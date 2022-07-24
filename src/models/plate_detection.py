@@ -76,7 +76,7 @@ model.layers[-6].trainable = False
 
 model.summary()
 model.compile(loss='mean_squared_error', optimizer='adam', metrics=['accuracy'])
-train = model.fit(X_train, y_train, validation_data=(X_val, y_val), epochs=50, batch_size=32, verbose=1)
+train = model.fit(X_train, y_train, validation_data=(X_val, y_val), epochs=1, batch_size=32, verbose=1)
 model.save('my_model.h5', overwrite=True)
 # Test
 scores = model.evaluate(X_test, y_test, verbose=0)

@@ -5,14 +5,14 @@ from lxml import etree
 import csv
 import logging
 
-logging.basicConfig(format='%(asctime)s - %(message)s', datefmt='%d-%b-%y %H:%M:%S')
+# create logger
+logger = logging.getLogger(__name__)
 
 IMAGE_SIZE = 256
 dir_path = os.path.dirname(os.path.realpath(__file__))
 
 
 class KaggleDatasetPreprocessor:
-
     KAGGLE_INPUT_PATH = os.path.join(dir_path, '..', '..', 'datasets', 'kaggle')
     KAGGLE_OUTPUT_PATH = os.path.join(dir_path, '..', '..', 'resources', 'kaggle')
     KAGGLE_INPUT_IMAGES = os.path.join(KAGGLE_INPUT_PATH, 'images')
@@ -22,26 +22,26 @@ class KaggleDatasetPreprocessor:
 
     def run_preprocessing(self):
 
-        logging.info("Running preprocessing")
+        logger.info("Running preprocessing")
 
         if not os.path.exists(self.KAGGLE_OUTPUT_PATH):
             os.makedirs(self.KAGGLE_OUTPUT_PATH)
-            logging.info("Created Kaggle folder")
+            logger.info("Created Kaggle folder")
 
         self.__resize_images()
         self.__annotations_to_csv()
 
-        logging.info("Done preprocessing")
+        logger.info("Done preprocessing")
 
     def __resize_images(self):
-        logging.info('Resizing kaggle images')
+        logger.info('Resizing images')
 
         if not os.path.exists(self.KAGGLE_OUTPUT_IMAGES):
             os.makedirs(self.KAGGLE_OUTPUT_IMAGES)
-            logging.info("Created Kaggle images folder")
+            logger.info("Created images folder")
 
         if len(os.listdir(self.KAGGLE_OUTPUT_IMAGES)):
-            logging.info('Output folder is not empty, skipping')
+            logger.info('Output folder is not empty, skipping')
             return
 
         data_path = os.path.join(self.KAGGLE_INPUT_IMAGES, '*g')
@@ -52,16 +52,16 @@ class KaggleDatasetPreprocessor:
             img = cv2.imread(f1)
             img = cv2.resize(img, (IMAGE_SIZE, IMAGE_SIZE))
             cv2.imwrite(os.path.join(self.KAGGLE_OUTPUT_IMAGES, f1.split(os.sep)[-1]), img)
-        logging.info('Done resizing')
+        logger.info('Done resizing')
 
     def __annotations_to_csv(self):
-        logging.info('Resizing kaggle annotations and writing them to csv')
+        logger.info('Resizing kaggle annotations and writing them to csv')
 
         annotations_file = os.path.join(self.KAGGLE_OUTPUT_ANNOTATIONS, 'annotations.csv')
 
         try:
             open(annotations_file)
-            logging.info('Annotations file exists, skipping')
+            logger.info('Annotations file exists, skipping')
             return
         except:
             pass
@@ -72,13 +72,14 @@ class KaggleDatasetPreprocessor:
             writer = csv.writer(f)
             writer.writerow(header)
 
-            text_files = [os.path.join(self.KAGGLE_INPUT_ANNOTATIONS, f) for f in sorted(os.listdir(self.KAGGLE_INPUT_ANNOTATIONS))]
+            text_files = [os.path.join(self.KAGGLE_INPUT_ANNOTATIONS, f) for f in
+                          sorted(os.listdir(self.KAGGLE_INPUT_ANNOTATIONS))]
             for annotation_file in text_files:
                 row = self.__resize_annotation(annotation_file)
                 row = [annotation_file.split(os.sep)[-1]] + row
                 writer.writerow(row)
 
-        logging.info('Written annotations')
+        logger.info('Written annotations')
 
     def __resize_annotation(self, f):
         tree = etree.parse(f)
