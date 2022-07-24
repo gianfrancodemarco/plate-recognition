@@ -1,2 +1,6 @@
 datasets
 resources
+src/my_model.h5
+
+*/__pycache__
+*/*/__pycache__
