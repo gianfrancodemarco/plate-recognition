@@ -1,20 +1,21 @@
-import os
-
 from src.datasets.DatasetLoader import DatasetLoader
-import numpy as np
 from matplotlib import pyplot as plt
 import logging
 import cv2
+from src.datasets.AnnotatedImageVisualizer import AnnotatedImageVisualizer
 
 logger = logging.getLogger(__name__)
 
 IMAGE_SIZE = 256
 
 dl = DatasetLoader()
-dl.load_kaggle_dataset()
+dl.load_final_dataset()
 
-X = dl.kaggle_X
-y = dl.kaggle_y
+#for i in range(10):
+#    AnnotatedImageVisualizer().show_image(dl.final_dataset_X[i], dl.final_dataset_y[i])
+
+X = dl.final_dataset_X
+y = dl.final_dataset_y
 
 from sklearn.model_selection import train_test_split
 

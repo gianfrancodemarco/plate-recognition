@@ -11,7 +11,8 @@ class AnnotatedImageVisualizer:
         plt.figure()
         plt.axis('off')
 
-        image = np.array(cv2.imread(image))
+        if type(image) == str:
+            image = np.array(cv2.imread(image))
 
         if rectangle:
             pt1, pt2, pt3, pt4 = rectangle

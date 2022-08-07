@@ -4,7 +4,9 @@ logging.config.fileConfig('logging.conf')
 
 sys.path.append('..')
 
-from datasets.DatasetSampler import DatasetSampler
+from models import plate_detection
 
-for i in range(10):
-    DatasetSampler().sample_dataset()
+# from datasets.DatasetSampler import DatasetSampler
+#
+# for i in range(10):
+#     DatasetSampler().sample_dataset()

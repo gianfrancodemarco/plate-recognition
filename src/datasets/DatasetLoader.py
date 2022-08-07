@@ -15,10 +15,16 @@ class DatasetLoader:
     KAGGLE_IMAGES = os.path.join(KAGGLE_PATH, 'images')
     KAGGLE_ANNOTATIONS = os.path.join(KAGGLE_PATH, 'annotations.csv')
 
+    FINAL_DATASET_PATH = os.path.join(dir_path, '..', '..', 'final_dataset')
+    FINAL_DATASET_IMAGES = os.path.join(FINAL_DATASET_PATH, 'images')
+    FINAL_DATASET_ANNOTATIONS = os.path.join(FINAL_DATASET_PATH, 'annotations.csv')
+
     def __init__(self):
 
         self.kaggle_X = []
         self.kaggle_y = []
+        self.final_dataset_X = []
+        self.final_dataset_y = []
 
     def load_kaggle_dataset(self):
 
@@ -49,3 +55,27 @@ class DatasetLoader:
         #self.kaggle_y = self.kaggle_y / 255
 
         #logger.info("Loaded annotations")
+
+
+    def load_final_dataset(self):
+
+        logger.info("Loading final dataset")
+
+        annotations = pd.read_csv(self.FINAL_DATASET_ANNOTATIONS)
+
+        logger.info("Loaded annotations")
+
+        for image in annotations['name'].tolist():
+            img = cv2.imread(os.path.join(self.FINAL_DATASET_IMAGES, str(image) + '.jpg'))
+            self.final_dataset_X.append(np.array(img))
+
+        annotations = annotations.drop(annotations.columns[[0]], axis=1)
+
+        logger.info("Loaded images")
+
+        self.final_dataset_y = annotations.values.tolist()
+
+        # Normalize data
+        # Transforming in array
+        self.final_dataset_X = np.array(self.final_dataset_X)
+        self.final_dataset_y = np.array(self.final_dataset_y)
