@@ -14,7 +14,7 @@ class AnnotatedImageVisualizer:
         if type(image) == str:
             image = np.array(cv2.imread(image))
 
-        if rectangle:
+        if rectangle is not None:
             pt1, pt2, pt3, pt4 = rectangle
             annotated_image = cv2.rectangle(image, (pt1, pt2), (pt3, pt4), self.RED)
         else:

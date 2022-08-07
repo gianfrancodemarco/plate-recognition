@@ -10,7 +10,6 @@ dir_path = os.path.dirname(os.path.realpath(__file__))
 
 
 class DatasetLoader:
-
     KAGGLE_PATH = os.path.join(dir_path, '..', '..', 'resources', 'kaggle')
     KAGGLE_IMAGES = os.path.join(KAGGLE_PATH, 'images')
     KAGGLE_ANNOTATIONS = os.path.join(KAGGLE_PATH, 'annotations.csv')
@@ -47,15 +46,14 @@ class DatasetLoader:
 
         # Normalize data
         # Transforming in array
-        self.kaggle_X = np.array(self.kaggle_X)#.astype(np.float16)
-        self.kaggle_y = np.array(self.kaggle_y)#.astype(np.float16)
+        self.kaggle_X = np.array(self.kaggle_X)  # .astype(np.float16)
+        self.kaggle_y = np.array(self.kaggle_y)  # .astype(np.float16)
 
         # Renormalisation
-        #self.kaggle_X = self.kaggle_X / 255
-        #self.kaggle_y = self.kaggle_y / 255
+        # self.kaggle_X = self.kaggle_X / 255
+        # self.kaggle_y = self.kaggle_y / 255
 
-        #logger.info("Loaded annotations")
-
+        # logger.info("Loaded annotations")
 
     def load_final_dataset(self):
 
