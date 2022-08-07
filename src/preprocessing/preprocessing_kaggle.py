@@ -4,6 +4,7 @@ import cv2
 from lxml import etree
 import csv
 import logging
+from src.datasets.AnnotatedImageVisualizer import  AnnotatedImageVisualizer
 
 # create logger
 logger = logging.getLogger(__name__)
@@ -48,10 +49,10 @@ class KaggleDatasetPreprocessor:
         files = glob.glob(data_path)
         files.sort()  # We sort the images in alphabetical order to match them to the xml files containing the annotations of the bounding boxes
 
-        for f1 in files:
+        for idx, f1 in enumerate(files):
             img = cv2.imread(f1)
             img = cv2.resize(img, (IMAGE_SIZE, IMAGE_SIZE))
-            cv2.imwrite(os.path.join(self.KAGGLE_OUTPUT_IMAGES, f1.split(os.sep)[-1]), img)
+            cv2.imwrite(os.path.join(self.KAGGLE_OUTPUT_IMAGES, str(idx) + '.jpg'), img)
         logger.info('Done resizing')
 
     def __annotations_to_csv(self):
@@ -74,10 +75,17 @@ class KaggleDatasetPreprocessor:
 
             text_files = [os.path.join(self.KAGGLE_INPUT_ANNOTATIONS, f) for f in
                           sorted(os.listdir(self.KAGGLE_INPUT_ANNOTATIONS))]
-            for annotation_file in text_files:
+            for idx, annotation_file in enumerate(text_files):
                 row = self.__resize_annotation(annotation_file)
-                row = [annotation_file.split(os.sep)[-1]] + row
+
+                #ann = row[:]
+
+                row = [str(idx)] + row
                 writer.writerow(row)
+
+                #if idx % 50 == 0:
+                    #AnnotatedImageVisualizer().show_image(os.path.join(self.KAGGLE_OUTPUT_IMAGES, str(idx) + '.jpg'), ann)
+
 
         logger.info('Written annotations')
 
