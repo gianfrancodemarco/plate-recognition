@@ -4,7 +4,7 @@ import numpy as np
 
 class AnnotatedImageVisualizer:
 
-    RED = (0, 255, 0)
+    GREEN = (0, 255, 0)
 
     def show_image(self, image, rectangle=None):
 
@@ -16,9 +16,9 @@ class AnnotatedImageVisualizer:
 
         if rectangle is not None:
             pt1, pt2, pt3, pt4 = rectangle
-            annotated_image = cv2.rectangle(image, (pt1, pt2), (pt3, pt4), self.RED)
+            annotated_image = cv2.rectangle(image, (pt1, pt2), (pt3, pt4), self.GREEN)
         else:
             annotated_image = image
 
         plt.imshow(annotated_image)
-        plt.show()
+        plt.show(block=False)
