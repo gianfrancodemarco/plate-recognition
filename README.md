@@ -1,6 +1,5 @@
 DATASETS 
 
-
 Only images:
 baza_slika: http://www.zemris.fer.hr/projects/LicensePlates/english/
 
@@ -9,9 +8,6 @@ https://www.kaggle.com/datasets/andrewmvd/car-plate-detection?resource=download
 
 Romanian Plates:
 https://github.com/RobertLucian/license-plate-dataset
-
-Images and bounding boxes and license plate number:
-https://github.com/detectRecog/CCPD
 
 
 INSTRUCTIONS
@@ -31,3 +27,12 @@ At this point, a human in the loop process is started:
 Even if the bounding box is not very precise, if it contains all of the text it can be approved; larger bounding box than the plate are ok,
 smaller obviously not.
 4) Repeated from one until there are no more images without label.
+
+
+
+
+
+1) Resize a allineamento annotations
+2) Rimozione di quelle che con il resize non si leggevano più (maggior parte di license-plate-recognition)
+3) Human-in-the-loop
+4) Rimozione di tutte tranne baza_slika
