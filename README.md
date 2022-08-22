@@ -36,3 +36,6 @@ smaller obviously not.
 2) Rimozione di quelle che con il resize non si leggevano più (maggior parte di license-plate-recognition)
 3) Human-in-the-loop
 4) Rimozione di tutte tranne baza_slika
+
+FINE TUNED MODELS: 200MB
+CUSTOM MODELS: 10MB

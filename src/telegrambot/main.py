@@ -1,8 +1,8 @@
 import logging
+import cv2
+import sys
 
-from flask import Flask
-
-app = Flask(__name__)
+from processor.Processor import Processor
 
 from flask import Flask
 from flask import request
@@ -10,8 +10,18 @@ from flask import Response
 import shutil
 import requests
 
+sys.path.append('.')
 
 app = Flask(__name__)
+
+# create logger
+logger = logging.getLogger(__name__)
+logger.setLevel(logging.DEBUG)
+ch = logging.StreamHandler()
+ch.setLevel(logging.DEBUG)
+formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
+ch.setFormatter(formatter)
+logger.addHandler(ch)
 
 
 def parse_message(message):
@@ -34,15 +44,12 @@ def tel_send_message(chat_id, text):
     return r
 
 
-def tel_send_image(chat_id):
+def tel_send_image(chat_id, photo, caption=None):
     url = f'https://api.telegram.org/bot5608820637:AAG7cHLFOafgcVqTGS5QDVdebhCEGm-CJjk/sendPhoto'
-    payload = {
-        'chat_id': chat_id,
-        'photo': "https://raw.githubusercontent.com/fbsamples/original-coast-clothing/main/public/styles/male-work.jpg",
-        'caption': "This is a sample image"
-    }
+    files = {'photo': photo}
+    data = {'chat_id': chat_id}
 
-    r = requests.post(url, json=payload)
+    r = requests.post(url, files=files, data=data)
     return r
 
 
@@ -63,7 +70,6 @@ def tel_parse_message(message):
 
 
 def download_photo(photo):
-
     file_id = photo[-2]['file_id']
 
     url = f'https://api.telegram.org/bot5608820637:AAG7cHLFOafgcVqTGS5QDVdebhCEGm-CJjk/getFile?file_id={file_id}'
@@ -72,8 +78,11 @@ def download_photo(photo):
 
     url = f'https://api.telegram.org/file/bot5608820637:AAG7cHLFOafgcVqTGS5QDVdebhCEGm-CJjk/{file_path}'
     image = requests.get(url, stream=True)
-    with open('img.png', 'wb') as out_file:
+
+    path = 'tmp/img.png'
+    with open(path, 'wb') as out_file:
         shutil.copyfileobj(image.raw, out_file)
+    return path
 
 
 @app.route('/', methods=['GET', 'POST'])
@@ -81,13 +90,27 @@ def index():
     if request.method == 'POST':
         msg = request.get_json()
         try:
+            logger.info('Received a message')
             chat_id, txt, photo = tel_parse_message(msg)
+            # tel_send_message(chat_id, "Thanks for the message")
 
             if photo:
-                tel_send_message(chat_id, "I'm retrieving the photo...")
-                download_photo(photo)
-                tel_send_message(chat_id, "I got the photo!")
+                logger.info('It is a photo')
+                # tel_send_message(chat_id, "I'm retrieving the photo...")
+                logger.info("I'm retrieving the photo...")
+                photo_path = download_photo(photo)
+                # tel_send_message(chat_id, "I've got the photo!")
+                logger.info("I've got the photo!")
 
+                image, bbox = processor.get_plate_detection_prediction(cv2.imread(photo_path))
+                cv2.imwrite(photo_path, image)
+                tel_send_image(chat_id, photo=open(photo_path, 'rb'))
+
+                plate = processor.get_ocr_prediction(cv2.imread(photo_path), bbox)
+                tel_send_message(chat_id, f"Vehicle plate: {plate}")
+
+            else:
+                tel_send_message(chat_id, "Send a picture of a plate")
 
         except Exception as e:
             logging.exception(e)
@@ -98,4 +121,6 @@ def index():
 
 
 if __name__ == '__main__':
+    processor = Processor()
     app.run(debug=True)
+    logger.info('Server running.')
