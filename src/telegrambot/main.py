@@ -70,7 +70,7 @@ def tel_parse_message(message):
 
 
 def download_photo(photo):
-    file_id = photo[-2]['file_id']
+    file_id = photo[-1]['file_id']
 
     url = f'https://api.telegram.org/bot5608820637:AAG7cHLFOafgcVqTGS5QDVdebhCEGm-CJjk/getFile?file_id={file_id}'
     file_path = requests.get(url).json()['result']['file_path']
@@ -102,12 +102,25 @@ def index():
                 # tel_send_message(chat_id, "I've got the photo!")
                 logger.info("I've got the photo!")
 
-                image, bbox = processor.get_plate_detection_prediction(cv2.imread(photo_path))
-                cv2.imwrite(photo_path, image)
-                tel_send_image(chat_id, photo=open(photo_path, 'rb'))
+                images, bboxes = processor.get_plate_detection_prediction(cv2.imread(photo_path))
 
-                plate = processor.get_ocr_prediction(cv2.imread(photo_path), bbox)
-                tel_send_message(chat_id, f"Vehicle plate: {plate}")
+                plates = []
+                for (image, bbox) in zip(images, bboxes):
+
+                    cv2.imwrite(photo_path, image)
+                    tel_send_image(chat_id, photo=open(photo_path, 'rb'))
+
+                    plate = processor.get_ocr_prediction(cv2.imread(photo_path), bbox)
+                    plates.append(plate)
+
+                logger.info(f'Plates before post processing: {", ".join(plates)}')
+                plates = processor.post_process_plates(plates)
+                logger.info(f'Plates after post processing: {", ".join(plates)}')
+
+                if len(plates) == 0:
+                    tel_send_message(chat_id, f"No plates found, please try again with another image")
+                else:
+                    tel_send_message(chat_id, f"Possible plates: {', '.join(plates)}")
 
             else:
                 tel_send_message(chat_id, "Send a picture of a plate")
