@@ -45,9 +45,10 @@ def tel_send_message(chat_id, text):
 
 
 def tel_send_image(chat_id, photo, caption=None):
+
     url = f'https://api.telegram.org/bot5608820637:AAG7cHLFOafgcVqTGS5QDVdebhCEGm-CJjk/sendPhoto'
     files = {'photo': photo}
-    data = {'chat_id': chat_id}
+    data = {'chat_id': chat_id, 'caption': caption}
 
     r = requests.post(url, files=files, data=data)
     return r
@@ -85,52 +86,50 @@ def download_photo(photo):
     return path
 
 
-@app.route('/', methods=['GET', 'POST'])
+@app.route('/', methods=['POST'])
 def index():
-    if request.method == 'POST':
-        msg = request.get_json()
-        try:
-            logger.info('Received a message')
-            chat_id, txt, photo = tel_parse_message(msg)
-            # tel_send_message(chat_id, "Thanks for the message")
+    msg = request.get_json()
+    try:
+        logger.info('Received a message')
+        chat_id, txt, photo = tel_parse_message(msg)
+        # tel_send_message(chat_id, "Thanks for the message")
 
-            if photo:
-                logger.info('It is a photo')
-                # tel_send_message(chat_id, "I'm retrieving the photo...")
-                logger.info("I'm retrieving the photo...")
-                photo_path = download_photo(photo)
-                # tel_send_message(chat_id, "I've got the photo!")
-                logger.info("I've got the photo!")
+        if photo:
+            logger.info('It is a photo')
+            # tel_send_message(chat_id, "I'm retrieving the photo...")
+            logger.info("I'm retrieving the photo...")
+            photo_path = download_photo(photo)
+            # tel_send_message(chat_id, "I've got the photo!")
+            logger.info("I've got the photo!")
 
-                images, bboxes = processor.get_plate_detection_prediction(cv2.imread(photo_path))
+            images, bboxes = processor.get_plate_detection_prediction(cv2.imread(photo_path))
 
-                plates = []
-                for (image, bbox) in zip(images, bboxes):
+            plates = []
+            for (image, bbox) in zip(images, bboxes):
+                cv2.imwrite(photo_path, image)
+                tel_send_image(chat_id, photo=open(photo_path, 'rb'))
 
-                    cv2.imwrite(photo_path, image)
-                    tel_send_image(chat_id, photo=open(photo_path, 'rb'))
+                plate = processor.get_ocr_prediction(cv2.imread(photo_path), bbox)
+                plates.append(plate)
 
-                    plate = processor.get_ocr_prediction(cv2.imread(photo_path), bbox)
-                    plates.append(plate)
+            logger.info(f'Plates before post processing: {", ".join(plates)}')
+            plates = processor.post_process_plates(plates)
+            logger.info(f'Plates after post processing: {", ".join(plates)}')
 
-                logger.info(f'Plates before post processing: {", ".join(plates)}')
-                plates = processor.post_process_plates(plates)
-                logger.info(f'Plates after post processing: {", ".join(plates)}')
-
-                if len(plates) == 0:
-                    tel_send_message(chat_id, f"No plates found, please try again with another image")
-                else:
-                    tel_send_message(chat_id, f"Possible plates: {', '.join(plates)}")
-
+            if len(plates) == 0:
+                tel_send_message(chat_id, f"No plates found, please try again with another image")
             else:
-                tel_send_message(chat_id, "Send a picture of a plate")
+                message = f"Possible plates: {', '.join(plates)}"
+                tel_send_message(chat_id, f"Possible plates: {', '.join(plates)}")
 
-        except Exception as e:
-            logging.exception(e)
 
-        return Response('ok', status=200)
-    else:
-        return "<h1>Welcome!</h1>"
+        else:
+            tel_send_message(chat_id, "Send a picture of a plate")
+
+    except Exception as e:
+        logging.exception(e)
+
+    return Response('ok', status=200)
 
 
 if __name__ == '__main__':

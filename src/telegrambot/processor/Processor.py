@@ -21,15 +21,16 @@ logger.addHandler(ch)
 class Processor:
 
     def __init__(self):
-        normal_images_model = load_model(os.path.join('processor', 'models', 'plate_detection_hitl_NormalImages.h5'))
-        bw_images_model = load_model(os.path.join('processor', 'models', 'plate_detection_hitl_BWImages.h5'))
-        edge_detection_images_model = load_model(
-            os.path.join('processor', 'models', 'plate_detection_hitl_LaplacianImages.h5'))
+        #normal_images_model = load_model(os.path.join('processor', 'models', 'plate_detection_hitl_NormalImages.h5'))
+        #bw_images_model = load_model(os.path.join('processor', 'models', 'plate_detection_hitl_BWImages.h5'))
+        edge_detection_images_model = load_model(os.path.join('processor', 'models', 'plate_detection_hitl_LaplacianImages.h5'))
+        normal_images_model_new = load_model(os.path.join('processor', 'models', 'plate_detection_hitl_NormalImages_1000.h5'))
 
         self.__plate_detection_models = [
-            (normal_images_model, self.get_normal_image),
-            (bw_images_model, self.get_bw_image),
-            (edge_detection_images_model, self.get_edge_detection_image)
+            #(normal_images_model, self.get_normal_image),
+            #(bw_images_model, self.get_bw_image),
+            (edge_detection_images_model, self.get_edge_detection_image),
+            (normal_images_model_new, self.get_normal_image)
         ]
 
         # self.__transformer_processor = TrOCRProcessor.from_pretrained("microsoft/trocr-large-printed")
@@ -77,7 +78,7 @@ class Processor:
 
     def get_ocr_prediction(self, image, predictions):
         image = self.crop_plate(image, predictions)
-        #logger.info(image)
+        # logger.info(image)
 
         cv2.imwrite('img.png', image)
         image = Image.open('img.png').convert("RGB")
@@ -141,7 +142,7 @@ class Processor:
 
             list_of_tuple = [(k, v) for k, v in votes.items()]
             ordered_votes = sorted(list_of_tuple, key=lambda x: x[1], reverse=1)
-            plates_to_keep = [ordered_votes[0]] # always take the first
+            plates_to_keep = [ordered_votes[0]]  # always take the first
             for (plate, votes) in ordered_votes[1:]:
                 if votes == plates_to_keep[0][1]:
                     plates_to_keep.append((plate, votes))
