@@ -5,9 +5,8 @@ def from_not_annotated_to_training_set(images):
 
         print(image)
         img = cv2.imread(os.path.join(not_annotated_images_path, str(image)))
-        # img = img.reshape(1, img.shape[0], img.shape[1], img.shape[2])
-        img = get_laplacian(img)
-        img = img.reshape(1, img.shape[0], img.shape[1])
+        img = current_function(img)
+        img = img.reshape(1, img.shape[0], img.shape[1], img.shape[2])
 
         print(os.path.join(not_annotated_images_path, str(image)))
         ny = model.predict(img)[0]
@@ -34,27 +33,9 @@ def from_not_annotated_to_training_set(images):
 
 upgrade_images = [
 
-    '227.jpg',
-    '404.jpg',
-    '247.jpg',
-    '270.jpg',
-    '146.jpg',
-    '160.jpg',
-    '119.jpg',
-    '27.jpg',
-    '126.jpg',
-    '446.jpg',
-    '91.jpg',
-    '285.jpg',
-    '151.jpg',
-    '314.jpg',
-    '463.jpg',
-    '26.jpg',
-    '406.jpg',
-    '317.jpg',
-    '45.jpg',
-    '279.jpg',
-    '264.jpg',
+    '366.jpg',
+    '17.jpg',
+    '306.jpg'
 
 ]
 

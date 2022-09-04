@@ -2,7 +2,7 @@ import logging
 import cv2
 import sys
 
-from processor.Processor import Processor
+from src.main.processor.processor import Processor
 
 from flask import Flask
 from flask import request
