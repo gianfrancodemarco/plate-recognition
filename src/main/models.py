@@ -5,7 +5,7 @@ from keras.layers import Dense, Flatten, Conv2D, MaxPooling2D, AveragePooling2D,
     LeakyReLU
 from keras.callbacks import Callback
 from keras.metrics import MeanSquaredError, RootMeanSquaredError
-from metrics import iou
+from src.main.metrics import iou
 
 class EarlyStoppingByLossVal(Callback):
     def __init__(self, monitor='val_loss', value=0.0001, verbose=0):
