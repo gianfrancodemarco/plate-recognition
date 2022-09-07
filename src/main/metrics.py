@@ -2,7 +2,7 @@ from tensorflow import *
 from tensorflow.math import *
 from tensorflow.keras.backend import *
 from functools import lru_cache
-
+import builtins # Because importing all from keras overrides builtins.min
 
 def iou(y_true, y_pred):
     y_true = cast(y_true, float32)
@@ -74,7 +74,7 @@ def lev_dist(a, b):
         if a[s1] == b[s2]:
             return min_dist(s1 + 1, s2 + 1)
 
-        return 1 + min(
+        return 1 + builtins.min(
             min_dist(s1, s2 + 1),  # insert character
             min_dist(s1 + 1, s2),  # delete character
             min_dist(s1 + 1, s2 + 1),  # replace character
