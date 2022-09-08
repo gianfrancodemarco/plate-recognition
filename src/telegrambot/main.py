@@ -33,11 +33,12 @@ def parse_message(message):
     return chat_id, txt
 
 
-def tel_send_message(chat_id, text):
+def tel_send_message(chat_id, text, message_id):
     url = f'https://api.telegram.org/bot5608820637:AAG7cHLFOafgcVqTGS5QDVdebhCEGm-CJjk/sendMessage'
     payload = {
         'chat_id': chat_id,
-        'text': text
+        'text': text,
+        'reply_to_message_id': message_id
     }
 
     r = requests.post(url, json=payload)
@@ -45,7 +46,6 @@ def tel_send_message(chat_id, text):
 
 
 def tel_send_image(chat_id, photo, caption=None):
-
     url = f'https://api.telegram.org/bot5608820637:AAG7cHLFOafgcVqTGS5QDVdebhCEGm-CJjk/sendPhoto'
     files = {'photo': photo}
     data = {'chat_id': chat_id, 'caption': caption}
@@ -60,12 +60,13 @@ def tel_parse_message(message):
         chat_id = message['message']['chat']['id']
         txt = message['message'].get('text')
         photo = message['message'].get('photo')
+        message_id = message['message'].get('message_id')
 
         print("\nchat_id-->", chat_id)
         print("\ntxt-->", txt)
         print("\nphoto-->", photo)
 
-        return chat_id, txt, photo
+        return chat_id, txt, photo, message_id
     except Exception as e:
         logging.exception(e)
 
@@ -91,7 +92,7 @@ def index():
     msg = request.get_json()
     try:
         logger.info('Received a message')
-        chat_id, txt, photo = tel_parse_message(msg)
+        chat_id, txt, photo, message_id = tel_parse_message(msg)
         # tel_send_message(chat_id, "Thanks for the message")
 
         if photo:
@@ -117,12 +118,10 @@ def index():
             logger.info(f'Plates after post processing: {", ".join(plates)}')
 
             if len(plates) == 0:
-                tel_send_message(chat_id, f"No plates found, please try again with another image")
+                tel_send_message(chat_id, f"No plates found, please try again with another image", message_id)
             else:
                 message = f"Possible plates: {', '.join(plates)}"
-                tel_send_message(chat_id, f"Possible plates: {', '.join(plates)}")
-
-
+                tel_send_message(chat_id, f"Possible plates: {', '.join(plates)}", message_id)
         else:
             tel_send_message(chat_id, "Send a picture of a plate")
 

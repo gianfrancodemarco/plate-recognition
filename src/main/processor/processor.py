@@ -8,6 +8,7 @@ from keras.models import load_model
 from transformers import TrOCRProcessor, VisionEncoderDecoderModel
 from PIL import Image
 from src.main.metrics import iou
+from src.main.image_preprocessing import get_bw_image, get_edge_detection_image, get_raw_image
 
 # create logger
 logger = logging.getLogger(__name__)
@@ -29,34 +30,15 @@ class Processor:
         edge_detection_images_model = load_model(os.path.join(models_path, 'laplatian_images.h5'), custom_objects={"iou": iou})
 
         self.__plate_detection_models = [
-            (normal_images_model, self.get_normal_image),
-            (bw_images_model, self.get_bw_image),
-            (edge_detection_images_model, self.get_edge_detection_image)
+            (normal_images_model, get_raw_image),
+            (bw_images_model, get_bw_image),
+            (edge_detection_images_model, get_edge_detection_image)
         ]
 
         # self.__transformer_processor = TrOCRProcessor.from_pretrained("microsoft/trocr-large-printed")
         # self.__transformer_model = VisionEncoderDecoderModel.from_pretrained("microsoft/trocr-large-printed")
         self.__transformer_processor = TrOCRProcessor.from_pretrained("microsoft/trocr-small-printed")
         self.__transformer_model = VisionEncoderDecoderModel.from_pretrained("microsoft/trocr-small-printed")
-
-    def get_normal_image(self, img):
-        return img
-
-    def get_bw_image(self, img):
-        img = cv2.cvtColor(img, cv2.COLOR_RGB2GRAY)
-        return img
-
-    def get_edge_detection_image(self, img):
-        # converting to gray scale
-        img = cv2.cvtColor(img, cv2.COLOR_RGB2GRAY)
-
-        # remove noise
-        img = cv2.GaussianBlur(img, (11, 11), 1)
-
-        # convolute with proper kernels
-        img = cv2.Laplacian(img, cv2.CV_64F, ksize=3)
-
-        return img
 
     def resize_image(self, image):
         return cv2.resize(image, (256, 256))
