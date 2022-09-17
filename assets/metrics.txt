@@ -1,0 +1,12 @@
+Final accuracy for OCR model: 0.7226027397260274
+Lev dist for OCR model: 0.5102739726027398
+
+Final accuracy for raw images model: 0.5402298850574713
+Final lev_distance for raw images model: 1.3591954022988506
+
+
+Final accuracy for raw images model: 0.5201149425287356
+Final lev_distance for raw images model: 1.528735632183908
+
+Final accuracy for edge detection images model: 0.56
+Final lev_distance for edge detection images model: 1.4

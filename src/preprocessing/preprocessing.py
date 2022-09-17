@@ -1,5 +1,6 @@
 import sys
 import logging.config
+
 logging.config.fileConfig('logging.conf')
 
 sys.path.append('../..')
