@@ -9,3 +9,4 @@ transformers
 transformers[sentencepiece]
 opencv-python
 Pillow
+torch
