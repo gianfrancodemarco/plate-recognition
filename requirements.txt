@@ -8,3 +8,4 @@ tokenizers
 transformers
 transformers[sentencepiece]
 opencv-python
+Pillow
