@@ -135,5 +135,5 @@ def index():
 
 if __name__ == '__main__':
     processor = Processor()
-    app.run(debug=True)
+    app.run(debug=True, port=8443)
     logger.info('Server running.')
