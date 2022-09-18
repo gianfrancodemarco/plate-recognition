@@ -1,6 +1,9 @@
 import logging
 import cv2
+import os
 import sys
+
+sys.path.append(os.path.join(os.path.dirname(__file__), '..', '..'))
 
 from src.main.processor.processor import Processor
 
@@ -10,7 +13,6 @@ from flask import Response
 import shutil
 import requests
 
-sys.path.append('.')
 
 app = Flask(__name__)
 
