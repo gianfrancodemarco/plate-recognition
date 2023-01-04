@@ -1,0 +1,12 @@
+name: tutorial-docker
+
+docker_env:
+  image:  mlflow-docker-example
+  environment: ["MLFLOW_TRACKING_URI", "MLFLOW_TRACKING_USERNAME"]
+
+entry_points:
+  main:
+    parameters:
+      alpha: {type: float, default: 0.1}
+      l1_ratio: {type: float, default: 0.1}
+    command: "python src/examples/sklearn_elasticnet_wine/models/train_model.py {alpha} {l1_ratio}"

@@ -1,0 +1,16 @@
+# external requirements
+-e .
+Flask
+numpy
+pandas
+scikit-learn
+scipy
+tensorflow==2.9.1
+tokenizers
+transformers
+transformers[sentencepiece]
+opencv-python
+Pillow
+torch
+mlflow
+shapely

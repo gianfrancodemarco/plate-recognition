@@ -1,0 +1,9 @@
+name: tutorial
+
+conda_env: conda.yaml
+
+entry_points:
+  download_data:
+    command: "python src/pipeline/download_data.py"
+  train:
+    command: "python src/pipeline/train_model.py"
