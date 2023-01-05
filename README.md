@@ -26,3 +26,6 @@ This step supports partial downloading of the resources and resuming.
 
 ### Start UVICORN local
 python -m uvicorn src.app.main:app --reload 
+
+### Start docker compose using modules cache
+COMPOSE_DOCKER_CLI_BUILD=1 DOCKER_BUILDKIT=1 docker-compose up

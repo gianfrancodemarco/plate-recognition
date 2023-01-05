@@ -8,6 +8,7 @@ numpy
 opencv-python
 pandas
 pydantic
+python-multipart
 scikit-learn
 scipy
 shapely
@@ -16,3 +17,4 @@ tokenizers
 torch
 transformers
 transformers[sentencepiece]
+uvicorn

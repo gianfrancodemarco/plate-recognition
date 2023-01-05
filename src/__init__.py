@@ -1,4 +1,4 @@
-from src import models, utils
+from src import utils
 
 # Configure logging
 import logging.config
