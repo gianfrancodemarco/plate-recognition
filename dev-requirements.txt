@@ -1,9 +1,9 @@
 # install in develop mode
 -r requirements.txt
+-e .
 pytest
 python-dotenv>=0.5.1
 flake8
-mlflow
 dvc
 coverage
 

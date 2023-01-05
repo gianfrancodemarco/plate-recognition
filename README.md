@@ -22,3 +22,7 @@ python ./run.py -e download_data
 Downloads the card database in SQLite format from MTGJson. <br/>
 Then, for each card, downloads its image. <br/>
 This step supports partial downloading of the resources and resuming.
+
+
+### Start UVICORN local
+python -m uvicorn src.app.main:app --reload 

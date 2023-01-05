@@ -48,7 +48,9 @@ def __show_image__(
             cv2.fillPoly(overlay, exterior, color=(255, 0, 0))
             cv2.addWeighted(overlay, alpha, image_copy, 1 - alpha, 0, image_copy)
         else:
-            cv2.rectangle(image_copy, segmentation.bounds, color=(255, 0, 0))        
+            pt1 = (int(segmentation.bounds[0]), int(segmentation.bounds[1]))
+            pt2 = (int(segmentation.bounds[2]), int(segmentation.bounds[3]))
+            cv2.rectangle(image_copy, pt1, pt2, color=(255, 0, 0))        
 
     plt.figure()
     plt.imshow(image_copy)

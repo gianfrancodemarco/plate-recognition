@@ -1,17 +1,18 @@
 # external requirements
--e .
 Flask
+Pillow
+fastapi
+matplotlib
+mlflow
 numpy
+opencv-python
 pandas
+pydantic
 scikit-learn
 scipy
+shapely
 tensorflow==2.9.1
 tokenizers
+torch
 transformers
 transformers[sentencepiece]
-opencv-python
-Pillow
-torch
-mlflow
-shapely
-matplotlib
