@@ -1,88 +1,35 @@
 import logging
-import logging.config
 import os
-import sqlite3
-
-from joblib import Parallel, delayed
+import zipfile
 
 from src import utils
-from src.data.misc import download_image, fetch_or_resume
+from src.data.misc import fetch_or_resume
 
-logging.config.fileConfig(os.path.join(utils.SRC_PATH, "logging.conf"))
-
-CARDS_DATABASE_PATH = os.path.join(
-    utils.DATA_PATH, "raw", "card_database.sqlite")
-IMAGES_DESTIN = os.path.join(utils.DATA_PATH, "raw", "card_images")
-
-IMAGES_DESTINATION = os.path.join(utils.DATA_PATH, "raw", "card_images")
+RAW_PATH = os.path.join(utils.DATA_PATH, "raw")
+DATASET_PATH = os.path.join(RAW_PATH, "plate-recognition-dataset.zip")
 
 
-def get_cursor():
-    def dict_factory(cursor, row):
-        fields = [column[0] for column in cursor.description]
-        return {key: value for key, value in zip(fields, row)}
+def download_dataset():
 
-    con = sqlite3.connect(CARDS_DATABASE_PATH)
-    con.row_factory = dict_factory
-    cur = con.cursor()
-    return cur
+    DATA_URL = os.getenv(
+        "DATASET_URL", "https://drive.google.com/uc?id=1fgyila3C4Z1GOg4o2bCi508Xkr29wuBB&export=download")
 
+    logging.info("Downloading dataset...")
+    fetch_or_resume(DATA_URL, DATASET_PATH)
 
-def download_cards_db():
-    logging.info("Downloading cards database...")
-    DATA_URL = os.getenv("CARD_DATABASE_URL",
-                         "https://mtgjson.com/api/v5/AllPrintings.sqlite")
-    fetch_or_resume(DATA_URL, CARDS_DATABASE_PATH)
-    logging.info("Download complete.")
+    logging.info("Download complete. Extracting zip file...")
+    with zipfile.ZipFile(DATASET_PATH, 'r') as zip_ref:
+        zip_ref.extractall(RAW_PATH)
 
+    logging.info("Zip file extracted. Removing zip file...")
+    os.remove(DATASET_PATH)
 
-def download_cards_images():
+    logging.info("Zip file removed.")
 
-    logging.info("Downloading images for all of the card in the database...")
-
-    if not os.path.exists(IMAGES_DESTINATION):
-        os.makedirs(IMAGES_DESTINATION)
-
-    cursor = get_cursor()
-    cards = cursor.execute("SELECT id, scryfallId FROM cards").fetchall()
-
-    # This was too slow
-    # for idx, card in enumerate(cards):
-    #     logging.info(f"Downloading image {idx}/{len(cards)}")
-    #     download_card_image(card)
-
-    Parallel(
-        n_jobs=-1,
-        prefer="threads"
-    )(delayed(download_card_image)(idx, card) for (idx, card) in enumerate(cards))
-
-    logging.info("Download complete.")
-
-
-def download_card_image(idx, card):
-
-    logging.info("Downloading image %s", idx)
-
-    scryfallId = card['scryfallId']
-    version = "normal"
-    image_url = f"https://api.scryfall.com/cards/{scryfallId}?format=image&version={version}"
-
-    card_filename = f"{card['id']}_{version}.jpg"
-    card_path = os.path.join(IMAGES_DESTINATION, card_filename)
-
-    if os.path.isfile(card_path):
-        logging.info("The card image is already present. Skipping.")
-    else:
-        try:
-            download_image(image_url, card_path)
-        except Exception:
-            pass
-
-
-def download_templates():
-    pass
 
 if __name__ == "__main__":
-    download_cards_db()
-    download_cards_images()
-    download_templates()
+    if len(os.listdir(RAW_PATH)) == 0:
+        download_dataset()
+    else:
+        logging.warning(
+            f"{RAW_PATH} is not empty. Delete its content and try again if you want to download the dataset")

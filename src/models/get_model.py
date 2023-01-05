@@ -27,7 +27,7 @@ def get_model(
         from keras.models import Sequential
 
 
-        input_shape = (512, 512, 3)
+        input_shape = (256, 256, 3)
         model = Sequential()
 
         model.add(Input(shape=input_shape))

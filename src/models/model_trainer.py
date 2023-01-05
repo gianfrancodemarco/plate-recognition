@@ -16,7 +16,7 @@ class SaveModelMLFlowCallback(Callback):
         self.epochs_interval = epochs_interval
 
     def on_epoch_end(self, epoch, logs=None):
-        if epoch % self.epochs_interval == 0:
+        if epoch > 0 and epoch % self.epochs_interval == 0:
             run_id = mlflow.active_run().info.run_id
             artifact_path = "model"
             model_uri = f"runs:/{run_id}/{artifact_path}"

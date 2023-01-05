@@ -1,110 +1,64 @@
 import logging
+import math
 import os
-import random
-from datetime import datetime
+import shutil
 
-import cv2
+import pandas as pd
+from sklearn.utils import shuffle
 from src import utils
-from src.data.annotations.coco_annotations_manager import \
-    CocoAnnotationsManager
-from src.data.augmentation.template_manager import ImagesTemplatesManager
-from src.features.build_features import flatten_list
 
-CARD_IMAGES_PATH = os.path.join(utils.DATA_PATH, 'raw', 'templates')
+RAW_IMAGES_PATH = os.path.join(utils.DATA_PATH, "raw", "images")
+PROCESSED_PATH = os.path.join(utils.DATA_PATH, "processed")
 
-ANNOTATIONS_PATH = os.path.join(utils.DATA_PATH, 'annotations', 'annotations.json')
-TEMPLATES_CONFIG_PATH = os.path.join(utils.DATA_PATH, 'annotations', 'templates.json')
-PROCESSD_PATH = os.path.join(utils.DATA_PATH, 'processed')
-
-_, _, files = next(os.walk(os.path.join(utils.DATA_PATH, 'raw', 'card_images')))
-num_card_images = len(files)
-
-
-def get_random_patches(num):
-    return [
-        cv2.imread(os.path.join(utils.DATA_PATH, 'raw', 'card_images',
-                   f'{random.randint(1, num_card_images)}_normal.jpg'))
-        for
-        patch
-        in range(num)
-    ]
+ANNOTATIONS_PATH = os.path.join(utils.DATA_PATH, "raw", "annotations.csv")
+PLATES_PATH = os.path.join(utils.DATA_PATH, "raw", "plates.csv")
+TRAIN_SET_FRACTION = os.getenv("TRAIN_SET_FRACTION", 0.7)
+TEST_SET_FRACTION = os.getenv("TEST_SET_FRACTION", 0.2)
+VALIDATION_SET_FRACTION = os.getenv("VALIDATION_SET_FRACTION", 0.1)
 
 
 def make_dataset():
-    num_images_to_generate = 10_000
 
-    annotations_manager = CocoAnnotationsManager()
-    annotations_manager.load_annotations(ANNOTATIONS_PATH)
-    image_templates_manager = ImagesTemplatesManager(
-        templates_config_path=TEMPLATES_CONFIG_PATH,
-        annotation_manager=annotations_manager,
-    )
-    templates = image_templates_manager.get_templates()
+    # Read annotations (bboxes) and plates to join into a single dataframe
+    annotations = pd.read_csv(ANNOTATIONS_PATH)
+    plates = pd.read_csv(PLATES_PATH)
+    annotations = annotations.set_index("name").join(plates.set_index("name"))
+    annotations = annotations.reset_index()
+    annotations = shuffle(annotations)
 
-    
-    for (dataset_split, percentage) in [("train", .7), ("test", .2), ("validation", .1)]:
-        
-        current = 0
+    # Split the dataset
+    n_data = len(annotations)
+    current_index = 0
 
-        num_split_images = percentage * num_images_to_generate
-        logging.warning(f"Generating {num_split_images} images for {dataset_split} set.")
+    for (split, fraction) in [("train", TRAIN_SET_FRACTION), ("test", TEST_SET_FRACTION), ("validation", VALIDATION_SET_FRACTION)]:
 
-        split_path = os.path.join(PROCESSD_PATH, dataset_split)
+        # Take the next n_data_in_split from the dataset
+        n_data_in_split = math.ceil(n_data * fraction)
+        data_in_split = annotations.iloc[current_index: current_index + n_data_in_split]
+        current_index += n_data_in_split
+
+        # Copy annotations into split's path
+        split_path = os.path.join(PROCESSED_PATH, split)
         if not os.path.exists(split_path):
             os.makedirs(split_path)
 
-        generated_annotations_path = os.path.join(
-            utils.DATA_PATH, 'annotations', f'{dataset_split}_set_annotations.json')
-        generated_annotations_manager = CocoAnnotationsManager()
-        generated_annotations_manager.create_empty_annotations(
-            generated_annotations_path,
-            categories={
-                "id": 0,
-                "name": "Card"
-            },
-            info={
-                "year": 2023,
-                "version": "1.0",
-                "description": f"Annotations generated for syntetic data ({dataset_split} set)",
-                "contributor": "Gianfranco Demarco",
-                "url": "",
-                "date_created": datetime.now().strftime("%Y-%d-%m %H:%M:%S")
-            }
-        )
+        data_in_split.to_csv(os.path.join(split_path, "annotations.csv"), index=False)
 
+        # Copy images into split's path
+        split_images_path = os.path.join(PROCESSED_PATH, split, "images")
+        if not os.path.exists(split_images_path):
+            os.makedirs(split_images_path)
 
-        while current < num_split_images:
-            
-            logging.warning(f"{dataset_split} set: {current}/{num_split_images}")
-
-            try:
-                template = random.choice(templates)
-                num_patches_to_generate = 0
-                try:
-                    num_patches_to_generate = template.max_patches
-                except AttributeError:
-                    num_patches_to_generate = len(template.segmentation_polygons)
-
-                patches = get_random_patches(num=num_patches_to_generate)
-                image, polygons = template.generate_image(patches)
-                filename = f"{dataset_split}_split_{current}.jpeg"
-                cv2.imwrite(os.path.join(split_path, filename), image)
-                image_id = generated_annotations_manager.add_image(
-                    filename=filename, height=image.shape[0], width=image.shape[1])
-                generated_annotations_manager.add_annotation(
-                    image_id=image_id,
-                    category_id=0,
-                    segmentation=[flatten_list([list(el) for el in polygon.exterior.coords]) for polygon in polygons],
-                    bbox=[list(polygon.bounds) for polygon in polygons],
-                    area=[polygon.area for polygon in polygons]
-                )
-
-                current += 1
-            except:
-                pass
-
-        generated_annotations_manager.flush_annotations()
+        for sample in data_in_split.values.tolist():
+            image_name = str(sample[0])
+            image_source_path = os.path.join(RAW_IMAGES_PATH, image_name)
+            image_dest_path = os.path.join(split_images_path, image_name)
+            shutil.copyfile(image_source_path, image_dest_path)
 
 
 if __name__ == "__main__":
-    make_dataset()
+    if len(os.listdir(PROCESSED_PATH)) == 0:
+        make_dataset()
+    else:
+        logging.warning(
+            f"{PROCESSED_PATH} is not empty. Delete its content and try again if you want to generate a new path")

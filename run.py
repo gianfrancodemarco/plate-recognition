@@ -1,4 +1,5 @@
 import argparse
+import logging
 import subprocess
 import sys
 
@@ -22,7 +23,10 @@ def build_command(args):
     return command
 
 
-load_dotenv(override=True)
+set_variables = load_dotenv(override=True)
+if not set_variables:
+    logging.warning("No environment variables have been set.")
+
 args = get_cli_args()
 command = build_command(args)
 subprocess.run(command, stderr=sys.stderr, stdout=sys.stdout)

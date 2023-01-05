@@ -1,14 +1,7 @@
+import random
+
 import cv2
 import numpy as np
-
-
-def get_raw_image(img):
-    return img
-
-
-def get_bw_image(img):
-    img = cv2.cvtColor(img, cv2.COLOR_RGB2GRAY)
-    return img
 
 
 def get_edge_detection_image(img):
@@ -27,19 +20,27 @@ def get_edge_detection_image(img):
 def get_canny_img(img):
     # remove noise
     img = cv2.GaussianBlur(img, (5, 5), 1)
-
     img = cv2.Canny(image=img, threshold1=120, threshold2=200)  # Canny Edge Detection
+    return img
 
+
+def get_raw_image(img):
+    return img
+
+
+def get_bw_image(img):
+    img = cv2.cvtColor(img, cv2.COLOR_RGB2GRAY)
     return img
 
 
 def get_blurry_img(img):
-    img = cv2.GaussianBlur(img, (5, 5), 1)
+    ksize = random.choice([1, 3, 5, 7])
+    sigma = random.randint(1, 5)
+    return cv2.GaussianBlur(img, (ksize, ksize), sigma)
 
-    return img
 
-
-def change_image_brightness(image, delta):
+def change_image_brightness(image):
+    delta = random.randint(-60, 60)
     return image + delta
 
 
@@ -53,3 +54,17 @@ def augment_dataset(X, y):
     y = np.concatenate([y, y, y, y])
 
     return X, y
+
+
+def random_image_augmentation(image: np.ndarray):
+    """
+    Perform a position invariant transformation to the image
+    The transformation is randomly chosen among:
+    - no transformation
+    - blurry the image
+    - change the image brightness 
+    """
+
+    functions = [get_raw_image, get_blurry_img, change_image_brightness]
+    random_function = random.choice(functions)
+    return random_function(image)

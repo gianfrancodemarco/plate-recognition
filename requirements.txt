@@ -14,3 +14,4 @@ Pillow
 torch
 mlflow
 shapely
+matplotlib
