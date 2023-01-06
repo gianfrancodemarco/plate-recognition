@@ -1,4 +1,3 @@
-
 import io
 
 import PIL
@@ -7,20 +6,20 @@ from PIL import Image
 from pydantic import BaseModel, validator
 
 
-class ImageValidator(BaseModel):
-    """Pydantic validator for images"""
+class PredictImageDTO(BaseModel):
+    
+    image_file: UploadFile
 
-    image: UploadFile
-
-    @validator("image")
-    def check_image(cls, image):
+    @validator("image_file")
+    def check_image(cls, image_file) -> Image:
         """Checks that the input file is actually an image"""
-        img = image.file.read()
+
         try:
-            Image.open(io.BytesIO(img))
-            image.file.close()
+            image_bytes = image_file.file.read()
+            image_file.close()
+            image = Image.open(io.BytesIO(image_bytes))
+            return image
         except PIL.UnidentifiedImageError as exc:
             raise ValueError(
                 "Image upload error, the file provided is not an image."
             ) from exc
-        return img
