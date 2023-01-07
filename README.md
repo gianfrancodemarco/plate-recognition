@@ -1,3 +1,5 @@
+[![Code check](https://github.com/gianfrancodemarco/ml-boilerplate/actions/workflows/code_checks.yml/badge.svg)](https://github.com/gianfrancodemarco/ml-boilerplate/actions/workflows/code_checks.yml)
+
 ## Commands
 
 To run the main entry point, run:
