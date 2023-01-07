@@ -9,7 +9,7 @@ on:
 
 
 jobs:
-  docker:
+  dockerhub:
     runs-on: ubuntu-latest
     steps:
       -
@@ -25,8 +25,51 @@ jobs:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
       -
-        name: Build and push
+        name: Build and push (DockerHub)
         uses: docker/build-push-action@v3
         with:
           push: true
           tags: gianfrancodemarco/plate-recognition:latest
+
+  artifact-registry:
+    runs-on: ubuntu-latest
+    steps:
+      -
+        name: Login to GAR
+        uses: docker/login-action@v2
+        with:
+          registry: us-central1-docker.pkg.dev
+          username: _json_key
+          password: ${{ secrets.GAR_JSON_KEY }}
+      -
+        name: Build and push (GCP)
+        uses: docker/build-push-action@v3
+        with:
+          push: true
+          tags: us-central1-docker.pkg.dev/linen-shape-374022/university/plate-recognition:latest
+
+          
+
+  #https://github.com/google-github-actions/deploy-cloudrun
+  deploy-cloudrun:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: 'read'
+      id-token: 'write'
+
+    steps:
+    - uses: 'actions/checkout@v3'
+
+    - uses: 'google-github-actions/auth@v1'
+      with:
+        workload_identity_provider: 'projects/123456789/locations/global/workloadIdentityPools/my-pool/providers/my-provider'
+        service_account: 'my-service-account@my-project.iam.gserviceaccount.com'
+
+    - id: 'deploy'
+      uses: 'google-github-actions/deploy-cloudrun@v1'
+      with:
+        service: 'hello-cloud-run'
+        image: 'gcr.io/cloudrun/hello'
+
+    - name: 'Use output'
+      run: 'curl "${{ steps.deploy.outputs.url }}"'
