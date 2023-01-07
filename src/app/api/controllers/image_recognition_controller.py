@@ -26,9 +26,9 @@ def predict_bbox(image_file: UploadFile):
                 "bbox": bbox.tolist()
             }
         }
-    except ValidationError as e:
-        logging.exception(e)
-        raise HTTPException(status_code=406, detail=str(e.raw_errors[0].e)) from e
+    except ValidationError as exc:
+        logging.exception(exc)
+        raise HTTPException(status_code=406, detail=str(exc.raw_errors[0].e)) from exc
 
 
 @router.post("/predict/annotate-image")
@@ -40,6 +40,6 @@ def predict_annotated_image(image_file: UploadFile):
         image = image_recognition_service.predict_bbox_and_annotate_image(numpy_image)
         res, im_png = cv2.imencode(".png", image)
         return StreamingResponse(io.BytesIO(im_png.tobytes()), media_type="image/png")
-    except ValidationError as e:
-        logging.exception(e)
-        raise HTTPException(status_code=406, detail=str(e.raw_errors[0].e)) from e
+    except ValidationError as exc:
+        logging.exception(exc)
+        raise HTTPException(status_code=406, detail=str(exc.raw_errors[0].e)) from exc

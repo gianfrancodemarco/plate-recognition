@@ -1,6 +1,10 @@
 import logging
 
 import mlflow
+from keras.layers import (Conv2D, Dense, Dropout, Flatten, Input, LeakyReLU,
+                          MaxPooling2D)
+from keras.metrics import RootMeanSquaredError
+from keras.models import Sequential
 from src.models.metrics import iou
 
 
@@ -20,11 +24,6 @@ def get_model(
 
     except Exception as exc:
         logging.exception(exc)
-
-        from keras.layers import (Conv2D, Dense, Dropout, Flatten, Input, LeakyReLU,
-                                  MaxPooling2D)
-        from keras.metrics import RootMeanSquaredError
-        from keras.models import Sequential
 
         input_shape = (256, 256, 3)
         model = Sequential()
