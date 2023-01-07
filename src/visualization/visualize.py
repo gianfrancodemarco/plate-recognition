@@ -10,13 +10,16 @@ from tensorflow.python.framework.ops import Tensor
 
 def show_image(
     image: Union[Tensor, np.ndarray],
-    segmentations: Union[Polygon, List[Polygon]] = [],
+    segmentations: Union[Polygon, List[Polygon]] = None,
     alpha: float = 1,
     fill: bool = False
 ):
 
     if isinstance(image, Tensor):
         image = image.numpy().astype(np.uint8)
+
+    if segmentations is None:
+        segmentations = []
 
     if isinstance(segmentations, Polygon):
         segmentations = [segmentations]
@@ -31,13 +34,13 @@ def show_image(
 
 def __show_image__(
     image: np.ndarray,
-    segmentations: List[Polygon] = [],
+    segmentations: List[Polygon] = None,
     alpha: float = 1,
     fill: bool = False
 ):
     image_copy = image.copy()
 
-    for segmentation in segmentations:
+    for segmentation in (segmentations or []):
 
         def int_coords(coords):
             return np.array(coords).round().astype(np.int32)

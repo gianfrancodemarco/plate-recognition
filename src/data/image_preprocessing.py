@@ -46,8 +46,8 @@ def change_image_brightness(image):
 
 def augment_dataset(X, y):
     X_blurry = list(map(get_blurry_img, X))
-    X_lighter = list(map(lambda img: change_image_brightness(img, 30), X))
-    X_darker = list(map(lambda img: change_image_brightness(img, -30), X))
+    X_lighter = list(map(change_image_brightness, X))
+    X_darker = list(map(change_image_brightness, X))
     X = np.concatenate([X, X_blurry, X_lighter, X_darker])
 
     # y doesn't change because these transformation doesn't change the bbox position

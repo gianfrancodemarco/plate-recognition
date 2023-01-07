@@ -5,11 +5,11 @@ from tqdm import tqdm
 
 
 def fetch_or_resume(url, filename):
-    with open(filename, 'a+b') as f:
+    with open(filename, 'a+b') as file:
         logging.info(f"Downloading {url} in {filename}")
 
         headers = {}
-        pos = f.tell()
+        pos = file.tell()
         if pos:
             logging.info("Previous download found. Resuming...")
             headers['Range'] = f'bytes={pos}-'
