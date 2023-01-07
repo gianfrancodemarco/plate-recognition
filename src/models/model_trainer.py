@@ -25,6 +25,7 @@ class SaveModelMLFlowCallback(Callback):
             model_details = mlflow.register_model(model_uri=model_uri, name=self.model_name)
             logging.info(f"Saved model at {model_details}")
 
+
 class EarlyStoppingByLossVal(Callback):
     def __init__(self, monitor='val_loss', value=0.0001, verbose=0):
         super(Callback, self).__init__()
@@ -42,37 +43,38 @@ class EarlyStoppingByLossVal(Callback):
                 print("\nEpoch %05d: early stopping THR" % epoch)
             self.model.stop_training = True
 
+
 def train_model(
         model,
         dataset,
         epochs=1000,
         validation_split: float = 0,
-        validation_dataset = None,
+        validation_dataset=None,
         early_stopping: bool = False,
         save_every_n_epochs: int = 3,
         model_name: None = "model"
 ):
-        callbacks = []
-        if early_stopping:
-            callbacks.append(EarlyStoppingByLossVal(monitor='loss', value=1, verbose=1))
+    callbacks = []
+    if early_stopping:
+        callbacks.append(EarlyStoppingByLossVal(monitor='loss', value=1, verbose=1))
 
-        if save_every_n_epochs:
-            callbacks.append(SaveModelMLFlowCallback(
-                model_name = model_name,
-                epochs_interval = save_every_n_epochs
-            ))
-        
-        logging.info(f"Training the model for {save_every_n_epochs} epochs")
-        model.fit(
-            x = dataset,
-            validation_data = validation_dataset,
-            epochs=epochs,
-            batch_size=16,
-            verbose=1,
-            validation_split=validation_split,
-            callbacks=callbacks
-        )
-        
-        logging.info(f"Model fitted for {save_every_n_epochs} epochs")
+    if save_every_n_epochs:
+        callbacks.append(SaveModelMLFlowCallback(
+            model_name=model_name,
+            epochs_interval=save_every_n_epochs
+        ))
 
-        return model
+    logging.info(f"Training the model for {save_every_n_epochs} epochs")
+    model.fit(
+        x=dataset,
+        validation_data=validation_dataset,
+        epochs=epochs,
+        batch_size=16,
+        verbose=1,
+        validation_split=validation_split,
+        callbacks=callbacks
+    )
+
+    logging.info(f"Model fitted for {save_every_n_epochs} epochs")
+
+    return model

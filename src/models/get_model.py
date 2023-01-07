@@ -9,23 +9,22 @@ def get_model(
     model_version: int = None,
     dropout: float = 0
 ):
-    
+
     if not (model_name and model_version):
         raise ValueError("You must provide a name and a version for the model")
 
     try:
         model_version_uri = f"models:/{model_name}/{model_version}"
-        model = mlflow.tensorflow.load_model(model_version_uri) 
+        model = mlflow.tensorflow.load_model(model_version_uri)
         logging.info(f"Loading registered model version from URI: '{model_version_uri}'")
-    
-    except Exception as e:
-        logging.exception(e) 
+
+    except Exception as exc:
+        logging.exception(exc)
 
         from keras.layers import (Conv2D, Dense, Dropout, Flatten, Input, LeakyReLU,
-                          MaxPooling2D)
+                                  MaxPooling2D)
         from keras.metrics import RootMeanSquaredError
         from keras.models import Sequential
-
 
         input_shape = (256, 256, 3)
         model = Sequential()

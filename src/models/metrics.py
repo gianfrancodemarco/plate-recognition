@@ -1,14 +1,15 @@
-from tensorflow import *
-from tensorflow.math import *
-from tensorflow.keras.backend import *
+import builtins  # Because importing all from keras overrides builtins.min
 from functools import lru_cache
-import builtins # Because importing all from keras overrides builtins.min
+
+from keras.backend import cast, clip, epsilon, minimum, maximum
+from tensorflow import abs, transpose, float32
+
 
 def iou(y_true, y_pred):
     y_true = cast(y_true, float32)
 
     # iou as metric for bounding box regression
-    # input must be as [x1, y1, x2, y2] -> i have [x2, y2, x1, y1]. 
+    # input must be as [x1, y1, x2, y2] -> i have [x2, y2, x1, y1].
 
     # AOG = Area of Groundtruth box
     AoG = abs(transpose(y_true)[0] - transpose(y_true)[2] + 1) * abs(transpose(y_true)[1] - transpose(y_true)[3] + 1)
