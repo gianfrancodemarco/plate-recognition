@@ -62,7 +62,7 @@ def random_image_augmentation(image: np.ndarray):
     The transformation is randomly chosen among:
     - no transformation
     - blurry the image
-    - change the image brightness 
+    - change the image brightness
     """
 
     functions = [get_raw_image, get_blurry_img, change_image_brightness]

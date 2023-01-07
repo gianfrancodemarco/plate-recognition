@@ -17,14 +17,15 @@ def show_image(
 
     if isinstance(image, Tensor):
         image = image.numpy().astype(np.uint8)
-    
+
     if isinstance(segmentations, Polygon):
         segmentations = [segmentations]
 
     __show_image__(
         image,
         segmentations,
-        alpha
+        alpha,
+        fill
     )
 
 
@@ -42,7 +43,7 @@ def __show_image__(
             return np.array(coords).round().astype(np.int32)
 
         overlay = image_copy.copy()
-        
+
         if fill:
             exterior = [int_coords(segmentation.exterior.coords)]
             cv2.fillPoly(overlay, exterior, color=(255, 0, 0))
@@ -50,9 +51,8 @@ def __show_image__(
         else:
             pt1 = (int(segmentation.bounds[0]), int(segmentation.bounds[1]))
             pt2 = (int(segmentation.bounds[2]), int(segmentation.bounds[3]))
-            cv2.rectangle(image_copy, pt1, pt2, color=(255, 0, 0))        
+            cv2.rectangle(image_copy, pt1, pt2, color=(255, 0, 0))
 
     plt.figure()
     plt.imshow(image_copy)
     plt.savefig('prediction.jpg')
-    
