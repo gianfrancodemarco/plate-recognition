@@ -41,7 +41,7 @@ jobs:
       run: |
         pynblint 'notebooks'
   pytest:
-    needs: [pylint]
+    needs: [pylint, pynblint]
     runs-on: ubuntu-latest
     strategy:
       matrix:
