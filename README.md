@@ -1,4 +1,4 @@
-[![Code check](https://github.com/gianfrancodemarco/ml-boilerplate/actions/workflows/code_checks.yml/badge.svg)](https://github.com/gianfrancodemarco/ml-boilerplate/actions/workflows/code_checks.yml)
+[![Code check](https://github.com/gianfrancodemarco/plate-recognition/actions/workflows/code_checks.yml/badge.svg)](https://github.com/gianfrancodemarco/plate-recognition/actions/workflows/code_checks.yml)
 
 ## Commands
 
