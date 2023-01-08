@@ -14,6 +14,4 @@ services:
     ports:
       - '8080:80'
       - '5678:5678'
-    #entrypoint: /start-reload.sh
-    #command: /start-reload.sh
-    entrypoint: ["sh", "-c", "pip install debugpy -t /tmp && python /tmp/debugpy --listen 0.0.0.0:5678 -m uvicorn src.app.main:app --host 0.0.0.0 --port 80 --reload"]
+    #entrypoint: ["sh", "-c", "pip install debugpy -t /tmp && python /tmp/debugpy --listen 0.0.0.0:5678 -m uvicorn src.app.main:app --host 0.0.0.0 --port 80 --reload"]

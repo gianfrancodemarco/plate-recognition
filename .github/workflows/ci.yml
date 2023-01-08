@@ -3,7 +3,7 @@ name: CI
 on:
   workflow_run:
     workflows: ["Code check"]
-    branches: ['main']
+    branches: ['production']
     types: 
       - completed
 
@@ -52,6 +52,7 @@ jobs:
 
   #https://github.com/google-github-actions/deploy-cloudrun
   deploy-cloudrun:
+    needs: [artifact-registry]
     runs-on: ubuntu-latest
     permissions:
       contents: 'read'
