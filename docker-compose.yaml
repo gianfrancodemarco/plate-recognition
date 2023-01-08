@@ -3,7 +3,7 @@ version: "3"
 services:
 
   app:
-    container_name: plate_recognition_app
+    container_name: plate-recognition-app
     env_file: .env
     build:
       context: ./
@@ -12,6 +12,6 @@ services:
       - ./src:/app/src
       - ./models:/app/models
     ports:
-      - '8080:80'
+      - '8080:8080'
       - '5678:5678'
     #entrypoint: ["sh", "-c", "pip install debugpy -t /tmp && python /tmp/debugpy --listen 0.0.0.0:5678 -m uvicorn src.app.main:app --host 0.0.0.0 --port 80 --reload"]
