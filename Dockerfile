@@ -21,4 +21,4 @@ COPY ./setup.py ./setup.py
 RUN python3 -m pip install .
 
 EXPOSE 8080
-ENTRYPOINT ["uvicorn", "src.app.main:app"]
+ENTRYPOINT ["uvicorn", "src.app.main:app", "--port", "8080"]
