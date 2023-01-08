@@ -41,6 +41,7 @@ jobs:
         name: Build and push (DockerHub)
         uses: docker/build-push-action@v3
         with:
+          context: .
           push: true
           tags: gianfrancodemarco/plate-recognition:latest
 
@@ -71,6 +72,7 @@ jobs:
         name: Build and push (GCP)
         uses: docker/build-push-action@v3
         with:
+          context: .
           push: true
           tags: us-central1-docker.pkg.dev/linen-shape-374022/university/plate-recognition:latest
 
