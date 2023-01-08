@@ -1,7 +1,15 @@
-- Artifact registry
-- Service account
-    - artifact-registry-ci	
-    - Amministratore Artifact Registry
-- Cloud run
-    - Cloud Run Admin
-    - Account di Servizio -> Amministratore
+For artifact registry:
+
+- Enable Artifact registry API
+- Create a service account with
+    - Name: artifact-registry-ci	
+    - Roles: Artifact Registry Admin
+
+
+For Cloud Run:
+
+- Create a service account with:
+    - Name: cloud-run
+    - Roles: Cloud Run Admin
+- Edit the default @comput service account adding:
+    - Roles: Service Account User
