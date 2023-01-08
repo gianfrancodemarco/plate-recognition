@@ -33,8 +33,6 @@ jobs:
       - 
         name: Pull data from DVC
         run: |
-          dvc init
-          dvc remote add -d origin https://dagshub.com/gianfrancodemarco/plate-recognition.dvc
           dvc remote modify origin --local auth basic
           dvc remote modify origin --local user ${{ secrets.DAGSHUB_USERNAME }}
           dvc remote modify origin --local password ${{ secrets.DAGSHUB_TOKEN }}
@@ -65,8 +63,6 @@ jobs:
       - 
         name: Pull data from DVC
         run: |
-          dvc init
-          dvc remote add -d origin https://dagshub.com/gianfrancodemarco/plate-recognition.dvc
           dvc remote modify origin --local auth basic
           dvc remote modify origin --local user ${{ secrets.DAGSHUB_USERNAME }}
           dvc remote modify origin --local password ${{ secrets.DAGSHUB_TOKEN }}
