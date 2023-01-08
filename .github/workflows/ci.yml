@@ -30,10 +30,11 @@ jobs:
       - 
         name: Pull data from DVC
         run: |
+          dvc remote add -d origin https://dagshub.com/gianfrancodemarco/plate-recognition.dvc
           dvc remote modify origin --local auth basic
           dvc remote modify origin --local user ${{ secrets.DAGSHUB_USERNAME }}
           dvc remote modify origin --local password ${{ secrets.DAGSHUB_TOKEN }}
-          dvc pull models/plate_recognititon
+          dvc pull models/*
       -
         name: Build and push (DockerHub)
         uses: docker/build-push-action@v3
@@ -57,10 +58,11 @@ jobs:
       - 
         name: Pull data from DVC
         run: |
+          dvc remote add -d origin https://dagshub.com/gianfrancodemarco/plate-recognition.dvc
           dvc remote modify origin --local auth basic
           dvc remote modify origin --local user ${{ secrets.DAGSHUB_USERNAME }}
           dvc remote modify origin --local password ${{ secrets.DAGSHUB_TOKEN }}
-          dvc pull models/plate_recognititon
+          dvc pull models/*
       -
         name: Build and push (GCP)
         uses: docker/build-push-action@v3
