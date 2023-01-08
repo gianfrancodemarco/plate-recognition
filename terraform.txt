@@ -3,3 +3,5 @@
     - artifact-registry-ci	
     - Amministratore Artifact Registry
 - Cloud run
+    - Cloud Run Admin
+    - Account di Servizio -> Amministratore
