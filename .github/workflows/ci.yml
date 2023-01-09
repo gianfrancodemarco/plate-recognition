@@ -102,10 +102,8 @@ jobs:
           password: ${{ secrets.GAR_JSON_KEY }}
       - 
         name: Pull image from GCP
-        uses: addnab/docker-run-action@v3
-        with:
-          options: -p 8080:8080
-          image: us-central1-docker.pkg.dev/linen-shape-374022/university/plate-recognition:latest
+        run: |
+          docker run -p 8080:8080 us-central1-docker.pkg.dev/linen-shape-374022/university/plate-recognition:latest
       -
         name: Install Locust
         run: |
