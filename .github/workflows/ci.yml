@@ -101,7 +101,7 @@ jobs:
           username: _json_key
           password: ${{ secrets.GAR_JSON_KEY }}
       - 
-        name: Pull image from GCP
+        name: Run web API from GCP image
         run: |
           docker run -p 8080:8080 us-central1-docker.pkg.dev/linen-shape-374022/university/plate-recognition:latest
       -
@@ -111,7 +111,7 @@ jobs:
 
       - name: Run Load Test
         run: |
-          locust --host http://localhost:8080 --headless --run-time 10s
+          sleep 15 && locust --host http://localhost:8080 --headless --run-time 10s
 
   #https://github.com/google-github-actions/deploy-cloudrun
   deploy-cloudrun:
