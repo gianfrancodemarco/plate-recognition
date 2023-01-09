@@ -77,7 +77,7 @@ jobs:
           dvc remote modify origin --local user ${{ secrets.DAGSHUB_USERNAME }}
           dvc remote modify origin --local password ${{ secrets.DAGSHUB_TOKEN }}
           dvc pull models/*
-          apt install tree && tree models
+          sudo apt install tree && tree models
       -
         name: Build and push (GCP)
         uses: docker/build-push-action@v3
