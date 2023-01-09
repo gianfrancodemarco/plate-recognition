@@ -1,14 +1,11 @@
 name: CI
 
 on:
-  push:
+  workflow_run:
+    workflows: ["Code check"]
     branches: ['production']
-# on:
-#   workflow_run:
-#     workflows: ["Code check"]
-#     branches: ['production']
-#     types: 
-#       - completed
+    types: 
+      - completed
 
 
 jobs:
@@ -31,7 +28,7 @@ jobs:
         name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v2
       -
-        name: Login to Docker Hub
+        name: Login to   Hub
         uses: docker/login-action@v2
         with:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
@@ -77,7 +74,6 @@ jobs:
           dvc remote modify origin --local user ${{ secrets.DAGSHUB_USERNAME }}
           dvc remote modify origin --local password ${{ secrets.DAGSHUB_TOKEN }}
           dvc pull models/*
-          sudo apt install tree && tree models
       -
         name: Build and push (GCP)
         uses: docker/build-push-action@v3
@@ -86,11 +82,37 @@ jobs:
           push: true
           tags: us-central1-docker.pkg.dev/linen-shape-374022/university/plate-recognition:latest
 
-          
 
+  locust-testing:
+    needs: [artifact-registry]
+    runs-on: ubuntu-latest
+    steps:
+      -
+        name: Checkout
+        uses: actions/checkout@v3
+      -
+        name: Login to GAR
+        uses: docker/login-action@v2
+        with:
+          registry: us-central1-docker.pkg.dev
+          username: _json_key
+          password: ${{ secrets.GAR_JSON_KEY }}
+      - 
+        name: Run web API from GCP image
+        run: |
+          docker run -d -p 8080:8080 us-central1-docker.pkg.dev/linen-shape-374022/university/plate-recognition:latest
+      -
+        name: Install Locust
+        run: |
+          pip install locust
+
+      - name: Run Load Test
+        run: |
+          sleep 15 && locust --host http://localhost:8080 --headless --run-time 30s -u 100 -r 50
+          
   #https://github.com/google-github-actions/deploy-cloudrun
   deploy-cloudrun:
-    needs: [artifact-registry]
+    needs: [locust-testing]
     runs-on: ubuntu-latest
     permissions:
       contents: 'read'
