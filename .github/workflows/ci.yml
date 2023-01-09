@@ -1,14 +1,11 @@
 name: CI
 
 on:
-  push:
-    branches: ['dev']
-# on:
-#   workflow_run:
-#     workflows: ["Code check"]
-#     branches: ['production']
-#     types: 
-#       - completed
+  workflow_run:
+    workflows: ["Code check"]
+    branches: ['production']
+    types: 
+      - completed
 
 
 jobs:
@@ -87,7 +84,7 @@ jobs:
 
 
   locust-testing:
-    #needs: [artifact-registry]
+    needs: [artifact-registry]
     runs-on: ubuntu-latest
     steps:
       -
