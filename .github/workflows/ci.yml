@@ -1,11 +1,14 @@
 name: CI
 
 on:
-  workflow_run:
-    workflows: ["Code check"]
+  push:
     branches: ['production']
-    types: 
-      - completed
+# on:
+#   workflow_run:
+#     workflows: ["Code check"]
+#     branches: ['production']
+#     types: 
+#       - completed
 
 
 jobs:
@@ -15,6 +18,12 @@ jobs:
       -
         name: Checkout
         uses: actions/checkout@v3
+      - 
+        name: Setup Python with pip cache
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.8'
+          cache: 'pip' # caching pip dependencies
       -
         name: Set up QEMU
         uses: docker/setup-qemu-action@v2
