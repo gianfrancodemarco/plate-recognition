@@ -2,7 +2,7 @@ name: CI
 
 on:
   push:
-    branches: ['production']
+    branches: ['master']
 # on:
 #   workflow_run:
 #     workflows: ["Code check"]
@@ -86,11 +86,38 @@ jobs:
           push: true
           tags: us-central1-docker.pkg.dev/linen-shape-374022/university/plate-recognition:latest
 
-          
+
+  locust-testing:
+    needs: [artifact-registry]
+    runs-on: ubuntu-latest
+    steps:
+      -
+        name: Checkout
+        uses: actions/checkout@v3
+      - 
+        name: Pull image from GCP
+        uses: addnab/docker-run-action@v3
+        with:
+          options: -p 8080:8080
+          image: us-central1-docker.pkg.dev/linen-shape-374022/university/plate-recognition:latest
+      -
+        name: Install Locust
+        run: |
+          pip install locust
+
+      - name: Run Load Test
+        uses: apardo04/locust-github-action@master
+        with:
+          LOCUSTFILE: "locustfile.py"
+          URL:  "localhost:8080"
+          USERS: "5"
+          RATE: "5"
+          RUNTIME: "10s"
+
 
   #https://github.com/google-github-actions/deploy-cloudrun
   deploy-cloudrun:
-    needs: [artifact-registry]
+    needs: [locust-testing]
     runs-on: ubuntu-latest
     permissions:
       contents: 'read'
