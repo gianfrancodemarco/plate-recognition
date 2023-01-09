@@ -87,7 +87,7 @@ jobs:
 
 
   locust-testing:
-    needs: [artifact-registry]
+    #needs: [artifact-registry]
     runs-on: ubuntu-latest
     steps:
       -
@@ -105,14 +105,8 @@ jobs:
           pip install locust
 
       - name: Run Load Test
-        uses: apardo04/locust-github-action@master
-        with:
-          LOCUSTFILE: "locustfile.py"
-          URL:  "localhost:8080"
-          USERS: "5"
-          RATE: "5"
-          RUNTIME: "10s"
-
+        run: |
+          locust --host http://localhost:8080 --headless --run-time 10s
 
   #https://github.com/google-github-actions/deploy-cloudrun
   deploy-cloudrun:
