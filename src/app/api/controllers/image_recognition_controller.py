@@ -21,6 +21,7 @@ def predict_bbox(image_file: UploadFile):
         predict_image_dto = PredictImageDTO(image_file = image_file)
         numpy_image = np.asarray(predict_image_dto.image_file)
         bbox = image_recognition_service.predict_bbox(numpy_image)
+        logging.warning(bbox)
         return {
             "data": {
                 "bbox": bbox.tolist()
@@ -31,7 +32,7 @@ def predict_bbox(image_file: UploadFile):
         raise HTTPException(status_code=406, detail=str(exc.raw_errors[0].e)) from exc
 
 
-@router.post("/predict/annotate-image")
+@router.post("/predict/bbox/annotate-image")
 def predict_annotated_image(image_file: UploadFile):
     try:
         predict_image_dto = PredictImageDTO(image_file = image_file)
