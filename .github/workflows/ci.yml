@@ -1,11 +1,14 @@
 name: CI
 
 on:
-  workflow_run:
-    workflows: ["Code check"]
+  push:
     branches: ['production']
-    types: 
-      - completed
+# on:
+#   workflow_run:
+#     workflows: ["Code check"]
+#     branches: ['production']
+#     types: 
+#       - completed
 
 
 jobs:
