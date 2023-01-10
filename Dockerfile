@@ -20,5 +20,7 @@ COPY ./models ./models
 COPY ./setup.py ./setup.py
 RUN python3 -m pip install .
 
+COPY ./.env ./.env
+
 EXPOSE 8080
 ENTRYPOINT ["uvicorn", "src.app.main:app", "--host", "0.0.0.0", "--port", "8080"]

@@ -11,7 +11,9 @@ services:
     volumes:
       - ./src:/app/src
       - ./models:/app/models
+      - ./.env:/app/.env
     ports:
       - '8080:8080'
       #- '5678:5678'
-    #entrypoint: ["sh", "-c", "pip install debugpy -t /tmp && python /tmp/debugpy --listen 0.0.0.0:5678 -m uvicorn src.app.main:app --host 0.0.0.0 --port 80 --reload"]
+    #entrypoint: ["sh", "-c", "uvicorn src.app.main:app --host 0.0.0.0 --port 8080 --reload"]
+    entrypoint: ["sh", "-c", "pip install debugpy -t /tmp && python /tmp/debugpy --listen 0.0.0.0:5678 -m uvicorn src.app.main:app --host 0.0.0.0 --port 8080 --reload"]
