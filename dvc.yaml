@@ -1,0 +1,27 @@
+stages:
+  download_data:
+    cmd: python src/data/download_data.py
+    deps:
+    - src/data/download_data.py
+    outs:
+    - data/raw/images
+    - data/raw/annotations.csv
+    - data/raw/plates.csv
+  make_dataset:
+    cmd: python src/data/make_dataset.py
+    deps:
+    - src/data/make_dataset.py
+    - data/raw/images
+    - data/raw/annotations.csv
+    - data/raw/plates.csv
+    outs:
+    - data/processed/train
+    - data/processed/test
+    - data/processed/validation
+  train_model:
+    cmd: python src/models/train_model.py
+    deps:
+    - data/processed
+    - src/models/train_model.py
+    - src/models/model_trainer.py
+    

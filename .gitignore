@@ -86,4 +86,7 @@ target/
 .mypy_cache/
 
 venv
-/data/raw
+
+data/raw/*
+data/interim/*
+data/processed/*

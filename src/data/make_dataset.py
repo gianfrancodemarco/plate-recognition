@@ -57,8 +57,4 @@ def make_dataset():
 
 
 if __name__ == "__main__":
-    if len(os.listdir(PROCESSED_PATH)) == 0:
-        make_dataset()
-    else:
-        logging.warning(
-            f"{PROCESSED_PATH} is not empty. Delete its content and try again if you want to generate a new path")
+    make_dataset()

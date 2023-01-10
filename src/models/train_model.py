@@ -9,7 +9,7 @@ from src.features.dataset import (AugmentedImagesDatasetGenerator,
 from src.models.get_model import get_model
 from src.models.model_trainer import train_model
 
-DATASETS_BASE = os.path.join(utils.DATA_PATH, "interim")
+DATASETS_BASE = os.path.join(utils.DATA_PATH, "processed")
 
 
 def get_dataset(split: str) -> tf.data.Dataset:
