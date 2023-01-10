@@ -108,7 +108,7 @@ jobs:
 
       - name: Run Load Test
         run: |
-          sleep 15 && locust --host http://localhost:8080 --headless --run-time 30s -u 100 -r 50
+          sleep 10 && locust --host http://localhost:8080 --headless --run-time 30s -u 100 -r 50
           
   #https://github.com/google-github-actions/deploy-cloudrun
   deploy-cloudrun:
