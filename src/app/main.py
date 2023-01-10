@@ -1,4 +1,5 @@
 import logging
+import os
 
 import uvicorn
 from dotenv import load_dotenv
@@ -6,6 +7,12 @@ from fastapi import FastAPI
 from src import utils
 from src.app.api import api
 from starlette.middleware.cors import CORSMiddleware
+
+if load_dotenv(
+    dotenv_path=os.path.join(utils.ROOT_PATH, '.env'),
+    override=True
+):
+    logging.info("Loaded environment variables")
 
 app = FastAPI()
 app.add_middleware(
