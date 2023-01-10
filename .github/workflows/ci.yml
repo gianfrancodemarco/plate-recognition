@@ -16,7 +16,7 @@ jobs:
         name: Checkout
         uses: actions/checkout@v3
         with:
-          ref: ${{ github.ref }}
+          ref: production
       - 
         name: Setup Python with pip cache
         uses: actions/setup-python@v4
@@ -60,7 +60,7 @@ jobs:
         name: Checkout
         uses: actions/checkout@v3
         with:
-          ref: ${{ github.ref }}
+          ref: production
 
       -
         name: Login to GAR
@@ -96,7 +96,7 @@ jobs:
         name: Checkout
         uses: actions/checkout@v3
         with:
-          ref: ${{ github.ref }}
+          ref: production
 
       -
         name: Login to GAR
@@ -129,7 +129,7 @@ jobs:
     steps:
     - uses: 'actions/checkout@v3'
       with:
-          ref: ${{ github.ref }}
+          ref: production
     - uses: 'google-github-actions/auth@v1'
       with:
         credentials_json: ${{ secrets.CLOUD_RUN_JSON_KEY }}
