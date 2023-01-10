@@ -47,12 +47,13 @@ class EarlyStoppingByLossVal(Callback):
 def train_model(
         model,
         dataset,
-        epochs=1000,
+        epochs: int = 1000,
         validation_split: float = 0,
-        validation_dataset=None,
+        validation_dataset = None,
         early_stopping: bool = False,
         save_every_n_epochs: int = 3,
-        model_name: None = "model"
+        model_name: None = "model",
+        batch_size: int = 16
 ):
     callbacks = []
     if early_stopping:
@@ -69,12 +70,11 @@ def train_model(
         x=dataset,
         validation_data=validation_dataset,
         epochs=epochs,
-        batch_size=16,
+        batch_size=batch_size,
         verbose=1,
         validation_split=validation_split,
         callbacks=callbacks
     )
-
     logging.info(f"Model fitted for {save_every_n_epochs} epochs")
 
     return model

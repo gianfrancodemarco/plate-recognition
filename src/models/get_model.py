@@ -7,12 +7,15 @@ from keras.metrics import RootMeanSquaredError
 from keras.models import Sequential
 from src.models.metrics import iou
 
-
 def get_model(
     model_name: str = None,
     model_version: int = None,
     dropout: float = 0
 ):
+    """
+    Fetches the corresponding model from MLFlow artifacts storage
+    If it doesn't exists, creates a new model
+    """
 
     if not (model_name and model_version):
         raise ValueError("You must provide a name and a version for the model")

@@ -5,8 +5,10 @@ import cv2
 import numpy as np
 import pandas as pd
 import tensorflow as tf
+from src import utils
 from src.data.image_preprocessing import random_image_augmentation
 
+DATASETS_BASE = os.path.join(utils.DATA_PATH, "processed")
 
 def configure_for_performance(ds: tf.data.Dataset):
     ds = ds.cache()
@@ -50,3 +52,25 @@ class AugmentedImagesDatasetGenerator(ImagesDatasetGenerator):
         image = cv2.cvtColor(cv2.COLOR_BGR2RGB)
         image = random_image_augmentation(image)
         return image
+
+
+def get_dataset(split: str) -> tf.data.Dataset:
+
+    annotations_path = os.path.join(DATASETS_BASE, split, "annotations.csv")
+    annotations = pd.read_csv(annotations_path)
+
+    images_path = os.path.join(DATASETS_BASE, split, "images")
+
+    dataset_generator = AugmentedImagesDatasetGenerator(
+        images_path=images_path,
+        annotations=annotations
+    )
+
+    dataset = tf.data.Dataset.from_generator(
+        dataset_generator.get_image,
+        output_signature=(tf.TensorSpec(shape=(256, 256, 3)), tf.TensorSpec(shape=(4, )))
+    )
+
+    dataset = configure_for_performance(dataset)
+
+    return dataset
