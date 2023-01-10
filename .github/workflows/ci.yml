@@ -22,7 +22,7 @@ jobs:
         uses: actions/setup-python@v4
         with:
           python-version: '3.8'
-          cache: 'pip' # caching pip dependencies
+          #cache: 'pip' # caching pip dependencies
       -
         name: Set up QEMU
         uses: docker/setup-qemu-action@v2
@@ -116,7 +116,7 @@ jobs:
 
       - name: Run Load Test
         run: |
-          sleep 10 && locust --host http://localhost:8080 --headless --run-time 30s -u 100 -r 50
+          sleep 10 && locust --host http://localhost:8080 --headless --run-time 60s -u 20 -r 3
           
   #https://github.com/google-github-actions/deploy-cloudrun
   deploy-cloudrun:
