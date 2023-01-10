@@ -1,7 +1,9 @@
-import os
+import logging
 
 import uvicorn
+from dotenv import load_dotenv
 from fastapi import FastAPI
+from src import utils
 from src.app.api import api
 from starlette.middleware.cors import CORSMiddleware
 

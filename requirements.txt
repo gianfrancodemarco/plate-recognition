@@ -1,14 +1,14 @@
-# external requirements
-Flask
-Pillow
 fastapi
+Flask
 matplotlib
 mlflow
 numpy
 opencv-python
 pandas
+Pillow
 pydantic
 python-multipart
+python-dotenv
 scikit-learn
 scipy
 shapely
