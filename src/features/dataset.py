@@ -14,7 +14,7 @@ DATASETS_BASE = os.path.join(utils.DATA_PATH, "processed")
 def configure_for_performance(ds: tf.data.Dataset):
     ds = ds.cache()
     ds = ds.shuffle(buffer_size=1000)
-    #ds = ds.batch(16)
+    ds = ds.batch(16)
     ds = ds.prefetch(buffer_size=tf.data.AUTOTUNE)
     return ds
 
