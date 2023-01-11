@@ -87,6 +87,9 @@ target/
 
 venv
 
-data/raw/*
-data/interim/*
-data/processed/*
+data/raw/images
+data/raw/annotations.csv
+data/raw/plates.csv
+data/processed/train
+data/processed/validation
+data/processed/test
