@@ -24,5 +24,6 @@ stages:
     - data/processed
     - src/models/train_model.py
     - src/models/model_trainer.py
+    - src/models/get_model.py
     params:
     - train

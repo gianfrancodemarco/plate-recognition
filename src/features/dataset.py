@@ -1,5 +1,6 @@
 import logging
 import os
+from typing import Tuple
 
 import cv2
 import numpy as np
@@ -13,7 +14,7 @@ DATASETS_BASE = os.path.join(utils.DATA_PATH, "processed")
 def configure_for_performance(ds: tf.data.Dataset):
     ds = ds.cache()
     ds = ds.shuffle(buffer_size=1000)
-    ds = ds.batch(16)
+    #ds = ds.batch(16)
     ds = ds.prefetch(buffer_size=tf.data.AUTOTUNE)
     return ds
 
@@ -28,7 +29,7 @@ class ImagesDatasetGenerator():
         self.annotations = annotations.values.tolist()
         self.images_path = images_path
 
-    def get_image(self) -> (np.ndarray):
+    def get_image(self) -> Tuple[np.ndarray, np.ndarray]:
         for sample in self.annotations:
             try:
                 image_name = sample[0]

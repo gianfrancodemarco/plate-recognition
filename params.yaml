@@ -1,6 +1,6 @@
 train:
-  epochs: 1
+  epochs: 10
   save_every_n_epochs: 1
-  model_name: my_best_model
-  model_version: 1
+  model_name: a_model_with
+  model_version: 2
   dropout: 0.3

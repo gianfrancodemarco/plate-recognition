@@ -22,15 +22,18 @@ def get_model(
 
     try:
         model_version_uri = f"models:/{model_name}/{model_version}"
-        model = mlflow.tensorflow.load_model(model_version_uri)
-        logging.info(f"Loading registered model version from URI: '{model_version_uri}'")
+        model = mlflow.tensorflow.load_model(
+            model_version_uri, 
+            keras_model_kwargs={"custom_objects":{"iou": iou}}
+        )
+        logging.info(f"Loaded registered model version from URI: '{model_version_uri}'")
 
     except Exception as exc:
         logging.exception(exc)
 
-        input_shape = (256, 256, 3)
-        model = Sequential()
+        model = Sequential(name=model_name)
 
+        input_shape = (256, 256, 3)
         model.add(Input(shape=input_shape))
 
         # Only for 3 channel images

@@ -53,17 +53,20 @@ stages:
       md5: 6b96882ebc4e2e9d31218c58876d550c.dir
       size: 12822635
       nfiles: 437
+    - path: src/models/get_model.py
+      md5: 60190694f16166b6e85c761f4a4bfaee
+      size: 2591
     - path: src/models/model_trainer.py
-      md5: 49f17829e5bfdf24ab9994a1a551c4d5
-      size: 2474
+      md5: db0dfc07ee610975fd0af9a99e167e04
+      size: 2328
     - path: src/models/train_model.py
-      md5: 9c1c004366e429659b1e32afd1b6a38b
-      size: 1156
+      md5: f71c08d77aa17a9bb7b1b60a28480f79
+      size: 1157
     params:
       params.yaml:
         train:
-          epochs: 1
+          epochs: 11
           save_every_n_epochs: 1
-          model_name: my_best_model
-          model_version: 1
+          model_name: a_model_with
+          model_version: 2
           dropout: 0.3

@@ -3,7 +3,6 @@ import mlflow
 from src.features.dataset import get_dataset
 from src.models.get_model import get_model
 from src.models.model_trainer import train_model
-from mlflow.models.signature import infer_signature
 
 params = dvc.api.params_show()
 train_params = params['train']
@@ -27,6 +26,7 @@ if __name__ == "__main__":
 
         mlflow.tensorflow.autolog(
             log_input_examples=True,
+            log_models=False
         )
 
         model = train_model(
@@ -37,6 +37,3 @@ if __name__ == "__main__":
             model_name=train_params['model_name'],
             save_every_n_epochs=train_params['save_every_n_epochs']
         )
-
-        signature = infer_signature(train_set, model.predict(train_set.take(1)))
-        mlflow.tensorflow.log_model(model, train_params["model_name"], signature=signature)
