@@ -17,8 +17,6 @@ class SaveModelMLFlowCallback(Callback):
 
     def on_epoch_end(self, epoch, logs=None):
         if epoch > 0 and epoch % self.epochs_interval == 0:
-            # https://mlflow.org/docs/latest/model-registry.html#adding-an-mlflow-model-to-the-model-registry
-            # Replace with method 1
             run_id = mlflow.active_run().info.run_id
             artifact_path = "model"
             model_uri = f"runs:/{run_id}/{artifact_path}"
@@ -47,12 +45,13 @@ class EarlyStoppingByLossVal(Callback):
 def train_model(
         model,
         dataset,
-        epochs=1000,
+        epochs: int = 1000,
         validation_split: float = 0,
-        validation_dataset=None,
+        validation_dataset = None,
         early_stopping: bool = False,
         save_every_n_epochs: int = 3,
-        model_name: None = "model"
+        model_name: None = "model",
+        batch_size: int = 16
 ):
     callbacks = []
     if early_stopping:
@@ -64,17 +63,15 @@ def train_model(
             epochs_interval=save_every_n_epochs
         ))
 
-    logging.info(f"Training the model for {save_every_n_epochs} epochs")
+    logging.info(f"Training the model for {epochs} epochs, saving every {save_every_n_epochs}")
     model.fit(
         x=dataset,
         validation_data=validation_dataset,
         epochs=epochs,
-        batch_size=16,
+        batch_size=batch_size,
         verbose=1,
         validation_split=validation_split,
         callbacks=callbacks
     )
-
-    logging.info(f"Model fitted for {save_every_n_epochs} epochs")
-
+    
     return model

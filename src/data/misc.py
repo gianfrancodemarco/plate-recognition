@@ -23,5 +23,5 @@ def fetch_or_resume(url, filename):
 
         total_size = int(response.headers.get('content-length'))
         for data in tqdm(iterable=response.iter_content(chunk_size=1024), total=total_size//1024, unit='KB'):
-            f.write(data)
+            file.write(data)
         logging.info("Download complete.")

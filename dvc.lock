@@ -1,0 +1,72 @@
+schema: '2.0'
+stages:
+  download_data:
+    cmd: python src/data/download_data.py
+    deps:
+    - path: src/data/download_data.py
+      md5: b36d5c5c8ffbd1f7eccd500e15ed49d3
+      size: 810
+    outs:
+    - path: data/raw/annotations.csv
+      md5: 4356a6cb545fa7df50c1ed5d0984a2d5
+      size: 10423
+    - path: data/raw/images
+      md5: a9a25050ebbf88b8188d804e54c27600.dir
+      size: 12808659
+      nfiles: 433
+    - path: data/raw/plates.csv
+      md5: 230a14f00bece9df11719b3e04ac8210
+      size: 7380
+  make_dataset:
+    cmd: python src/data/make_dataset.py
+    deps:
+    - path: data/raw/annotations.csv
+      md5: 4356a6cb545fa7df50c1ed5d0984a2d5
+      size: 10423
+    - path: data/raw/images
+      md5: a9a25050ebbf88b8188d804e54c27600.dir
+      size: 12808659
+      nfiles: 433
+    - path: data/raw/plates.csv
+      md5: 230a14f00bece9df11719b3e04ac8210
+      size: 7380
+    - path: src/data/make_dataset.py
+      md5: 86dbe656c565ac99ee64a2bf2696a920
+      size: 2208
+    outs:
+    - path: data/processed/test
+      md5: 621998a99a688019bd73da7b2aef5276.dir
+      size: 2565859
+      nfiles: 88
+    - path: data/processed/train
+      md5: 62e82f57a876d0f8f7111a9622132ffa.dir
+      size: 9007958
+      nfiles: 305
+    - path: data/processed/validation
+      md5: 5e24a54c25000182af62312e2e2aaf2c.dir
+      size: 1248797
+      nfiles: 43
+  train_model:
+    cmd: python src/models/train_model.py
+    deps:
+    - path: data/processed
+      md5: 6b96882ebc4e2e9d31218c58876d550c.dir
+      size: 12822635
+      nfiles: 437
+    - path: src/models/get_model.py
+      md5: 60190694f16166b6e85c761f4a4bfaee
+      size: 2591
+    - path: src/models/model_trainer.py
+      md5: db0dfc07ee610975fd0af9a99e167e04
+      size: 2328
+    - path: src/models/train_model.py
+      md5: f71c08d77aa17a9bb7b1b60a28480f79
+      size: 1157
+    params:
+      params.yaml:
+        train:
+          epochs: 11
+          save_every_n_epochs: 1
+          model_name: a_model_with
+          model_version: 2
+          dropout: 0.3

@@ -28,8 +28,4 @@ def download_dataset():
 
 
 if __name__ == "__main__":
-    if len(os.listdir(RAW_PATH)) == 0:
-        download_dataset()
-    else:
-        logging.warning(
-            f"{RAW_PATH} is not empty. Delete its content and try again if you want to download the dataset")
+    download_dataset()
