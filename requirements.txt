@@ -9,6 +9,8 @@ Pillow
 pydantic
 python-multipart
 python-dotenv
+prometheus-client
+prometheus-fastapi-instrumentator
 scikit-learn
 scipy
 shapely

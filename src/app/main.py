@@ -1,11 +1,7 @@
-import logging
-import os
-
 import uvicorn
-from dotenv import load_dotenv
 from fastapi import FastAPI
-from src import utils
 from src.app.api import api
+from src.app.monitoring import instrumentator
 from starlette.middleware.cors import CORSMiddleware
 
 app = FastAPI()
@@ -17,6 +13,7 @@ app.add_middleware(
     allow_credentials=True,
 )
 app.include_router(api.api_router, prefix="/api/v1")
+instrumentator.instrument(app).expose(app, include_in_schema=False, should_gzip=True)
 
 if __name__ == "__main__":
     uvicorn.run(app, host="0.0.0.0", port=8080)
