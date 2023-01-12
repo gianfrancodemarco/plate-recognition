@@ -26,7 +26,7 @@ if __name__ == "__main__":
 
         mlflow.tensorflow.autolog(
             log_input_examples=True,
-            log_models=False
+            log_models=True
         )
 
         model = train_model(
