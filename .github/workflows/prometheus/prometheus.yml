@@ -1,4 +1,4 @@
-name: Build and push prometheus image on artifact-registry, deploy on cloudrun
+name: Deploy Prometheus on CloudRun
 
 on:
   push:
@@ -50,7 +50,7 @@ jobs:
     - id: 'deploy'
       uses: 'google-github-actions/deploy-cloudrun@v1'
       with:
-        service: 'prometheus'
+        service: ${{ vars.PROMETHEUS_SERVICE_NAME }}
         image: ${{ vars.PROMETHEUS_DOCKER_IMAGE }}
 
     - name: 'Use output'

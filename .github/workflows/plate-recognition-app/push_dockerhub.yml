@@ -1,4 +1,4 @@
-name: Build and push DockerHub
+name: Push DockerHub
 
 on:
   workflow_run:

@@ -1,4 +1,4 @@
-name: Build and push app image on artifact-registry, locus testing, deploy on cloudrun
+name: Deploy app on CloudRun
 
 on:
   workflow_run:
@@ -44,7 +44,7 @@ jobs:
 
 
   locust-testing:
-    needs: [artifact-registry]
+    needs: [build-and-push-artifact-registry]
     runs-on: ubuntu-latest
     steps:
       -
@@ -92,7 +92,7 @@ jobs:
     - id: 'deploy'
       uses: 'google-github-actions/deploy-cloudrun@v1'
       with:
-        service: 'plate-recognition'
+        service: ${{ vars.APP_SERVICE_NAME }}
         image: ${{ vars.APP_DOCKER_IMAGE }}
 
     - name: 'Use output'
