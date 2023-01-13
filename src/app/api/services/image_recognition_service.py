@@ -6,31 +6,35 @@ from keras.models import Model, load_model
 from shapely.affinity import scale
 from shapely.geometry import box
 from src.models.metrics import iou
+from transformers import TrOCRProcessor, VisionEncoderDecoderModel
 
 
 class ImageRecognitionService:
 
-    model: Model = None
+    __detection_model: Model = None
+    __transformer_processor: TrOCRProcessor = None
+    __transformer_model: VisionEncoderDecoderModel = None
 
-    def __get_model__(self):
-        if not self.model:
-            self.model = load_model(
-                os.getenv("MODEL_PATH"),
-                custom_objects={"iou": iou}
-            )
-        return self.model
+    def __init__(self):
+        self.__detection_model = load_model(
+            os.getenv("MODEL_PATH"),
+            custom_objects={"iou": iou}
+        )
+        self.__transformer_processor = TrOCRProcessor.from_pretrained(
+            "microsoft/trocr-small-printed")
+        self.__transformer_model = VisionEncoderDecoderModel.from_pretrained(
+            "microsoft/trocr-small-printed")
 
     def __predict_image_bbox__(self, image: np.ndarray):
         _image = image.copy()
         _image = self.preprocess_image(_image)
         _image_batch = np.array([_image])
-        return self.__get_model__().predict(_image_batch)[0]
+        return self.__detection_model.predict(_image_batch)[0]
 
     def predict_bbox(self, image: np.ndarray) -> np.ndarray:
         return self.__predict_image_bbox__(image)
 
     def predict_bbox_and_annotate_image(self, image: np.ndarray):
-
         bbox = self.__predict_image_bbox__(image)
         bbox = box(*bbox)
 
@@ -46,6 +50,24 @@ class ImageRecognitionService:
         cv2.rectangle(_image, pt1, pt2, color=(0, 0, 255), thickness=3)
         return _image
 
+    def predict_plate(self, image: np.ndarray):
+
+        bbox = self.__predict_image_bbox__(image)
+        bbox = box(*bbox)
+        
+        cropped_image = self.crop_image(image, bbox)
+        
+        pixel_values = self.__transformer_processor(cropped_image, return_tensors="pt").pixel_values
+        generated_ids = self.__transformer_model.generate(pixel_values)
+        generated_text = self.__transformer_processor.batch_decode(generated_ids, skip_special_tokens=True)[0]
+
+        return generated_text
+
     def preprocess_image(self, image: np.ndarray) -> np.ndarray:
         image = cv2.resize(image, (256, 256))
         return image
+
+    def crop_image(self, image, bbox: box):
+        _cropped_image = image.copy()
+        _cropped_image = _cropped_image[bbox[1]: bbox[3], bbox[0], bbox[2]]
+        return _cropped_image
