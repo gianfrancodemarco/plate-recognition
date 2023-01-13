@@ -16,7 +16,7 @@ scipy
 shapely
 tensorflow==2.9.1
 tokenizers
-#torch
+torch
 transformers
 transformers[sentencepiece]
 uvicorn
