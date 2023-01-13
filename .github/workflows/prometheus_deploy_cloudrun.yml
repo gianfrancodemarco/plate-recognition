@@ -6,6 +6,7 @@ on:
       - "production"
     paths:
       - "prometheus/*"
+      - ".github/workflows/prometheus*"
 
 jobs:
   build-and-push-artifact-registry:

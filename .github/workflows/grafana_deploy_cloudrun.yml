@@ -6,6 +6,7 @@ on:
       - "production"
     paths:
       - "grafana/*"
+      - ".github/workflows/grafana*"
 
 jobs:
   build-and-push-artifact-registry:
