@@ -12,4 +12,4 @@ scrape_configs:
   - job_name: 'plate-recognition-app'
 
     static_configs:
-      - targets: ['PLATE_RECOGNITION_APP_HOST:8080']
+      - targets: ['PLATE_RECOGNITION_APP_HOST']
