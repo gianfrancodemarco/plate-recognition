@@ -1,1 +1,0 @@
-sed -i -e "s/HOST/$PLATE_RECOGNITION_APP_HOST/" /etc/prometheus/prometheus.yml

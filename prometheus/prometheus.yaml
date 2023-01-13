@@ -4,16 +4,13 @@ global:
   # Attach these labels to any time series or alerts when communicating with
   # external systems (federation, remote storage, Alertmanager).
   external_labels:
-    monitor: 'codelab-monitor'
+    monitor: 'plate-recognition-app-monitor'
 
 # A scrape configuration containing exactly one endpoint to scrape:
 # Here it's Prometheus itself.
 scrape_configs:
   # The job name is added as a label `job=<job_name>` to any timeseries scraped from this config.
-  - job_name: 'iris_model'
-
-    # Override the global default and scrape targets from this job every 5 seconds.
-    scrape_interval: 5s
+  - job_name: 'plate-recognition-app'
 
     static_configs:
-      - targets: ['HOST:8080']
+      - targets: ['PLATE_RECOGNITION_APP_HOST:8080']
