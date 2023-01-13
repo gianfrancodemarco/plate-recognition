@@ -34,6 +34,7 @@ jobs:
           
   #https://github.com/google-github-actions/deploy-cloudrun
   deploy-cloudrun:
+    needs: [build-and-push-artifact-registry]
     runs-on: ubuntu-latest
     permissions:
       contents: 'read'
