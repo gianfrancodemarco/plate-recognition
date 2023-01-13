@@ -1,4 +1,4 @@
-name: Deploy Prometheus on CloudRun
+name: Prometheus deploy on CloudRun
 
 on:
   push:
