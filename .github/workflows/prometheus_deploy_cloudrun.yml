@@ -6,6 +6,7 @@ on:
       - "production"
     paths:
       - "prometheus/*"
+      - ".github/workflows/prometheus*"
 
 jobs:
   build-and-push-artifact-registry:
@@ -54,7 +55,7 @@ jobs:
         service: ${{ vars.PROMETHEUS_SERVICE_NAME }}
         image: ${{ vars.PROMETHEUS_DOCKER_IMAGE }}
         env_vars: |
-          PLATE_RECOGNITION_APP_HOST: ${{vars.PLATE_RECOGNITION_APP_HOST}}
+          PLATE_RECOGNITION_APP_HOST: ${{ vars.PLATE_RECOGNITION_APP_HOST }}
 
     - name: 'Use output'
       run: 'curl "${{ steps.deploy.outputs.url }}"'
