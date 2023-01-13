@@ -3,6 +3,7 @@ import os
 import cv2
 import numpy as np
 from keras.models import Model, load_model
+from PIL import Image
 from shapely.affinity import scale
 from shapely.geometry import box
 from src.models.metrics import iou
@@ -53,10 +54,10 @@ class ImageRecognitionService:
     def predict_plate(self, image: np.ndarray):
 
         bbox = self.__predict_image_bbox__(image)
-        bbox = box(*bbox)
         
         cropped_image = self.crop_image(image, bbox)
-        
+        cropped_image = Image.fromarray(cropped_image)
+
         pixel_values = self.__transformer_processor(cropped_image, return_tensors="pt").pixel_values
         generated_ids = self.__transformer_model.generate(pixel_values)
         generated_text = self.__transformer_processor.batch_decode(generated_ids, skip_special_tokens=True)[0]
@@ -68,6 +69,7 @@ class ImageRecognitionService:
         return image
 
     def crop_image(self, image, bbox: box):
+
         _cropped_image = image.copy()
-        _cropped_image = _cropped_image[bbox[1]: bbox[3], bbox[0], bbox[2]]
+        _cropped_image = _cropped_image[int(bbox[3]):int(bbox[1]), int(bbox[2]):int(bbox[0])]
         return _cropped_image

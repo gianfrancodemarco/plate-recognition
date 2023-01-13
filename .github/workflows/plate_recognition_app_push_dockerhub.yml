@@ -2,7 +2,7 @@ name: Plate recognition app push DockerHub
 
 on:
   workflow_run:
-    workflows: ["Code check"]
+    workflows: ["Plate recognition app code checks"]
     branches: ['production']
     types: 
       - completed
