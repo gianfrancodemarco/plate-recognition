@@ -16,21 +16,31 @@ class ImageRecognitionService:
     __transformer_processor: TrOCRProcessor = None
     __transformer_model: VisionEncoderDecoderModel = None
 
-    def __init__(self):
-        self.__detection_model = load_model(
-            os.getenv("MODEL_PATH"),
-            custom_objects={"iou": iou}
-        )
-        self.__transformer_processor = TrOCRProcessor.from_pretrained(
-            "microsoft/trocr-small-printed")
-        self.__transformer_model = VisionEncoderDecoderModel.from_pretrained(
-            "microsoft/trocr-small-printed")
+    def __get_detection_model(self):
+        if not self.__detection_model:
+            self.__detection_model = load_model(
+                os.getenv("MODEL_PATH"),
+                custom_objects={"iou": iou}
+            )
+        return self.__detection_model
+
+    def __get_transformer_processor(self):
+        if not self.__transformer_processor:
+            self.__transformer_processor = TrOCRProcessor.from_pretrained(
+                "microsoft/trocr-small-printed")
+        return self.__transformer_processor
+
+    def __get_transformer_model(self):
+        if not self.__transformer_model:
+            self.__transformer_model = VisionEncoderDecoderModel.from_pretrained(
+                "microsoft/trocr-small-printed")
+        return self.__transformer_model
 
     def __predict_image_bbox__(self, image: np.ndarray):
         _image = image.copy()
         _image = self.preprocess_image(_image)
         _image_batch = np.array([_image])
-        return self.__detection_model.predict(_image_batch)[0]
+        return self.__get_detection_model().predict(_image_batch)[0]
 
     def predict_bbox(self, image: np.ndarray) -> np.ndarray:
         return self.__predict_image_bbox__(image)
@@ -54,13 +64,16 @@ class ImageRecognitionService:
     def predict_plate(self, image: np.ndarray):
 
         bbox = self.__predict_image_bbox__(image)
-        
+
         cropped_image = self.crop_image(image, bbox)
         cropped_image = Image.fromarray(cropped_image)
 
-        pixel_values = self.__transformer_processor(cropped_image, return_tensors="pt").pixel_values
-        generated_ids = self.__transformer_model.generate(pixel_values)
-        generated_text = self.__transformer_processor.batch_decode(generated_ids, skip_special_tokens=True)[0]
+        transformer_processor = self.__get_transformer_processor()
+        transformer_model = self.__get_transformer_model()
+        pixel_values = transformer_processor(cropped_image, return_tensors="pt").pixel_values
+        generated_ids = transformer_model.generate(pixel_values)
+        generated_text = transformer_processor.batch_decode(
+            generated_ids, skip_special_tokens=True)[0]
 
         return generated_text
 
