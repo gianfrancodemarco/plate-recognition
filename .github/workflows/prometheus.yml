@@ -34,7 +34,6 @@ jobs:
           
   #https://github.com/google-github-actions/deploy-cloudrun
   deploy-cloudrun:
-    needs: [locust-testing]
     runs-on: ubuntu-latest
     permissions:
       contents: 'read'
