@@ -1,6 +1,11 @@
 name: Plate recognition app deploy on CloudRun
 
-on: [push]
+on:
+  workflow_run:
+    workflows: ["Plate recognition app code checks"]
+    branches: ['production']
+    types: 
+      - completed
 
 jobs:
   build-and-push-artifact-registry:
@@ -58,7 +63,7 @@ jobs:
       - 
         name: Run web API from GCP image
         run: |
-          docker run -p 8080:8080 ${{ vars.APP_DOCKER_IMAGE }}
+          docker run -d -p 8080:8080 ${{ vars.APP_DOCKER_IMAGE }}
       -
         name: Install Locust
         run: |
@@ -68,7 +73,7 @@ jobs:
         run: |
           echo Waiting 90 seconds for service to fully load...
           sleep 90
-          locust --host http://localhost:8080 --headless --run-time 60s -u 5 -r 1
+          locust --host http://localhost:8080 --headless --run-time 60s -u 10 -r 1
           
   #https://github.com/google-github-actions/deploy-cloudrun
   deploy-cloudrun:

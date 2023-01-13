@@ -12,7 +12,7 @@ logging.config.fileConfig(
 )
 
 if load_dotenv(
-    dotenv_path=os.path.join(utils.ROOT_PATH, '.secret.env'),
+    dotenv_path=os.path.join(utils.ROOT_PATH, '.env'),
     override=True
 ):
     logging.info("Loaded environment variables")
