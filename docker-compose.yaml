@@ -2,7 +2,7 @@ version: "3"
 
 services:
 
-  app:
+  plate-recognition-app:
     container_name: plate-recognition-app
     env_file: .env
     build:
@@ -14,7 +14,7 @@ services:
       - ./.env:/app/.env
     ports:
       - '8080:8080'
-      #- '5678:5678'
+      - '5678:5678'
     #entrypoint: ["sh", "-c", "uvicorn src.app.main:app --host 0.0.0.0 --port 8080 --reload"]
     entrypoint: ["sh", "-c", "pip install debugpy -t /tmp && python /tmp/debugpy --listen 0.0.0.0:5678 -m uvicorn src.app.main:app --host 0.0.0.0 --port 8080 --reload"]
   prometheus:
@@ -25,4 +25,11 @@ services:
     ports:
       - 9090:9090
     environment:
-      - PLATE_RECOGNITION_APP_HOST=app
+      - PLATE_RECOGNITION_APP_HOST=plate-recognition-app:8080
+  grafana:
+    container_name: grafana
+    build: 
+      context: grafana
+      dockerfile: Dockerfile
+    ports:
+      - '3000:3000'
