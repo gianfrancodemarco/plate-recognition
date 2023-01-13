@@ -1,11 +1,6 @@
 name: Plate recognition app deploy on CloudRun
 
-on:
-  workflow_run:
-    workflows: ["Plate recognition app code checks"]
-    branches: ['production']
-    types: 
-      - completed
+on: [push]
 
 jobs:
   build-and-push-artifact-registry:
@@ -63,7 +58,7 @@ jobs:
       - 
         name: Run web API from GCP image
         run: |
-          docker run -d -p 8080:8080 ${{ vars.APP_DOCKER_IMAGE }}
+          docker run -p 8080:8080 ${{ vars.APP_DOCKER_IMAGE }}
       -
         name: Install Locust
         run: |
