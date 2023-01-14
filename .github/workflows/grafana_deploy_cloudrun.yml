@@ -55,6 +55,7 @@ jobs:
         service: ${{ vars.GRAFANA_SERVICE_NAME }}
         image: ${{ vars.GRAFANA_DOCKER_IMAGE }}
         env_vars: |
+          PROMETHEUS_SCHEMA=${{ vars.PROMETHEUS_SCHEMA }}
           PROMETHEUS_HOST=${{ vars.PROMETHEUS_HOST }}
           PROMETHEUS_PORT=${{ vars.PROMETHEUS_PORT }}
 
