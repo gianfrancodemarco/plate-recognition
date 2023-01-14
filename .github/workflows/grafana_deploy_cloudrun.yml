@@ -55,8 +55,8 @@ jobs:
         service: ${{ vars.GRAFANA_SERVICE_NAME }}
         image: ${{ vars.GRAFANA_DOCKER_IMAGE }}
         env_vars: |
-          PROMETHEUS_HOST: ${{ vars.PROMETHEUS_PORT }}
-          PROMETHEUS_PORT: ${{ vars.PROMETHEUS_PORT }}
+          PROMETHEUS_HOST=${{ vars.PROMETHEUS_PORT }}
+          PROMETHEUS_PORT=${{ vars.PROMETHEUS_PORT }}
 
     - name: 'Use output'
       run: 'curl "${{ steps.deploy.outputs.url }}"'
