@@ -8,5 +8,6 @@ When creating or editing a new dashboard or datasource, export its JSON represen
 
 ## Environment variables
 These envrionment variables are required to be set on the container:
+- PROMETHEUS_SCHEMA
 - PROMETHEUS_HOST
 - PROMETHEUS_PORT
