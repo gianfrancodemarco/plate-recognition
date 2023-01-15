@@ -1,0 +1,23 @@
+# syntax = docker/dockerfile:experimental
+FROM python:3.8-slim
+
+WORKDIR /app
+
+RUN apt update
+
+RUN python3 -m pip install --upgrade pip 
+
+# Install dependencies using cache so that they don't have to be downloaded every time
+COPY ./requirements_bot.txt ./requirements.txt
+RUN --mount=type=cache,target=/root/.cache pip install -r ./requirements.txt 
+
+COPY ./src ./src
+
+# Install project as module
+COPY ./setup.py ./setup.py
+RUN python3 -m pip install .
+
+COPY ./.env ./.env
+
+EXPOSE 8080
+ENTRYPOINT ["uvicorn", "src.app.main:app", "--host", "0.0.0.0", "--port", "8080"]
