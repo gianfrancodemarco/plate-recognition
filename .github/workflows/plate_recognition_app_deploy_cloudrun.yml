@@ -39,7 +39,7 @@ jobs:
         uses: docker/build-push-action@v3
         with:
           context: .
-          dockerfile: Dockerfile_app
+          file: Dockerfile_app
           push: true
           tags: ${{ vars.APP_DOCKER_IMAGE }}
 

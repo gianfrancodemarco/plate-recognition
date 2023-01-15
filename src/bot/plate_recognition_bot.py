@@ -1,31 +1,3 @@
-
-# import asyncio
-# import logging
-
-# import telegram
-
-
-# class PlateRecognitionBot():
-
-#     def start(self):
-#         loop = asyncio.get_event_loop()
-#         loop.create_task(self.__receiver_loop__())
-
-#     async def __receiver_loop__(self):
-#         bot = telegram.Bot("5608820637:AAG7cHLFOafgcVqTGS5QDVdebhCEGm-CJjk")
-#         async with bot:
-#             updates = await bot.get_updates()
-#             for update in updates or []:
-#                 logging.info(update)
-#                 text = update.message.text
-#                 chat_id = update.message.from_user.id
-#                 await bot.send_message(text=text, chat_id=chat_id)
-#                 # print((await bot.get_updates())[0])
-
-#!/usr/bin/env python
-# pylint: disable=unused-argument, wrong-import-position
-# This program is dedicated to the public domain under the CC0 license.
-
 """
 Simple Bot to reply to Telegram messages.
 
@@ -41,27 +13,9 @@ bot.
 
 import logging
 
-from telegram import __version__ as TG_VER
-
-try:
-    from telegram import __version_info__
-except ImportError:
-    __version_info__ = (0, 0, 0, 0, 0)  # type: ignore[assignment]
-
-if __version_info__ < (20, 0, 0, "alpha", 1):
-    raise RuntimeError(
-        f"This example is not compatible with your current PTB version {TG_VER}. To view the "
-        f"{TG_VER} version of this example, "
-        f"visit https://docs.python-telegram-bot.org/en/v{TG_VER}/examples.html"
-    )
 from telegram import ForceReply, Update
-from telegram.ext import Application, CommandHandler, ContextTypes, MessageHandler, filters
-
-# Enable logging
-logging.basicConfig(
-    format="%(asctime)s - %(name)s - %(levelname)s - %(message)s", level=logging.INFO
-)
-logger = logging.getLogger(__name__)
+from telegram.ext import (Application, CommandHandler, ContextTypes,
+                          MessageHandler, filters)
 
 
 # Define a few command handlers. These usually take the two arguments update and
@@ -70,7 +24,7 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     """Send a message when the command /start is issued."""
     user = update.effective_user
     await update.message.reply_html(
-        rf"Hi {user.mention_html()}!",
+        rf"Hi {user.mention_html()}!\nSend me the picture of a car plate and i'll try to transribe it for you.",
         reply_markup=ForceReply(selective=True),
     )
 
@@ -100,7 +54,5 @@ def main() -> None:
     # Run the bot until the user presses Ctrl-C
     application.run_polling()
 
-class PlateRecognitionBot():
-
-    def start(self):
-        main()
+if __name__ == "__main__":
+    main()
