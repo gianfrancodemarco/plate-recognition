@@ -98,11 +98,9 @@ jobs:
         service: ${{ vars.APP_SERVICE_NAME }}
         image: ${{ vars.APP_DOCKER_IMAGE }}
         env_vars_file: .env
-        secrets: |
+        env_vars: |
           DAGSHUB_USERNAME=${{secrets.DAGSHUB_USERNAME}}
-          DAGSHUB_TOKEN=${{secrets.DAGSHUB_USERNAME}}
-          DAGSHUB_TOKEN=${{secrets.DAGSHUB_USERNAME}}
-          DAGSHUB_TOKEN=${{secrets.DAGSHUB_USERNAME}}      
+          DAGSHUB_TOKEN=${{secrets.DAGSHUB_TOKEN}}
 
     - name: 'Use output'
       run: 'curl "${{ steps.deploy.outputs.url }}"'

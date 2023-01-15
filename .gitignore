@@ -93,3 +93,4 @@ data/raw/plates.csv
 data/processed/train
 data/processed/validation
 data/processed/test
+.env
