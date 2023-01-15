@@ -9,7 +9,8 @@ services:
       context: ./
       dockerfile: Dockerfile_app
     volumes:
-      - ./src:/app/src
+      - ./src/common:/app/src/common
+      - ./src/app:/app/src/app
       - ./models:/app/models
     ports:
       - '8080:8080'
