@@ -17,7 +17,6 @@ image_recognition_service = ImageRecognitionService()
 
 @router.post("/predict/plate-bbox")
 def predict_bbox(image_file: UploadFile):
-    raise Exception
     try:
         predict_image_dto = PredictImageDTO(image_file = image_file)
         numpy_image = np.asarray(predict_image_dto.image_file)

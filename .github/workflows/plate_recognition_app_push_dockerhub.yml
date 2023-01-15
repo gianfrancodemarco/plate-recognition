@@ -50,5 +50,6 @@ jobs:
         uses: docker/build-push-action@v3
         with:
           context: .
+          dockerfile: Dockerfile_app
           push: true
           tags: gianfrancodemarco/plate-recognition:latest
