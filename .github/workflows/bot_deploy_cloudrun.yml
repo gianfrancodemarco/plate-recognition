@@ -1,4 +1,4 @@
-name: Plate recognition app deploy on CloudRun
+name: Bot deploy on CloudRun
 
 on:
   workflow_run:
@@ -58,6 +58,6 @@ jobs:
           PLATE_RECOGNITION_APP_SCHEMA=${{ vars.PLATE_RECOGNITION_APP_SCHEMA }}
           PLATE_RECOGNITION_APP_HOST=${{ vars.PLATE_RECOGNITION_APP_HOST }}
           PLATE_RECOGNITION_APP_PORT=${{ vars.PLATE_RECOGNITION_APP_PORT }}
-          BOT_TOKEN=${{ secrets.BOT_TOKEN }}
+          BOT_TOKEN=${{ secrets.TELEGRAM_BOT_TOKEN }}
     - name: 'Use output'
       run: 'curl "${{ steps.deploy.outputs.url }}"'
