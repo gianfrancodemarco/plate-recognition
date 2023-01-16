@@ -35,7 +35,7 @@ jobs:
           
   #https://github.com/google-github-actions/deploy-cloudrun
   deploy-cloudrun:
-    needs: [build-and-push-artifact-registrys]
+    needs: [build-and-push-artifact-registry]
     runs-on: ubuntu-latest
     permissions:
       contents: 'read'
@@ -54,6 +54,10 @@ jobs:
       with:
         service: ${{ vars.BOT_SERVICE_NAME }}
         image: ${{ vars.BOT_DOCKER_IMAGE }}
-        env_vars_file: .env
+        env_vars: |
+          PLATE_RECOGNITION_APP_SCHEMA=${{ vars.PLATE_RECOGNITION_APP_SCHEMA }}
+          PLATE_RECOGNITION_APP_HOST=${{ vars.PLATE_RECOGNITION_APP_HOST }}
+          PLATE_RECOGNITION_APP_PORT=${{ vars.PLATE_RECOGNITION_APP_PORT }}
+          BOT_TOKEN=${{ secrets.BOT_TOKEN }}
     - name: 'Use output'
       run: 'curl "${{ steps.deploy.outputs.url }}"'
