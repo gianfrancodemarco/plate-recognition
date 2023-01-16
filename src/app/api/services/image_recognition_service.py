@@ -1,4 +1,7 @@
+import asyncio
+import logging
 import os
+from time import sleep
 
 import cv2
 import numpy as np
@@ -16,24 +19,56 @@ class ImageRecognitionService:
     __transformer_processor: TrOCRProcessor = None
     __transformer_model: VisionEncoderDecoderModel = None
 
+    def __init__(self) -> None:
+
+        def __load_detection_model():
+            try:
+                return load_model(
+                        os.getenv("MODEL_PATH"),
+                        custom_objects={"iou": iou}
+                    )
+            except:
+                return __load_detection_model()
+
+        def __load_transformer_processor():
+            try:
+                return TrOCRProcessor.from_pretrained(
+                    "microsoft/trocr-small-printed")
+            except:
+                return __load_transformer_processor()
+
+        def __load_transformer_model():
+            try:
+                return VisionEncoderDecoderModel.from_pretrained(
+                    "microsoft/trocr-small-printed")
+            except:
+                return __load_transformer_model()
+
+        def _load():
+            logging.info("Downloading models in background")
+            self.__detection_model = __load_detection_model()
+            self.__transformer_processor = __load_transformer_processor()
+            self.__transformer_model = __load_transformer_model()
+
+        loop = asyncio.get_event_loop()
+        loop.run_in_executor(None, _load)
+
     def __get_detection_model(self):
-        if not self.__detection_model:
-            self.__detection_model = load_model(
-                os.getenv("MODEL_PATH"),
-                custom_objects={"iou": iou}
-            )
+        while not self.__detection_model:
+            logging.warning("__detection_model not ready. Sleeping 1 sec.")
+            sleep(1)
         return self.__detection_model
 
     def __get_transformer_processor(self):
-        if not self.__transformer_processor:
-            self.__transformer_processor = TrOCRProcessor.from_pretrained(
-                "microsoft/trocr-small-printed")
+        while not self.__transformer_processor:
+            logging.warning("__transformer_processor not ready. Sleeping 1 sec.")
+            sleep(1)
         return self.__transformer_processor
 
     def __get_transformer_model(self):
-        if not self.__transformer_model:
-            self.__transformer_model = VisionEncoderDecoderModel.from_pretrained(
-                "microsoft/trocr-small-printed")
+        while not self.__transformer_model:
+            logging.warning("__transformer_model not ready. Sleeping 1 sec.")
+            sleep(1)
         return self.__transformer_model
 
     def __predict_image_bbox__(self, image: np.ndarray):
