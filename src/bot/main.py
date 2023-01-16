@@ -7,8 +7,8 @@ from telegram import ForceReply, Update
 from telegram.ext import (Application, CommandHandler, ContextTypes,
                           MessageHandler, filters)
 
-DEFAULT_MESSAGE = "Send me the picture of a car plate and i'll try to transribe it for you."
-TOKEN = os.getenv("BOT_TOKEN", "5608820637:AAG7cHLFOafgcVqTGS5QDVdebhCEGm-CJjk")
+DEFAULT_MESSAGE = "Send me the picture of a car plate and i'll try to transcribe it for you."
+TOKEN = os.getenv("TELEGRAM_API_TOKEN", "5608820637:AAG7cHLFOafgcVqTGS5QDVdebhCEGm-CJjk")
 
 # Define a few command handlers. These usually take the two arguments update and
 # context.
@@ -36,7 +36,7 @@ async def text_handler(update: Update, context: ContextTypes.DEFAULT_TYPE) -> No
 async def photo_handler(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     logging.info("Received a photo message")
     try:
-        update.message.reply_text(
+        await update.message.reply_text(
             "Processing your request...",
             reply_to_message_id=update.message.id
         )
@@ -44,7 +44,7 @@ async def photo_handler(update: Update, context: ContextTypes.DEFAULT_TYPE) -> N
         photo = await telegram_helper.get_photo(photo_file)
         logging.info("Requesting the plate to the plate recognition api...")
         response = plate_recognition_api.get_plate_text(photo)
-        update.message.reply_text(
+        await update.message.reply_text(
             response.json()["data"]["plate"],
             reply_to_message_id=update.message.id
         )
