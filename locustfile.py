@@ -21,3 +21,8 @@ class WinePredictionUser(HttpUser):
     def predict_bbox_annotate_image(self):
         files = {'image_file': requests.get("https://picsum.photos/200").content}
         self.client.post("/api/v1/image-recognition/predict/plate-bbox/annotate-image", files=files)
+    
+    @task(10)
+    def predict_bbox_annotate_image(self):
+        files = {'image_file': requests.get("https://picsum.photos/200").content}
+        self.client.post("/api/v1/image-recognition/predict/plate-text", files=files)
