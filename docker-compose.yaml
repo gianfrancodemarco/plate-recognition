@@ -16,8 +16,8 @@ services:
       - '8080:8080'
       - '5678:5678'
     entrypoint: ["sh", "-c", "pip install debugpy -t /tmp && python /tmp/debugpy --listen 0.0.0.0:5678 -m uvicorn src.app.main:app --host 0.0.0.0 --port 8080 --reload"]
-  bot:
-    container_name: bot
+  telegram-bot:
+    container_name: telegram-bot
     env_file: .env
     build:
       context: ./
@@ -27,7 +27,7 @@ services:
     ports:
       - '8081:8080'
       - '5679:5678'
-    entrypoint: ["sh", "-c", "pip install debugpy -t /tmp && python /tmp/debugpy --listen 0.0.0.0:5678 -m src.bot.main & uvicorn src.bot.web_server:app --host 0.0.0.0 --port 8080"]
+    entrypoint: ["sh", "-c", "pip install debugpy -t /tmp && python /tmp/debugpy --listen 0.0.0.0:5678 -m src.bot.main"]
   prometheus:
     container_name: prometheus
     build: 
@@ -37,6 +37,7 @@ services:
       - 9090:9090
     environment:
       - PLATE_RECOGNITION_APP_HOST=plate-recognition-app:8080
+      - TELEGRAM_BOT_HOST=telegram-bot:8080
   grafana:
     container_name: grafana
     build: 
@@ -47,5 +48,6 @@ services:
     ports:
       - '3000:3000'
     environment:
+      - PROMETHEUS_SCHEMA=http
       - PROMETHEUS_HOST=prometheus
       - PROMETHEUS_PORT=9090
