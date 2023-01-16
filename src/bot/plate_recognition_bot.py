@@ -13,7 +13,6 @@ bot.
 
 import logging
 import os
-from io import BytesIO
 
 from telegram import ForceReply, Update
 from telegram.ext import (Application, CommandHandler, ContextTypes,
