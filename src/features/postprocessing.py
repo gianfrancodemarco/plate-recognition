@@ -41,5 +41,7 @@ def post_process_plates(plates):
 
     return plates
 
-def post_process_plate(plate):
-    return post_process_plates([plate])[0]
+def post_process_plate(plate):    
+    predictions = post_process_plates([plate])
+    return plate[0] if len(predictions) else None
+    
