@@ -3,6 +3,8 @@ import os
 
 from src.bot import telegram_helper
 from src.bot.api import plate_recognition_api
+from src.bot.monitoring import (increase_messages_counter,
+                                increase_photos_counter, start_monitoring)
 from telegram import ForceReply, Update
 from telegram.ext import (Application, CommandHandler, ContextTypes,
                           MessageHandler, filters)
@@ -30,11 +32,13 @@ async def help_command(update: Update, context: ContextTypes.DEFAULT_TYPE) -> No
 
 
 async def text_handler(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
+    increase_messages_counter()
     await update.message.reply_text(DEFAULT_MESSAGE)
 
 
 async def photo_handler(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     logging.info("Received a photo message")
+    increase_photos_counter()
     try:
         await update.message.reply_text(
             "Processing your request...",
@@ -79,4 +83,5 @@ def start_bot() -> None:
     logging.info("Telegram bot started")
 
 if __name__ == "__main__":
+    start_monitoring()
     start_bot()

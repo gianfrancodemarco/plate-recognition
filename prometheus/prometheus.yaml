@@ -13,3 +13,8 @@ scrape_configs:
 
     static_configs:
       - targets: ['PLATE_RECOGNITION_APP_HOST']
+
+  - job_name: 'telegram-bot'
+
+    static_configs:
+      - targets: ['TELEGRAM_BOT_HOST']

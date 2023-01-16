@@ -1,5 +1,4 @@
-fastapi
 requests
+prometheus_client
 python-dotenv
 python-telegram-bot
-uvicorn

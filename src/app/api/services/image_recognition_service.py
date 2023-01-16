@@ -19,6 +19,7 @@ class ImageRecognitionService:
     __transformer_processor: TrOCRProcessor = None
     __transformer_model: VisionEncoderDecoderModel = None
 
+
     def __init__(self) -> None:
 
         def __load_detection_model():
@@ -53,11 +54,13 @@ class ImageRecognitionService:
         loop = asyncio.get_event_loop()
         loop.run_in_executor(None, _load)
 
+
     def __get_detection_model(self):
         while not self.__detection_model:
             logging.warning("__detection_model not ready. Sleeping 1 sec.")
             sleep(1)
         return self.__detection_model
+
 
     def __get_transformer_processor(self):
         while not self.__transformer_processor:
@@ -65,11 +68,13 @@ class ImageRecognitionService:
             sleep(1)
         return self.__transformer_processor
 
+
     def __get_transformer_model(self):
         while not self.__transformer_model:
             logging.warning("__transformer_model not ready. Sleeping 1 sec.")
             sleep(1)
         return self.__transformer_model
+
 
     def __predict_image_bbox__(self, image: np.ndarray):
         _image = image.copy()
@@ -77,8 +82,10 @@ class ImageRecognitionService:
         _image_batch = np.array([_image])
         return self.__get_detection_model().predict(_image_batch)[0]
 
+
     def predict_bbox(self, image: np.ndarray) -> np.ndarray:
         return self.__predict_image_bbox__(image)
+
 
     def predict_bbox_and_annotate_image(self, image: np.ndarray):
         bbox = self.__predict_image_bbox__(image)
@@ -96,6 +103,7 @@ class ImageRecognitionService:
         cv2.rectangle(_image, pt1, pt2, color=(0, 0, 255), thickness=3)
         return _image
 
+
     def predict_plate(self, image: np.ndarray):
 
         bbox = self.__predict_image_bbox__(image)
@@ -112,12 +120,17 @@ class ImageRecognitionService:
 
         return generated_text
 
+
     def preprocess_image(self, image: np.ndarray) -> np.ndarray:
+        if len(image.shape) == 3 and image.shape[2] == 4:
+            image = cv2.cvtColor(image, cv2.COLOR_BGRA2BGR)
+        image = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
+
         image = cv2.resize(image, (256, 256))
         return image
 
-    def crop_image(self, image, bbox: box):
 
+    def crop_image(self, image, bbox: box):
         _cropped_image = image.copy()
         _cropped_image = _cropped_image[int(bbox[3]):int(bbox[1]), int(bbox[2]):int(bbox[0])]
         return _cropped_image
