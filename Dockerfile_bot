@@ -19,5 +19,7 @@ RUN python3 -m pip install .
 
 COPY ./.env ./.env
 
+RUN echo "python -m src.bot.main & uvicorn src.bot.web_server:app --host 0.0.0.0 --port 8080" >> ./start.sh
+
 EXPOSE 8080
-ENTRYPOINT ["python", "src/bot/plate_recognition_bot.py"]
+ENTRYPOINT ["sh", "./start.sh"]

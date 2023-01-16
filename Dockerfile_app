@@ -7,7 +7,7 @@ WORKDIR /app
 RUN apt update
 RUN apt install ffmpeg libsm6 libxext6  -y
 
-RUN python3 -m pip install --upgrade pip 
+RUN python3 -m pip install --upgrade pip
 
 # Install dependencies using cache so that they don't have to be downloaded every time
 COPY ./requirements_app.txt ./requirements.txt

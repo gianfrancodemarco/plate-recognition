@@ -1,6 +1,4 @@
 fastapi
-Flask
-matplotlib
 mlflow
 numpy
 opencv-python
@@ -11,8 +9,6 @@ python-multipart
 python-dotenv
 prometheus-client
 prometheus-fastapi-instrumentator
-scikit-learn
-scipy
 shapely
 tensorflow==2.9.1
 tokenizers
