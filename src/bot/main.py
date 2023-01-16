@@ -36,7 +36,7 @@ async def text_handler(update: Update, context: ContextTypes.DEFAULT_TYPE) -> No
 async def photo_handler(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     logging.info("Received a photo message")
     try:
-        await update.message.reply_text(
+        update.message.reply_text(
             "Processing your request...",
             reply_to_message_id=update.message.id
         )
@@ -44,7 +44,7 @@ async def photo_handler(update: Update, context: ContextTypes.DEFAULT_TYPE) -> N
         photo = await telegram_helper.get_photo(photo_file)
         logging.info("Requesting the plate to the plate recognition api...")
         response = plate_recognition_api.get_plate_text(photo)
-        await update.message.reply_text(
+        update.message.reply_text(
             response.json()["data"]["plate"],
             reply_to_message_id=update.message.id
         )
