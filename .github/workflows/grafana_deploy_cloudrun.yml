@@ -5,7 +5,7 @@ on:
     branches:
       - "production"
     paths:
-      - "grafana/*"
+      - "grafana/**"
       - ".github/workflows/grafana*"
 
 jobs:
