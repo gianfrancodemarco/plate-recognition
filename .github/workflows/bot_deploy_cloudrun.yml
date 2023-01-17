@@ -58,6 +58,6 @@ jobs:
           PLATE_RECOGNITION_APP_SCHEMA=${{ vars.PLATE_RECOGNITION_APP_SCHEMA }}
           PLATE_RECOGNITION_APP_HOST=${{ vars.PLATE_RECOGNITION_APP_HOST }}
           PLATE_RECOGNITION_APP_PORT=${{ vars.PLATE_RECOGNITION_APP_PORT }}
-          TELEGRAM_API_TOKEN=${{ secrets.TELEGRAM_BOT_TOKEN }}
+          TELEGRAM_API_TOKEN=${{ secrets.TELEGRAM_API_TOKEN }}
     - name: 'Use output'
       run: 'curl "${{ steps.deploy.outputs.url }}"'
