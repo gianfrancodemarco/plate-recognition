@@ -31,3 +31,6 @@ python -m uvicorn src.app.main:app --reload
 
 ### Start docker compose using modules cache
 COMPOSE_DOCKER_CLI_BUILD=1 DOCKER_BUILDKIT=1 docker-compose up
+
+Labelling made with:
+https://www.makesense.ai/

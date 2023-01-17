@@ -16,14 +16,26 @@ TRAIN_SET_FRACTION = os.getenv("TRAIN_SET_FRACTION", 0.7)
 TEST_SET_FRACTION = os.getenv("TEST_SET_FRACTION", 0.2)
 VALIDATION_SET_FRACTION = os.getenv("VALIDATION_SET_FRACTION", 0.1)
 
-
-def make_dataset():
-
+def merge_annotations_and_plates_dataframes():
     # Read annotations (bboxes) and plates to join into a single dataframe
     annotations = pd.read_csv(ANNOTATIONS_PATH)
     plates = pd.read_csv(PLATES_PATH)
+    annotations["name"] = annotations["image_name"]
     annotations = annotations.set_index("name").join(plates.set_index("name"))
     annotations = annotations.reset_index()
+    return annotations
+
+def reorganize_annotations_columns(annotations):
+    annotations["minx"] = annotations["bbox_x"]
+    annotations["miny"] = annotations["bbox_y"]
+    annotations["maxx"] = annotations["bbox_x"] + annotations["bbox_width"]
+    annotations["maxy"] = annotations["bbox_y"] + annotations["bbox_height"]
+    annotations = annotations[["name", "minx", "miny", "maxx", "maxy", "plate"]].copy()
+    return annotations
+
+def make_dataset():
+    annotations = merge_annotations_and_plates_dataframes()
+    annotations = reorganize_annotations_columns(annotations)
     annotations = shuffle(annotations)
 
     # Split the dataset

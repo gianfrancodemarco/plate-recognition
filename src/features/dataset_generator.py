@@ -1,0 +1,60 @@
+import logging
+import os
+from enum import Enum
+from typing import Tuple
+
+import cv2
+import numpy as np
+import pandas as pd
+import tensorflow as tf
+from src import utils
+from src.data.image_preprocessing import random_image_augmentation
+
+
+class ImageDatasetType(Enum):
+    ImagesDatasetGenerator = 'ImagesDatasetGenerator'
+    AugmentedImagesDatasetGenerator = 'AugmentedImagesDatasetGenerator'
+
+
+class ImagesDatasetGenerator():
+
+    def __init__(
+        self,
+        annotations: pd.DataFrame,
+        images_path: str
+    ):
+        self.annotations = annotations.values.tolist()
+        self.images_path = images_path
+
+    def get_image(self) -> Tuple[np.ndarray, np.ndarray]:
+        for sample in self.annotations:
+            try:
+                image_name = sample[0]
+                image_path = os.path.join(self.images_path, image_name)
+                image = cv2.imread(image_path)
+                image = self.image_transformation(image)
+                annotation = sample[1:-1]
+                yield image, annotation
+            except Exception as e:
+                logging.error("Error retrieving dataset image.")
+                logging.exception(e)
+                logging.info(f"Image path: {image_path}, annotation: {annotation}")
+
+    def image_transformation(self, image):
+        image = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
+        return image
+
+
+class AugmentedImagesDatasetGenerator(ImagesDatasetGenerator):
+
+    def image_transformation(self, image):
+        image = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
+        image = random_image_augmentation(image)
+        return image
+
+
+def get_dataset_generator(dataset_generator_type: ImageDatasetType):
+    if dataset_generator_type == ImageDatasetType.ImagesDatasetGenerator:
+        return ImagesDatasetGenerator
+    elif dataset_generator_type == ImageDatasetType.AugmentedImagesDatasetGenerator:
+        return AugmentedImagesDatasetGenerator

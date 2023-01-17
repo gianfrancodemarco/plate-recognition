@@ -10,9 +10,8 @@ DATASET_PATH = os.path.join(RAW_PATH, "plate-recognition-dataset.zip")
 
 
 def download_dataset():
-
     DATA_URL = os.getenv(
-        "DATASET_URL", "https://drive.google.com/uc?id=1fgyila3C4Z1GOg4o2bCi508Xkr29wuBB&export=download")
+        "DATASET_URL", "https://drive.google.com/uc?id=1bTxEOmOtIzHPV8N43ZnJTyVu7lonIP1o&export=download")
 
     logging.info("Downloading dataset...")
     fetch_or_resume(DATA_URL, DATASET_PATH)
