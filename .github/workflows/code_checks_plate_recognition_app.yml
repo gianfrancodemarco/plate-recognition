@@ -1,4 +1,4 @@
-name: Plate recognition app code checks
+name: Code Checks - Plate Recognition App 
 
 on: 
   push:

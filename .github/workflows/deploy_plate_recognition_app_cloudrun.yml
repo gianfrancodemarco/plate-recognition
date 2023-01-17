@@ -1,4 +1,4 @@
-name: Plate recognition app deploy on CloudRun
+name: Deploy - Plate Recognition App - CloudRun
 
 on:
   workflow_run:

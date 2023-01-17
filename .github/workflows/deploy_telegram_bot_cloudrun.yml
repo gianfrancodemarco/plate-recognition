@@ -1,12 +1,11 @@
-name: Prometheus deploy on CloudRun
+name: Deploy - Telegram Bot - CloudRun
 
 on:
-  push:
-    branches:
-      - "production"
-    paths:
-      - "prometheus/*"
-      - ".github/workflows/prometheus*"
+  workflow_run:
+    workflows: ["Plate recognition app code checks"]
+    branches: ['production']
+    types: 
+      - completed
   workflow_dispatch:
 
 jobs:
@@ -30,9 +29,10 @@ jobs:
         name: Build and push (GCP)
         uses: docker/build-push-action@v3
         with:
-          context: prometheus/
+          context: .
+          file: Dockerfile_bot
           push: true
-          tags: ${{ vars.PROMETHEUS_DOCKER_IMAGE }}
+          tags: ${{ vars.BOT_DOCKER_IMAGE }}
           
   #https://github.com/google-github-actions/deploy-cloudrun
   deploy-cloudrun:
@@ -53,11 +53,12 @@ jobs:
     - id: 'deploy'
       uses: 'google-github-actions/deploy-cloudrun@v1'
       with:
-        service: ${{ vars.PROMETHEUS_SERVICE_NAME }}
-        image: ${{ vars.PROMETHEUS_DOCKER_IMAGE }}
+        service: ${{ vars.BOT_SERVICE_NAME }}
+        image: ${{ vars.BOT_DOCKER_IMAGE }}
         env_vars: |
+          PLATE_RECOGNITION_APP_SCHEMA=${{ vars.PLATE_RECOGNITION_APP_SCHEMA }}
           PLATE_RECOGNITION_APP_HOST=${{ vars.PLATE_RECOGNITION_APP_HOST }}
-          TELEGRAM_BOT_HOST=${{ vars.TELEGRAM_BOT_HOST }}
-
+          PLATE_RECOGNITION_APP_PORT=${{ vars.PLATE_RECOGNITION_APP_PORT }}
+          TELEGRAM_API_TOKEN=${{ secrets.TELEGRAM_API_TOKEN }}
     - name: 'Use output'
       run: 'curl "${{ steps.deploy.outputs.url }}"'

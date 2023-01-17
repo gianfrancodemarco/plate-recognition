@@ -1,12 +1,13 @@
-name: Grafana deploy on CloudRun
+name: Deploy - Prometheus - CloudRun
 
 on:
   push:
     branches:
       - "production"
     paths:
-      - "grafana/**"
-      - ".github/workflows/grafana*"
+      - "prometheus/*"
+      - ".github/workflows/prometheus*"
+  workflow_dispatch:
 
 jobs:
   build-and-push-artifact-registry:
@@ -29,9 +30,9 @@ jobs:
         name: Build and push (GCP)
         uses: docker/build-push-action@v3
         with:
-          context: grafana/
+          context: prometheus/
           push: true
-          tags: ${{ vars.GRAFANA_DOCKER_IMAGE }}
+          tags: ${{ vars.PROMETHEUS_DOCKER_IMAGE }}
           
   #https://github.com/google-github-actions/deploy-cloudrun
   deploy-cloudrun:
@@ -52,12 +53,11 @@ jobs:
     - id: 'deploy'
       uses: 'google-github-actions/deploy-cloudrun@v1'
       with:
-        service: ${{ vars.GRAFANA_SERVICE_NAME }}
-        image: ${{ vars.GRAFANA_DOCKER_IMAGE }}
+        service: ${{ vars.PROMETHEUS_SERVICE_NAME }}
+        image: ${{ vars.PROMETHEUS_DOCKER_IMAGE }}
         env_vars: |
-          PROMETHEUS_SCHEMA=${{ vars.PROMETHEUS_SCHEMA }}
-          PROMETHEUS_HOST=${{ vars.PROMETHEUS_HOST }}
-          PROMETHEUS_PORT=${{ vars.PROMETHEUS_PORT }}
+          PLATE_RECOGNITION_APP_HOST=${{ vars.PLATE_RECOGNITION_APP_HOST }}
+          TELEGRAM_BOT_HOST=${{ vars.TELEGRAM_BOT_HOST }}
 
     - name: 'Use output'
       run: 'curl "${{ steps.deploy.outputs.url }}"'

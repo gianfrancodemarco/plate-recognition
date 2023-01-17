@@ -1,4 +1,4 @@
-name: Plate recognition app push DockerHub
+name: Push - Plate Recognition App - DockerHub
 
 on:
   workflow_run:
