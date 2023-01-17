@@ -10,7 +10,8 @@ from src.models.metrics import iou
 def get_model(
     model_name: str = None,
     model_version: int = None,
-    dropout: float = 0
+    dropout: float = 0,
+    cnn_blocks: int = 1
 ):
     """
     Fetches the corresponding model from MLFlow artifacts storage
@@ -36,48 +37,17 @@ def get_model(
         input_shape = (256, 256, 3)
         model.add(Input(shape=input_shape))
 
-        # Only for 3 channel images
-        model.add(Conv2D(32, 2))
-        model.add(LeakyReLU(alpha=0.01))
-        model.add(Conv2D(32, 2))
-        model.add(LeakyReLU(alpha=0.01))
-        model.add(Conv2D(32, 2))
-        model.add(LeakyReLU(alpha=0.01))
-        model.add(MaxPooling2D(pool_size=(2, 2)))
-
-        model.add(Conv2D(32, 2))
-        model.add(LeakyReLU(alpha=0.01))
-        model.add(Conv2D(32, 2))
-        model.add(LeakyReLU(alpha=0.01))
-        model.add(Conv2D(32, 2))
-        model.add(LeakyReLU(alpha=0.01))
-        model.add(MaxPooling2D(pool_size=(2, 2)))
-
-        model.add(Conv2D(32, 2))
-        model.add(LeakyReLU(alpha=0.01))
-        model.add(Conv2D(32, 2))
-        model.add(LeakyReLU(alpha=0.01))
-        model.add(Conv2D(32, 2))
-        model.add(LeakyReLU(alpha=0.01))
-        model.add(MaxPooling2D(pool_size=(2, 2)))
-
-        model.add(Conv2D(32, 2))
-        model.add(LeakyReLU(alpha=0.01))
-        model.add(Conv2D(32, 2))
-        model.add(LeakyReLU(alpha=0.01))
-        model.add(Conv2D(32, 2))
-        model.add(LeakyReLU(alpha=0.01))
-        model.add(MaxPooling2D(pool_size=(2, 2)))
+        for i in range(cnn_blocks):
+            model.add(Conv2D(32, 2))
+            model.add(LeakyReLU(alpha=0.01))
+            model.add(MaxPooling2D(pool_size=(2, 2)))
 
         model.add(Flatten())
 
         if dropout:
             model.add(Dropout(dropout))
 
-        # Only for 3 channel images
         model.add(Dense(128))
-        model.add(LeakyReLU(alpha=0.01))
-
         model.add(Dense(4))
         model.add(LeakyReLU(alpha=0.01))
 
