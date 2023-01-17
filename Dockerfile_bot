@@ -20,4 +20,4 @@ RUN python3 -m pip install .
 COPY ./.env ./.env
 
 EXPOSE 8080
-ENTRYPOINT ["python", "-m src.bot.main"]
+ENTRYPOINT ["python", "-m", "src.bot.main"]
