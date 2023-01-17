@@ -1,12 +1,10 @@
-name: Code Checks - Plate Recognition App 
+name: Code Checks - Plate Recognition App
 
 on: 
   push:
-    paths-ignore:
-    - 'prometheus/**'
-    - 'grafana/**'
-    - '.github/workflows/grafana*'
-    - '.github/workflows/prometheus*'
+    paths:
+      - 'src/**'
+      - 'notebooks/**'
 
 jobs:
   pylint:
