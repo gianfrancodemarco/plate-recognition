@@ -3,7 +3,7 @@ name: Push - Plate Recognition App - DockerHub
 on:
   workflow_run:
     workflows: ["Code Checks - Plate Recognition App"]
-    branches: ['${{ GITHUB_REF_NAME }}']
+    branches: ["production"]
     types: 
       - completed
 
