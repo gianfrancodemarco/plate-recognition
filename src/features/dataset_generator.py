@@ -33,7 +33,12 @@ class ImagesDatasetGenerator():
                 image_path = os.path.join(self.images_path, image_name)
                 image = cv2.imread(image_path)
                 image = self.image_transformation(image)
-                annotation = sample[1:-1]
+
+                # We want the annotations in the form: [y_min, x_min, y_max, x_max]
+                # to be able to use GIoU loss
+                # https://github.com/tensorflow/addons/blob/master/tensorflow_addons/losses/giou_loss.py
+
+                annotation = [sample[2], sample[1], sample[4], sample[3]]
                 yield image, annotation
             except Exception as e:
                 logging.error("Error retrieving dataset image.")

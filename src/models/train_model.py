@@ -20,7 +20,9 @@ if __name__ == "__main__":
         model_name=train_params['model_name'],
         model_version=train_params['model_version'],
         dropout=train_params.get('dropout'),
-        cnn_blocks=train_params.get('cnn_blocks')
+        cnn_blocks=train_params.get('cnn_blocks'),
+        filters_num=train_params.get('filters_num'),
+        filters_kernel_size=train_params.get('filters_kernel_size')
     )
 
     with mlflow.start_run():

@@ -1,7 +1,10 @@
 train:
   epochs: 100
   save_every_n_epochs: 10
-  model_name: cnn_plate_recognition_2_block
-  model_version: 2
-  dropout: 0.3
-  cnn_blocks: 7
+  model_name: iou_v2
+  model_version: 1
+  
+  dropout: 0.4
+  cnn_blocks: 5
+  filters_num: 64
+  filters_kernel_size: (2,2)

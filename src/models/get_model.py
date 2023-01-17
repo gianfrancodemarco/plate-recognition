@@ -1,7 +1,7 @@
 import logging
 
 import mlflow
-from keras.layers import (Conv2D, Dense, Dropout, Flatten, Input, LeakyReLU,
+from keras.layers import (Conv2D, Dense, Dropout, Flatten, Input, LeakyReLU, ReLU,
                           MaxPooling2D)
 from keras.metrics import RootMeanSquaredError
 from keras.models import Sequential
@@ -11,7 +11,9 @@ def get_model(
     model_name: str = None,
     model_version: int = None,
     dropout: float = 0,
-    cnn_blocks: int = 1
+    cnn_blocks: int = 1,
+    filters_num: int = 32,
+    filters_kernel_size: int = (2,2)
 ):
     """
     Fetches the corresponding model from MLFlow artifacts storage
@@ -38,8 +40,8 @@ def get_model(
         model.add(Input(shape=input_shape))
 
         for i in range(cnn_blocks):
-            model.add(Conv2D(32, 2))
-            model.add(LeakyReLU(alpha=0.01))
+            model.add(Conv2D(filters_num, (2, 2)))
+            model.add(ReLU())
             model.add(MaxPooling2D(pool_size=(2, 2)))
 
         model.add(Flatten())
@@ -49,7 +51,7 @@ def get_model(
 
         model.add(Dense(128))
         model.add(Dense(4))
-        model.add(LeakyReLU(alpha=0.01))
+        model.add(ReLU())
 
         model.build()
         model.summary()
