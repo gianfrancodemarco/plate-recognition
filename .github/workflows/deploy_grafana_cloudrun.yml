@@ -3,7 +3,7 @@ name: Deploy - Grafana - CloudRun
 on:
   push:
     branches:
-      - "${{ GITHUB_REF_NAME }}"
+      - production
     paths:
       - "grafana/**"
       - ".github/workflows/grafana*"

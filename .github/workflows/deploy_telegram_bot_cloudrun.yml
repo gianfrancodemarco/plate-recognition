@@ -3,7 +3,7 @@ name: Deploy - Telegram Bot - CloudRun
 on:
   workflow_run:
     workflows: ["Plate recognition app code checks"]
-    branches: ['${{ GITHUB_REF_NAME }}']
+    branches: ["production"]
     types: 
       - completed
   workflow_dispatch:

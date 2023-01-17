@@ -3,8 +3,8 @@ name: Deploy - Plate Recognition App - CloudRun
 on:
   workflow_run:
     workflows: ["Code Checks - Plate Recognition App"]
-    branches: ['${{ GITHUB_REF_NAME }}']
-    types: 
+    branches: ["production"]
+    types:
       - completed
   workflow_dispatch:
 
