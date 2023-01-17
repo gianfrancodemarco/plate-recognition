@@ -17,9 +17,10 @@ if __name__ == "__main__":
     validation_set = get_dataset("validation")
 
     model = get_model(
-        dropout=train_params.get('dropout'),
         model_name=train_params['model_name'],
-        model_version=train_params['model_version']
+        model_version=train_params['model_version'],
+        dropout=train_params.get('dropout'),
+        cnn_blocks=train_params.get('cnn_blocks')
     )
 
     with mlflow.start_run():
