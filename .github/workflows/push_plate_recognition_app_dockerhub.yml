@@ -16,7 +16,7 @@ jobs:
         name: Checkout
         uses: actions/checkout@v3
         with:
-          ref: ${{ GITHUB_REF_NAME }}
+          ref: ${{ env.GITHUB_REF_NAME }}
       - 
         name: Setup Python with pip cache
         uses: actions/setup-python@v4
