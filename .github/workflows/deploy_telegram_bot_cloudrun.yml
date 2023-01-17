@@ -3,7 +3,7 @@ name: Deploy - Telegram Bot - CloudRun
 on:
   workflow_run:
     workflows: ["Plate recognition app code checks"]
-    branches: ['production']
+    branches: ['${{ GITHUB_REF_NAME }}']
     types: 
       - completed
   workflow_dispatch:
@@ -16,7 +16,7 @@ jobs:
         name: Checkout
         uses: actions/checkout@v3
         with:
-          ref: production
+          ref: ${{ GITHUB_REF_NAME }}
 
       -
         name: Login to GAR
@@ -45,7 +45,7 @@ jobs:
     steps:
     - uses: 'actions/checkout@v3'
       with:
-          ref: production
+          ref: ${{ GITHUB_REF_NAME }}
     - uses: 'google-github-actions/auth@v1'
       with:
         credentials_json: ${{ secrets.CLOUD_RUN_JSON_KEY }}

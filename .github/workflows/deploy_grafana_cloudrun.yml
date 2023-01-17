@@ -3,7 +3,7 @@ name: Deploy - Grafana - CloudRun
 on:
   push:
     branches:
-      - "production"
+      - "${{ GITHUB_REF_NAME }}"
     paths:
       - "grafana/**"
       - ".github/workflows/grafana*"
@@ -16,7 +16,7 @@ jobs:
         name: Checkout
         uses: actions/checkout@v3
         with:
-          ref: production
+          ref: ${{ GITHUB_REF_NAME }}
 
       -
         name: Login to GAR
@@ -44,7 +44,7 @@ jobs:
     steps:
     - uses: 'actions/checkout@v3'
       with:
-          ref: production
+          ref: ${{ GITHUB_REF_NAME }}
     - uses: 'google-github-actions/auth@v1'
       with:
         credentials_json: ${{ secrets.CLOUD_RUN_JSON_KEY }}
