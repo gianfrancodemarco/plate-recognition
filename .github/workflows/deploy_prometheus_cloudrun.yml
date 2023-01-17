@@ -1,4 +1,4 @@
-name: Prometheus deploy on CloudRun
+name: Deploy - Prometheus - CloudRun
 
 on:
   push:
@@ -7,6 +7,7 @@ on:
     paths:
       - "prometheus/*"
       - ".github/workflows/prometheus*"
+  workflow_dispatch:
 
 jobs:
   build-and-push-artifact-registry:
@@ -16,7 +17,7 @@ jobs:
         name: Checkout
         uses: actions/checkout@v3
         with:
-          ref: production
+          ref: ${{ env.GITHUB_REF_NAME }}
 
       -
         name: Login to GAR
@@ -44,7 +45,7 @@ jobs:
     steps:
     - uses: 'actions/checkout@v3'
       with:
-          ref: production
+          ref: ${{ env.GITHUB_REF_NAME }}
     - uses: 'google-github-actions/auth@v1'
       with:
         credentials_json: ${{ secrets.CLOUD_RUN_JSON_KEY }}

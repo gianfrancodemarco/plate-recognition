@@ -1,11 +1,12 @@
-name: Plate recognition app deploy on CloudRun
+name: Deploy - Plate Recognition App - CloudRun
 
 on:
   workflow_run:
-    workflows: ["Plate recognition app code checks"]
-    branches: ['production']
-    types: 
+    workflows: ["Code Checks - Plate Recognition App"]
+    branches: ["production"]
+    types:
       - completed
+  workflow_dispatch:
 
 jobs:
   build-and-push-artifact-registry:
@@ -15,7 +16,7 @@ jobs:
         name: Checkout
         uses: actions/checkout@v3
         with:
-          ref: production
+          ref: ${{ env.GITHUB_REF_NAME }}
 
       -
         name: Login to GAR
@@ -52,7 +53,7 @@ jobs:
         name: Checkout
         uses: actions/checkout@v3
         with:
-          ref: production
+          ref: ${{ env.GITHUB_REF_NAME }}
 
       -
         name: Login to GAR
@@ -87,7 +88,7 @@ jobs:
     steps:
     - uses: 'actions/checkout@v3'
       with:
-          ref: production
+          ref: ${{ env.GITHUB_REF_NAME }}
     - uses: 'google-github-actions/auth@v1'
       with:
         credentials_json: ${{ secrets.CLOUD_RUN_JSON_KEY }}

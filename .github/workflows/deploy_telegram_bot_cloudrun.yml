@@ -1,12 +1,12 @@
-name: Grafana deploy on CloudRun
+name: Deploy - Telegram Bot - CloudRun
 
 on:
-  push:
-    branches:
-      - "production"
-    paths:
-      - "grafana/**"
-      - ".github/workflows/grafana*"
+  workflow_run:
+    workflows: ["Plate recognition app code checks"]
+    branches: ["production"]
+    types: 
+      - completed
+  workflow_dispatch:
 
 jobs:
   build-and-push-artifact-registry:
@@ -16,7 +16,7 @@ jobs:
         name: Checkout
         uses: actions/checkout@v3
         with:
-          ref: production
+          ref: ${{ env.GITHUB_REF_NAME }}
 
       -
         name: Login to GAR
@@ -29,9 +29,10 @@ jobs:
         name: Build and push (GCP)
         uses: docker/build-push-action@v3
         with:
-          context: grafana/
+          context: .
+          file: Dockerfile_bot
           push: true
-          tags: ${{ vars.GRAFANA_DOCKER_IMAGE }}
+          tags: ${{ vars.BOT_DOCKER_IMAGE }}
           
   #https://github.com/google-github-actions/deploy-cloudrun
   deploy-cloudrun:
@@ -44,7 +45,7 @@ jobs:
     steps:
     - uses: 'actions/checkout@v3'
       with:
-          ref: production
+          ref: ${{ env.GITHUB_REF_NAME }}
     - uses: 'google-github-actions/auth@v1'
       with:
         credentials_json: ${{ secrets.CLOUD_RUN_JSON_KEY }}
@@ -52,12 +53,12 @@ jobs:
     - id: 'deploy'
       uses: 'google-github-actions/deploy-cloudrun@v1'
       with:
-        service: ${{ vars.GRAFANA_SERVICE_NAME }}
-        image: ${{ vars.GRAFANA_DOCKER_IMAGE }}
+        service: ${{ vars.BOT_SERVICE_NAME }}
+        image: ${{ vars.BOT_DOCKER_IMAGE }}
         env_vars: |
-          PROMETHEUS_SCHEMA=${{ vars.PROMETHEUS_SCHEMA }}
-          PROMETHEUS_HOST=${{ vars.PROMETHEUS_HOST }}
-          PROMETHEUS_PORT=${{ vars.PROMETHEUS_PORT }}
-
+          PLATE_RECOGNITION_APP_SCHEMA=${{ vars.PLATE_RECOGNITION_APP_SCHEMA }}
+          PLATE_RECOGNITION_APP_HOST=${{ vars.PLATE_RECOGNITION_APP_HOST }}
+          PLATE_RECOGNITION_APP_PORT=${{ vars.PLATE_RECOGNITION_APP_PORT }}
+          TELEGRAM_API_TOKEN=${{ secrets.TELEGRAM_API_TOKEN }}
     - name: 'Use output'
       run: 'curl "${{ steps.deploy.outputs.url }}"'

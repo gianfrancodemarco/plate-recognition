@@ -1,9 +1,9 @@
-name: Plate recognition app push DockerHub
+name: Push - Plate Recognition App - DockerHub
 
 on:
   workflow_run:
-    workflows: ["Plate recognition app code checks"]
-    branches: ['production']
+    workflows: ["Code Checks - Plate Recognition App"]
+    branches: ["production"]
     types: 
       - completed
 
@@ -16,7 +16,7 @@ jobs:
         name: Checkout
         uses: actions/checkout@v3
         with:
-          ref: production
+          ref: ${{ env.GITHUB_REF_NAME }}
       - 
         name: Setup Python with pip cache
         uses: actions/setup-python@v4
