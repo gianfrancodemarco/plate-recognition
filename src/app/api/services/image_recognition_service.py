@@ -5,13 +5,16 @@ from time import sleep
 
 import cv2
 import numpy as np
-from keras.models import Model, load_model
+from keras.models import Model
 from PIL import Image
 from shapely.affinity import scale
 from shapely.geometry import box
 from src.models.metrics import iou
 from transformers import TrOCRProcessor, VisionEncoderDecoderModel
+from src.models.fetch_model import fetch_model
 
+model_name = os.getenv("MODEL_NAME")
+model_version = os.getenv("MODEL_VERSION")
 
 class ImageRecognitionService:
 
@@ -24,9 +27,9 @@ class ImageRecognitionService:
 
         def __load_detection_model():
             try:
-                return load_model(
-                        os.getenv("MODEL_PATH"),
-                        custom_objects={"iou": iou}
+                return fetch_model(
+                        model_name=model_name,
+                        model_version=model_version
                     )
             except:
                 return __load_detection_model()

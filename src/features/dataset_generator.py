@@ -38,7 +38,8 @@ class ImagesDatasetGenerator():
                 # to be able to use GIoU loss
                 # https://github.com/tensorflow/addons/blob/master/tensorflow_addons/losses/giou_loss.py
 
-                annotation = [sample[2], sample[1], sample[4], sample[3]]
+                #annotation = [sample[2], 255 - sample[1], sample[4], 255 - sample[3]]
+                annotation = sample[1:-1]
                 yield image, annotation
             except Exception as e:
                 logging.error("Error retrieving dataset image.")

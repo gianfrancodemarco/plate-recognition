@@ -40,38 +40,3 @@ class EarlyStoppingByLossVal(Callback):
             if self.verbose > 0:
                 print("\nEpoch %05d: early stopping THR" % epoch)
             self.model.stop_training = True
-
-
-def train_model(
-        model,
-        dataset,
-        epochs: int = 1000,
-        validation_split: float = 0,
-        validation_dataset = None,
-        early_stopping: bool = False,
-        save_every_n_epochs: int = 3,
-        model_name: None = "model",
-        batch_size: int = 16
-):
-    callbacks = []
-    if early_stopping:
-        callbacks.append(EarlyStoppingByLossVal(monitor='loss', value=1, verbose=1))
-
-    if save_every_n_epochs:
-        callbacks.append(SaveModelMLFlowCallback(
-            model_name=model_name,
-            epochs_interval=save_every_n_epochs
-        ))
-
-    logging.info(f"Training the model for {epochs} epochs, saving every {save_every_n_epochs}")
-    model.fit(
-        x=dataset,
-        validation_data=validation_dataset,
-        epochs=epochs,
-        batch_size=batch_size,
-        verbose=1,
-        validation_split=validation_split,
-        callbacks=callbacks
-    )
-    
-    return model

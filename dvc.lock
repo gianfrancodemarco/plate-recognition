@@ -50,23 +50,26 @@ stages:
     cmd: python src/models/train_model.py
     deps:
     - path: data/processed
-      md5: 6b96882ebc4e2e9d31218c58876d550c.dir
-      size: 12822635
+      md5: c0f4a539f51d45fab131f51c2a41b851.dir
+      size: 12822673
       nfiles: 437
     - path: src/models/get_model.py
-      md5: 60190694f16166b6e85c761f4a4bfaee
-      size: 2591
+      md5: 669ccdbc8ce5c688aafa980410bc6b2a
+      size: 1837
     - path: src/models/model_trainer.py
-      md5: db0dfc07ee610975fd0af9a99e167e04
-      size: 2328
+      md5: d87d325280d667e4794b54f644a80269
+      size: 2288
     - path: src/models/train_model.py
-      md5: f71c08d77aa17a9bb7b1b60a28480f79
-      size: 1157
+      md5: a2756d37cf784ce1aef4b63f837762f3
+      size: 1021
     params:
       params.yaml:
         train:
-          epochs: 11
-          save_every_n_epochs: 1
-          model_name: a_model_with
-          model_version: 2
-          dropout: 0.3
+          epochs: 100
+          save_every_n_epochs: 10
+          model_name: iou_v2
+          model_version: 1
+          dropout: 0.4
+          cnn_blocks: 5
+          filters_num: 64
+          filters_kernel_size: (2,2)

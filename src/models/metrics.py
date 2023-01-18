@@ -3,10 +3,13 @@ from functools import lru_cache
 
 from keras.backend import cast, clip, epsilon, minimum, maximum
 from tensorflow import abs, transpose, float32
-
+import tensorflow as tf
 
 def iou(y_true, y_pred):
-    y_true = cast(y_true, float32)
+
+    tf.print("y true:", y_true)
+    tf.print("y pred:", y_pred)
+    
 
     # AOG = Area of Groundtruth box
     AoG = abs(transpose(y_true)[0] - transpose(y_true)[2] + 1) * abs(transpose(y_true)[1] - transpose(y_true)[3] + 1)
