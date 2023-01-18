@@ -4,56 +4,37 @@ import cv2
 import numpy as np
 
 
-def get_edge_detection_image(img):
-    # converting to gray scale
-    img = cv2.cvtColor(img, cv2.COLOR_RGB2GRAY)
-
-    # remove noise
-    img = cv2.GaussianBlur(img, (11, 11), 1)
-
-    # convolute with proper kernels
-    img = cv2.Laplacian(img, cv2.CV_32F, ksize=3)
-
-    return img
+def get_raw_image(image):
+    return image
 
 
-def get_canny_img(img):
-    # remove noise
-    img = cv2.GaussianBlur(img, (5, 5), 1)
-    img = cv2.Canny(image=img, threshold1=120, threshold2=200)  # Canny Edge Detection
-    return img
+def random_get_blurry_image(image):
+    ksize = random.choice([1, 3])
+    sigma = random.randint(1, 3)
+    return get_blurry_img(image, ksize, sigma)
 
 
-def get_raw_image(img):
-    return img
+def get_blurry_img(image, ksize: int, sigma: int):
+    return cv2.GaussianBlur(image, (ksize, ksize), sigma)
 
 
-def get_bw_image(img):
-    img = cv2.cvtColor(img, cv2.COLOR_RGB2GRAY)
-    return img
+def random_change_image_brightness(image):
+    delta = random.randint(-75, 75)
+    return change_image_brightness(image, delta)
 
 
-def get_blurry_img(img):
-    ksize = random.choice([1, 3, 5, 7])
-    sigma = random.randint(1, 5)
-    return cv2.GaussianBlur(img, (ksize, ksize), sigma)
+def change_image_brightness(image, delta: int):
+    hsv = cv2.cvtColor(image, cv2.COLOR_RGB2HSV)  # convert it to hsv
+    h, s, v = cv2.split(hsv)
 
+    v = cv2.add(v, delta)
+    v[v > 255] = 255
+    v[v < 0] = 0
 
-def change_image_brightness(image):
-    delta = random.randint(-60, 60)
-    return image + delta
+    final_hsv = cv2.merge((h, s, v))
+    image = cv2.cvtColor(final_hsv, cv2.COLOR_HSV2RGB)
 
-
-def augment_dataset(X, y):
-    X_blurry = list(map(get_blurry_img, X))
-    X_lighter = list(map(change_image_brightness, X))
-    X_darker = list(map(change_image_brightness, X))
-    X = np.concatenate([X, X_blurry, X_lighter, X_darker])
-
-    # y doesn't change because these transformation doesn't change the bbox position
-    y = np.concatenate([y, y, y, y])
-
-    return X, y
+    return image
 
 
 def random_image_augmentation(image: np.ndarray):
@@ -65,6 +46,6 @@ def random_image_augmentation(image: np.ndarray):
     - change the image brightness
     """
 
-    functions = [get_raw_image, get_blurry_img, change_image_brightness]
+    functions = [get_raw_image, random_get_blurry_image, random_change_image_brightness]
     random_function = random.choice(functions)
     return random_function(image)

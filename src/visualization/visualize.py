@@ -58,4 +58,3 @@ def __show_image__(
 
     plt.figure()
     plt.imshow(image_copy)
-    plt.savefig('prediction.jpg')
