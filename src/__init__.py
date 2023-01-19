@@ -16,3 +16,11 @@ if load_dotenv(
     override=True
 ):
     logging.info("Loaded environment variables")
+
+
+import tensorflow as tf
+import numpy as np
+import random 
+tf.random.set_seed(42)
+np.random.seed(None)
+random.seed(10)

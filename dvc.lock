@@ -33,18 +33,21 @@ stages:
     - path: src/data/make_dataset.py
       md5: 9e9c92498c7326e1a9e253ad06b54dc6
       size: 2861
+    params:
+      params.yaml:
+        random_seed: 42
     outs:
     - path: data/processed/test
-      md5: 2964496a9bfab4762cd354958b343e75.dir
-      size: 2537391
+      md5: 996f3e6759d9cd653a792d6dbb675e41.dir
+      size: 2555197
       nfiles: 88
     - path: data/processed/train
-      md5: 57dd8b01572d3eb8499f576b8d891bd3.dir
-      size: 9010846
+      md5: 6c62e5806d29d6cb1c98e809b8ff9759.dir
+      size: 9063596
       nfiles: 305
     - path: data/processed/validation
-      md5: 540028db69e0122a7be14d9b5af3233e.dir
-      size: 1274415
+      md5: 1264be6da8ef6dc55a78e33dd31e05e7.dir
+      size: 1203859
       nfiles: 43
   train_model:
     cmd: python src/models/train_model.py

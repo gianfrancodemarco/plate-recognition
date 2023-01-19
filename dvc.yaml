@@ -18,6 +18,8 @@ stages:
     - data/processed/train
     - data/processed/test
     - data/processed/validation
+    params:
+      - random_seed    
   train_model:
     cmd: python src/models/train_model.py
     deps:
