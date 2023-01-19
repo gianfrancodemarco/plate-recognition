@@ -21,3 +21,4 @@ def fetch_model(
         keras_model_kwargs={"custom_objects":{"iou": iou}}
     )
     logging.info(f"Loaded registered model version from URI: '{model_version_uri}'")
+    return model

@@ -3,7 +3,6 @@ import logging
 import mlflow
 from keras.callbacks import Callback
 
-
 class SaveModelMLFlowCallback(Callback):
 
     def __init__(
@@ -15,13 +14,16 @@ class SaveModelMLFlowCallback(Callback):
         self.model_name = model_name
         self.epochs_interval = epochs_interval
 
-    def on_epoch_end(self, epoch, logs=None):
-        if epoch > 0 and epoch % self.epochs_interval == 0:
-            run_id = mlflow.active_run().info.run_id
-            artifact_path = "model"
-            model_uri = f"runs:/{run_id}/{artifact_path}"
-            model_details = mlflow.register_model(model_uri=model_uri, name=self.model_name)
-            logging.info(f"Saved model at {model_details}")
+    def save_model(self):
+        run_id = mlflow.active_run().info.run_id
+        artifact_path = "model"
+        model_uri = f"runs:/{run_id}/{artifact_path}"
+        model_details = mlflow.register_model(model_uri=model_uri, name=self.model_name)
+        return model_details
+
+    def on_train_end(self, epoch, logs=None):
+        model_details = self.save_model()
+        logging.info(f"Saved final model at {model_details}")
 
 
 class EarlyStoppingByLossVal(Callback):

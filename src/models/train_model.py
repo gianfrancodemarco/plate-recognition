@@ -3,12 +3,18 @@ import logging
 import dvc.api
 import mlflow
 from src.features.dataset import get_dataset
-from src.models.fetch_model import fetch_model
-from src.models.build_model import build_model
-from src.models.train_callbacks import EarlyStoppingByLossVal, SaveModelMLFlowCallback
 from src.features.dataset_generator import ImageDatasetType
+from src.models.build_model import build_model
+from src.models.fetch_model import fetch_model
+from src.models.train_callbacks import (EarlyStoppingByLossVal,
+                                        SaveModelMLFlowCallback)
+from src.utils import set_random_states
 
 params = dvc.api.params_show()
+
+assert "random_state" in params, "Required param random_state" 
+set_random_states(params["random_state"])
+
 assert "train" in params, "Required param train"
 train_params = params["train"]
 
@@ -31,13 +37,14 @@ if __name__ == "__main__":
     validation_set = get_dataset("validation", dataset_generator_type=ImageDatasetType.ImagesDatasetGenerator)
    
     try:
-        model = fetch_model(**model_params)
-    except:
+        model = fetch_model(model_name=model_name, model_version=model_version)
+    except Exception as e:
+        logging.exception(e)
         model = build_model(**model_params)
 
     with mlflow.start_run():
 
-        mlflow.log_params(params)
+        #mlflow.log_params(params)
 
         mlflow.tensorflow.autolog(
             log_input_examples=True,

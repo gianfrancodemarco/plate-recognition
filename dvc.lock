@@ -31,11 +31,11 @@ stages:
       md5: 230a14f00bece9df11719b3e04ac8210
       size: 7380
     - path: src/data/make_dataset.py
-      md5: 2cde6eca6db6a8729ac232757479a706
-      size: 2980
+      md5: f26c2b68b849d56810e61b5f3b748015
+      size: 3023
     params:
       params.yaml:
-        random_seed: 42
+        random_state: 42
     outs:
     - path: data/processed/test
       md5: 22a16789f61f67221776c4805359f398.dir
@@ -53,26 +53,29 @@ stages:
     cmd: python src/models/train_model.py
     deps:
     - path: data/processed
-      md5: c0f4a539f51d45fab131f51c2a41b851.dir
+      md5: 8c045e5acc5c24df4069d918b1f6489f.dir
       size: 12822673
       nfiles: 437
-    - path: src/models/get_model.py
-      md5: 669ccdbc8ce5c688aafa980410bc6b2a
-      size: 1837
-    - path: src/models/model_trainer.py
-      md5: d87d325280d667e4794b54f644a80269
-      size: 2288
+    - path: src/models/build_model.py
+      md5: 5b2ed9c20ee78d143acc09d08af25b35
+      size: 974
+    - path: src/models/fetch_model.py
+      md5: 1f16045389b110573af4200525429df6
+      size: 699
     - path: src/models/train_model.py
-      md5: a2756d37cf784ce1aef4b63f837762f3
-      size: 1021
+      md5: 1d57dd320f32ce4ea8b0a36b285a6e74
+      size: 2399
     params:
       params.yaml:
+        random_state: 42
         train:
-          epochs: 100
-          save_every_n_epochs: 10
-          model_name: iou_v2
-          model_version: 1
-          dropout: 0.4
-          cnn_blocks: 5
-          filters_num: 64
-          filters_kernel_size: (2,2)
+          fit:
+            epochs: 10
+            save_every_n_epochs: 1
+          model:
+            model_name: test_1
+            model_version: 41
+            dropout: 0.4
+            cnn_blocks: 6
+            filters_num: 32
+            filters_kernel_size: 3

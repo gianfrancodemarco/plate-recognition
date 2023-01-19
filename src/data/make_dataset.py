@@ -3,9 +3,15 @@ import math
 import os
 import shutil
 
+import dvc.api
 import pandas as pd
 from sklearn.utils import shuffle
 from src import utils
+
+params = dvc.api.params_show()
+
+assert "random_state" in params, "Required param random_state"
+utils.set_random_states(params["random_state"])
 
 RAW_IMAGES_PATH = os.path.join(utils.DATA_PATH, "raw", "images")
 PROCESSED_PATH = os.path.join(utils.DATA_PATH, "processed")
@@ -17,14 +23,6 @@ TEST_SET_FRACTION = os.getenv("TEST_SET_FRACTION", 0.2)
 VALIDATION_SET_FRACTION = os.getenv("VALIDATION_SET_FRACTION", 0.1)
 
 
-import tensorflow as tf
-import numpy as np
-import random 
-tf.random.set_seed(42)
-np.random.seed(42)
-random.seed(10)
-
-
 def merge_annotations_and_plates_dataframes():
     # Read annotations (bboxes) and plates to join into a single dataframe
     annotations = pd.read_csv(ANNOTATIONS_PATH)
@@ -34,6 +32,7 @@ def merge_annotations_and_plates_dataframes():
     annotations = annotations.reset_index()
     return annotations
 
+
 def reorganize_annotations_columns(annotations):
     annotations["minx"] = annotations["bbox_x"]
     annotations["miny"] = annotations["bbox_y"]
@@ -41,6 +40,7 @@ def reorganize_annotations_columns(annotations):
     annotations["maxy"] = annotations["bbox_y"] + annotations["bbox_height"]
     annotations = annotations[["name", "minx", "miny", "maxx", "maxy", "plate"]].copy()
     return annotations
+
 
 def make_dataset():
     annotations = merge_annotations_and_plates_dataframes()

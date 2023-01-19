@@ -1,11 +1,11 @@
-random_seed: 42
+random_state: 42
 train:
   fit:
     epochs: 10000
     save_every_n_epochs: 1000
   
   model:
-    model_name: test_1
+    model_name: test
     model_version: 1
     dropout: 0.4
     cnn_blocks: 6
