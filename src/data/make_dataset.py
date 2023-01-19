@@ -16,6 +16,15 @@ TRAIN_SET_FRACTION = os.getenv("TRAIN_SET_FRACTION", 0.7)
 TEST_SET_FRACTION = os.getenv("TEST_SET_FRACTION", 0.2)
 VALIDATION_SET_FRACTION = os.getenv("VALIDATION_SET_FRACTION", 0.1)
 
+
+import tensorflow as tf
+import numpy as np
+import random 
+tf.random.set_seed(42)
+np.random.seed(42)
+random.seed(10)
+
+
 def merge_annotations_and_plates_dataframes():
     # Read annotations (bboxes) and plates to join into a single dataframe
     annotations = pd.read_csv(ANNOTATIONS_PATH)
