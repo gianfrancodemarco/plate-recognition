@@ -1,23 +1,26 @@
 import builtins  # Because importing all from keras overrides builtins.min
+import logging
 from functools import lru_cache
 
-from keras.backend import cast, clip, epsilon, minimum, maximum
-from tensorflow import abs, transpose, float32
 import tensorflow as tf
+from keras.backend import cast, clip, epsilon, maximum, minimum
+from tensorflow import abs, float32, transpose
+
 
 def iou(y_true, y_pred):
 
     tf.print("y true:", y_true)
     tf.print("y pred:", y_pred)
-    
 
     # AOG = Area of Groundtruth box
-    AoG = abs(transpose(y_true)[0] - transpose(y_true)[2] + 1) * abs(transpose(y_true)[1] - transpose(y_true)[3] + 1)
+    AoG = abs(transpose(y_true)[0] - transpose(y_true)[2] + 1) * \
+        abs(transpose(y_true)[1] - transpose(y_true)[3] + 1)
 
     # tf.print('aog', AoG)
 
     # AOP = Area of Predicted box
-    AoP = abs(transpose(y_pred)[0] - transpose(y_pred)[2] + 1) * abs(transpose(y_pred)[1] - transpose(y_pred)[3] + 1)
+    AoP = abs(transpose(y_pred)[0] - transpose(y_pred)[2] + 1) * \
+        abs(transpose(y_pred)[1] - transpose(y_pred)[3] + 1)
 
     # tf.print('aop', AoP)
 
@@ -64,6 +67,12 @@ def lev_dist(a, b):
         lev_dist(a,b)
         >> 1.0
     '''
+
+    if not a:
+        return len(b)
+
+    if not b:
+        return len(a)
 
     @lru_cache(None)  # for memorization
     def min_dist(s1, s2):

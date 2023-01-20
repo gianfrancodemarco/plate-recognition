@@ -26,15 +26,13 @@ model_version = model_params["model_version"]
 
 fit_params = train_params.get("fit")
 assert "epochs" in fit_params, "Required param fit.epochs"
-assert "save_every_n_epochs" in fit_params, "Required param fit.save_every_n_epochs"
 epochs = fit_params["epochs"]
-save_every_n_epochs = fit_params["save_every_n_epochs"]
 
 
 if __name__ == "__main__":
 
-    train_set = get_dataset("train", dataset_generator_type=ImageDatasetType.AugmentedImagesDatasetGenerator)
-    validation_set = get_dataset("validation", dataset_generator_type=ImageDatasetType.ImagesDatasetGenerator)
+    train_set = get_dataset("train", dataset_generator_type=ImageDatasetType.BboxAugmentedImagesDatasetGenerator)
+    validation_set = get_dataset("validation", dataset_generator_type=ImageDatasetType.BboxImagesDatasetGenerator)
    
     try:
         model = fetch_model(model_name=model_name, model_version=model_version)
@@ -44,7 +42,7 @@ if __name__ == "__main__":
 
     with mlflow.start_run():
 
-        #mlflow.log_params(params)
+        mlflow.log_params(params)
 
         mlflow.tensorflow.autolog(
             log_input_examples=True,
@@ -54,12 +52,11 @@ if __name__ == "__main__":
         callbacks = [
             EarlyStoppingByLossVal(monitor='loss', value=1, verbose=1),
             SaveModelMLFlowCallback(
-                model_name=model_name,
-                epochs_interval=save_every_n_epochs
+                model_name=model_name
             )
         ]
 
-        logging.info(f"Training the model for {epochs} epochs, saving every {save_every_n_epochs}")
+        logging.info(f"Training the model for {epochs} epochs")
 
         model.fit(
             x=train_set,

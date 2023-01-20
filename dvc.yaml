@@ -30,3 +30,9 @@ stages:
     params:
     - train
     - random_state
+  predict_model:
+    cmd: python src/models/test_model.py
+    deps:
+    - src/models/test_model.py
+    params:
+    - test

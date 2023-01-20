@@ -8,11 +8,9 @@ class SaveModelMLFlowCallback(Callback):
     def __init__(
         self,
         model_name: str,
-        epochs_interval: int
     ):
         super().__init__()
         self.model_name = model_name
-        self.epochs_interval = epochs_interval
 
     def save_model(self):
         run_id = mlflow.active_run().info.run_id

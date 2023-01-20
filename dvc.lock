@@ -63,19 +63,32 @@ stages:
       md5: 1f16045389b110573af4200525429df6
       size: 699
     - path: src/models/train_model.py
-      md5: 1d57dd320f32ce4ea8b0a36b285a6e74
-      size: 2399
+      md5: fb96fb99e3af139709830118d0ea190f
+      size: 2176
     params:
       params.yaml:
         random_state: 42
         train:
           fit:
             epochs: 10
-            save_every_n_epochs: 1
           model:
-            model_name: test_1
-            model_version: 41
+            model_name: test
+            model_version: 1
             dropout: 0.4
             cnn_blocks: 6
             filters_num: 32
             filters_kernel_size: 3
+  predict_model:
+    cmd: python src/models/test_model.py
+    deps:
+    - path: src/models/test_model.py
+      md5: a8b788e2cc9f394d8a65fca3f6e941cb
+      size: 3328
+    params:
+      params.yaml:
+        test:
+          model:
+            model_name: test
+            model_version: 1
+            tr_ocr_processor: microsoft/trocr-small-printed
+            tr_ocr_model: microsoft/trocr-small-printed

@@ -4,22 +4,26 @@ import pandas as pd
 import tensorflow as tf
 from src import utils
 from src.features.dataset_generator import (ImageDatasetType,
-                                            get_dataset_generator)
+                                            get_dataset_generator,
+                                            get_model_output_signature)
 
 DATASETS_BASE = os.path.join(utils.DATA_PATH, "processed")
 
 
-def configure_for_performance(ds: tf.data.Dataset):
+def configure_for_performance(ds: tf.data.Dataset, batch_size: int = 16, shuffle: bool = True):
     ds = ds.cache()
-    ds = ds.shuffle(buffer_size=1000)
-    ds = ds.batch(16)
+    if shuffle:
+        ds = ds.shuffle(buffer_size=1000)
+    ds = ds.batch(batch_size)
     ds = ds.prefetch(buffer_size=tf.data.AUTOTUNE)
     return ds
 
 
 def get_dataset(
     split: str,
-    dataset_generator_type: ImageDatasetType = ImageDatasetType.ImagesDatasetGenerator
+    dataset_generator_type: ImageDatasetType = ImageDatasetType.BboxImagesDatasetGenerator,
+    batch_size: int = 16,
+    shuffle: bool = True
 ) -> tf.data.Dataset:
 
     annotations_path = os.path.join(DATASETS_BASE, split, "annotations.csv")
@@ -33,11 +37,12 @@ def get_dataset(
         annotations=annotations
     )
 
+    output_signature = get_model_output_signature(dataset_generator_type)
     dataset = tf.data.Dataset.from_generator(
-        dataset_generator.get_image,
-        output_signature=(tf.TensorSpec(shape=(256, 256, 3)), tf.TensorSpec(shape=(4, )))
+        dataset_generator.get_sample,
+        output_signature=output_signature
     )
 
-    dataset = configure_for_performance(dataset)
+    dataset = configure_for_performance(dataset, batch_size=batch_size, shuffle=shuffle)
 
     return dataset
