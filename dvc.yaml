@@ -1,16 +1,16 @@
 stages:
   download_data:
-    cmd: python src/data/download_data.py
+    cmd: python src/pipeline/download_data.py
     deps:
-    - src/data/download_data.py
+    - src/pipeline/download_data.py
     outs:
     - data/raw/images
     - data/raw/annotations.csv
     - data/raw/plates.csv
   make_dataset:
-    cmd: python src/data/make_dataset.py
+    cmd: python src/pipeline/make_dataset.py
     deps:
-    - src/data/make_dataset.py
+    - src/pipeline/make_dataset.py
     - data/raw/images
     - data/raw/annotations.csv
     - data/raw/plates.csv
@@ -21,18 +21,18 @@ stages:
     params:
       - random_state    
   train_model:
-    cmd: python src/models/train_model.py
+    cmd: python src/pipeline/train_model.py
     deps:
     - data/processed
-    - src/models/train_model.py
+    - src/pipeline/train_model.py
     - src/models/fetch_model.py
     - src/models/build_model.py
     params:
     - train
     - random_state
   predict_model:
-    cmd: python src/models/test_model.py
+    cmd: python src/pipeline/test_model.py
     deps:
-    - src/models/test_model.py
+    - src/pipeline/test_model.py
     params:
     - test

@@ -1,9 +1,9 @@
 schema: '2.0'
 stages:
   download_data:
-    cmd: python src/data/download_data.py
+    cmd: python src/pipeline/download_data.py
     deps:
-    - path: src/data/download_data.py
+    - path: src/pipeline/download_data.py
       md5: a253f2456a52024015034e909fcddbb0
       size: 809
     outs:
@@ -18,7 +18,7 @@ stages:
       md5: 230a14f00bece9df11719b3e04ac8210
       size: 7380
   make_dataset:
-    cmd: python src/data/make_dataset.py
+    cmd: python src/pipeline/make_dataset.py
     deps:
     - path: data/raw/annotations.csv
       md5: e16179b0438f32222098fa82261cc1e7
@@ -30,7 +30,7 @@ stages:
     - path: data/raw/plates.csv
       md5: 230a14f00bece9df11719b3e04ac8210
       size: 7380
-    - path: src/data/make_dataset.py
+    - path: src/pipeline/make_dataset.py
       md5: f26c2b68b849d56810e61b5f3b748015
       size: 3023
     params:
@@ -50,7 +50,7 @@ stages:
       size: 1238510
       nfiles: 43
   train_model:
-    cmd: python src/models/train_model.py
+    cmd: python src/pipeline/train_model.py
     deps:
     - path: data/processed
       md5: 8c045e5acc5c24df4069d918b1f6489f.dir
@@ -62,7 +62,7 @@ stages:
     - path: src/models/fetch_model.py
       md5: 1f16045389b110573af4200525429df6
       size: 699
-    - path: src/models/train_model.py
+    - path: src/pipeline/train_model.py
       md5: fb96fb99e3af139709830118d0ea190f
       size: 2176
     params:
@@ -79,9 +79,9 @@ stages:
             filters_num: 32
             filters_kernel_size: 3
   predict_model:
-    cmd: python src/models/test_model.py
+    cmd: python src/pipeline/test_model.py
     deps:
-    - path: src/models/test_model.py
+    - path: src/pipeline/test_model.py
       md5: a8b788e2cc9f394d8a65fca3f6e941cb
       size: 3328
     params:
