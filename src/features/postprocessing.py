@@ -1,6 +1,15 @@
 import re
 
 def post_process_plates(plates):
+    """
+    Post processes a list of plates
+    The post processing include:
+    - removing special characters
+    - removing plates which are too long
+    - removing plates which are too short
+
+    After the postprocessing, the plates which are left without any character are removed
+    """
 
     def clean_prediction(plate):
         return re.sub(r'\W+', '', plate)
@@ -42,5 +51,9 @@ def post_process_plates(plates):
     return plates
 
 def post_process_plate(plate):    
+    """
+    Perform postprocessing on a plate calling the more general version of this method: post_process_plate
+    """
+    
     predictions = post_process_plates([plate])
     return predictions[0] if len(predictions) else None

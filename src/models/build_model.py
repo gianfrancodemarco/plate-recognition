@@ -21,7 +21,7 @@ def build_model(
     model.add(Input(shape=input_shape))
 
     for i in range(cnn_blocks):
-        model.add(Conv2D(filters_num, (filters_kernel_size, filters_kernel_size)))
+        model.add(Conv2D(filters_num, filters_kernel_size))
         model.add(MaxPooling2D(pool_size=(2, 2)))
 
     model.add(Flatten())
