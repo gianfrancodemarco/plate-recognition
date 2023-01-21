@@ -40,7 +40,12 @@ if __name__ == "__main__":
         logging.exception(e)
         model = build_model(**model_params)
 
-    with mlflow.start_run():
+    run_name = f"train_{model_name}_v{model_version}"
+
+    with mlflow.start_run(
+        run_id=run_name,
+        run_name=run_name
+    ):
 
         mlflow.log_params(params)
 

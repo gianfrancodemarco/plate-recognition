@@ -30,7 +30,7 @@ stages:
     params:
     - train
     - random_state
-  predict_model:
+  test_model:
     cmd: python src/pipeline/test_model.py
     deps:
     - src/pipeline/test_model.py

@@ -1,7 +1,7 @@
 import logging
 
 from keras.layers import (Conv2D, Dense, Dropout, Flatten, Input, LeakyReLU,
-                          MaxPooling2D, ReLU)
+                          MaxPooling2D, ReLU, BatchNormalization)
 from keras.metrics import RootMeanSquaredError
 from keras.models import Sequential
 from src.models.metrics import iou
@@ -30,6 +30,7 @@ def build_model(
         model.add(Dropout(dropout))
 
     model.add(Dense(128))
+    model.add(BatchNormalization())
     model.add(Dense(4))
     model.add(LeakyReLU(0.001))
 
