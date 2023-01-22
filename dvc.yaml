@@ -23,14 +23,19 @@ stages:
   data_expectations:
     cmd: python src/pipeline/data_expectations.py
     deps:
-        - data/processed
+    - data/processed
+    outs:
+    - reports/great_expectations
   train_model:
     cmd: python src/pipeline/train_model.py
     deps:
+    - reports/great_expectations
     - data/processed
     - src/pipeline/train_model.py
     - src/models/fetch_model.py
     - src/models/build_model.py
+    outs:
+    - reports/train/history.json
     params:
     - train
     - random_state
@@ -38,5 +43,6 @@ stages:
     cmd: python src/pipeline/test_model.py
     deps:
     - src/pipeline/test_model.py
+    - reports/train/history.json
     params:
     - test

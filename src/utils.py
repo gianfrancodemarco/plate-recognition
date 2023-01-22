@@ -1,18 +1,19 @@
 import functools
 import json
 import os
-import random
 from pathlib import Path
-
-import numpy as np
-import tensorflow as tf
 
 ROOT_PATH = Path(__file__).parent.parent
 SRC_PATH = os.path.join(ROOT_PATH, "src")
 DATA_PATH = os.path.join(ROOT_PATH, "data")
 TESTS_PATH = os.path.join(ROOT_PATH, "tests")
+REPORTS_PATH = os.path.join(ROOT_PATH, "reports")
 
 def set_random_states(random_state):
+    
+    import random
+    import numpy as np
+    import tensorflow as tf
 
     if not random_state:
         random_state = 42

@@ -1,7 +1,10 @@
+import json
 import logging
+import os
 
 import dvc.api
 import mlflow
+from src import utils
 from src.features.dataset import get_dataset
 from src.features.dataset_generator import ImageDatasetType
 from src.models.build_model import build_model
@@ -9,11 +12,12 @@ from src.models.fetch_model import fetch_model
 from src.models.train_callbacks import (EarlyStoppingByLossVal,
                                         SaveModelMLFlowCallback)
 from src.pipeline.param_parser import ParamParser
-from src.utils import set_random_states
+
+TRAIN_REPORTS_PATH = os.path.join(utils.REPORTS_PATH, "train")
 
 params_dict = dvc.api.params_show()
 params = ParamParser().parse(params_dict)
-set_random_states(params.random_state)
+utils.set_random_states(params.random_state)
 
 if __name__ == "__main__":
 
@@ -59,3 +63,8 @@ if __name__ == "__main__":
             callbacks=callbacks,
             epochs=params.train.fit.epochs
         )
+
+
+        output_path = os.path.join(TRAIN_REPORTS_PATH, "history.json")
+        with open(output_path, "w") as f:
+            f.write(json.dumps(model.history.history, indent=4))

@@ -2,7 +2,7 @@ random_state: 42
 
 train:
   fit:
-    epochs: 10
+    epochs: 1
   model:
     model_name: test
     model_version: 1
