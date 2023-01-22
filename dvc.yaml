@@ -25,11 +25,15 @@ stages:
     deps:
     - data/processed
     outs:
-    - reports/great_expectations
+    - reports/great_expectations/train_annotations.json
+    - reports/great_expectations/validation_annotations.json
+    - reports/great_expectations/test_annotations.json
   train_model:
     cmd: python src/pipeline/train_model.py
     deps:
-    - reports/great_expectations
+    - reports/great_expectations/train_annotations.json
+    - reports/great_expectations/validation_annotations.json
+    - reports/great_expectations/test_annotations.json
     - data/processed
     - src/pipeline/train_model.py
     - src/models/fetch_model.py
