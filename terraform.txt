@@ -11,5 +11,5 @@ For Cloud Run:
 - Create a service account with:
     - Name: cloud-run
     - Roles: Cloud Run Admin
-- Edit the default @comput service account adding:
+- Edit the default @compute service account adding:
     - Roles: Service Account User

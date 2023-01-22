@@ -46,7 +46,7 @@ def objective(params, trial: Trial):
     ).build()
 
     model_trainer = MLFlowModelTrainer(
-        epochs=20,
+        epochs=2,
         model_name=params.train.model.model_name,
         train_data=train_set,
         validation_data=validation_set,
@@ -58,8 +58,10 @@ def objective(params, trial: Trial):
         params_to_log=params.__dict__
     )
 
-    val_loss = model.history.history["val_loss"]
-
+    trial.set_user_attr("loss", model.history.history["loss"])
+    trial.set_user_attr("val_loss", model.history.history["val_loss"])
+    
+    val_loss = model.history.history["val_loss"][-1]
     return val_loss
 
 
