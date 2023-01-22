@@ -43,7 +43,7 @@ jobs:
     - name: Analysing the code with pynblint
       run: |
         pynblint 'notebooks'
-  pytest:
+  converage:
     needs: [pylint, pynblint]
     runs-on: ubuntu-latest
     strategy:
@@ -62,7 +62,8 @@ jobs:
         python -m pip install --upgrade pip
         python -m pip install -e .
         python -m pip install pytest
-        python -m pip list
-    - name: Run tests with pytest
+        python -m pip install coverage
+    - name: Run tests with coverage and pytest
       run: |
-        python -m pytest tests
+        coverage run --source src -m pytest tests
+        coverage report -m -i 

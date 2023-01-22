@@ -13,7 +13,11 @@ class TestParamParser:
                 },
                 "model":  {
                     "model_name": "test",
-                    "model_version": 1
+                    "model_version": 1,
+                    "dropout": 0,
+                    "cnn_blocks": 1,
+                    "filters_num": 1,
+                    "filters_kernel_size": 2
                 }
             },
             "test": {
