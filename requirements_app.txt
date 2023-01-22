@@ -16,3 +16,4 @@ torch
 transformers
 transformers[sentencepiece]
 uvicorn
+great_expectations

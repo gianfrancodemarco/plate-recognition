@@ -11,8 +11,7 @@ def build_model(
     dropout: float = 0,
     cnn_blocks: int = 1,
     filters_num: int = 32,
-    filters_kernel_size: int = (2, 2),
-    **kwargs
+    filters_kernel_size: int = (2, 2)
 ):
 
     model = Sequential()

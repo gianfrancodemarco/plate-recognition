@@ -20,6 +20,10 @@ stages:
     - data/processed/validation
     params:
       - random_state    
+  data_expectations:
+    cmd: python src/pipeline/data_expectations.py
+    deps:
+        - data/processed
   train_model:
     cmd: python src/pipeline/train_model.py
     deps:

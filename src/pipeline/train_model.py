@@ -8,47 +8,34 @@ from src.models.build_model import build_model
 from src.models.fetch_model import fetch_model
 from src.models.train_callbacks import (EarlyStoppingByLossVal,
                                         SaveModelMLFlowCallback)
+from src.pipeline.param_parser import ParamParser
 from src.utils import set_random_states
 
-params = dvc.api.params_show()
-
-assert "random_state" in params, "Required param random_state" 
-set_random_states(params["random_state"])
-
-assert "train" in params, "Required param train"
-train_params = params["train"]
-
-model_params = train_params.get("model")
-assert "model_name" in model_params, "Required param model.model_name"
-assert "model_version" in model_params, "Required param model.model_version"
-model_name = model_params["model_name"]
-model_version = model_params["model_version"]
-
-fit_params = train_params.get("fit")
-assert "epochs" in fit_params, "Required param fit.epochs"
-epochs = fit_params["epochs"]
-
+params_dict = dvc.api.params_show()
+params = ParamParser().parse(params_dict)
+set_random_states(params.random_state)
 
 if __name__ == "__main__":
 
-    train_set = get_dataset("train", dataset_generator_type=ImageDatasetType.BboxAugmentedImagesDatasetGenerator)
-    validation_set = get_dataset("validation", dataset_generator_type=ImageDatasetType.BboxImagesDatasetGenerator)
-   
+    train_set = get_dataset(
+        "train", dataset_generator_type=ImageDatasetType.BboxAugmentedImagesDatasetGenerator)
+    validation_set = get_dataset(
+        "validation", dataset_generator_type=ImageDatasetType.BboxImagesDatasetGenerator)
+
     try:
-        model = fetch_model(model_name=model_name, model_version=model_version)
+        model = fetch_model(model_name=params.train.model.model_name,
+                            model_version=params.train.model.model_version)
     except Exception as e:
         logging.exception(e)
-        model = build_model(**model_params)
+        model = build_model(
+            dropout=params.train.model.dropout,
+            cnn_blocks=params.train.model.cnn_blocks,
+            filters_num=params.train.model.filters_num,
+            filters_kernel_size=params.train.model.filters_kernel_size
+        )
 
-    run_name = f"train_{model_name}_v{model_version}"
-
-    with mlflow.start_run(
-        run_id=run_name,
-        run_name=run_name
-    ):
-
-        mlflow.log_params(params)
-
+    with mlflow.start_run():
+        mlflow.log_params(params.__dict__)
         mlflow.tensorflow.autolog(
             log_input_examples=True,
             log_models=True
@@ -57,11 +44,11 @@ if __name__ == "__main__":
         callbacks = [
             EarlyStoppingByLossVal(monitor='loss', value=1, verbose=1),
             SaveModelMLFlowCallback(
-                model_name=model_name
+                model_name=params.train.model.model_name
             )
         ]
 
-        logging.info(f"Training the model for {epochs} epochs")
+        logging.info(f"Training the model for {params.train.fit.epochs} epochs")
 
         model.fit(
             x=train_set,
@@ -70,5 +57,5 @@ if __name__ == "__main__":
             verbose=1,
             validation_split=validation_set,
             callbacks=callbacks,
-            epochs=epochs
+            epochs=params.train.fit.epochs
         )
