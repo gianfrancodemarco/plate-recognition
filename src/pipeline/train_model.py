@@ -1,16 +1,13 @@
-import json
 import logging
 import os
 
 import dvc.api
-import mlflow
 from src import utils
 from src.features.dataset import get_dataset
 from src.features.dataset_generator import ImageDatasetType
 from src.models.build_model import build_model
 from src.models.fetch_model import fetch_model
-from src.models.train_callbacks import (EarlyStoppingByLossVal,
-                                        SaveModelMLFlowCallback)
+from src.models.mlflow_model_trainer import MLFlowModelTrainer
 from src.pipeline.param_parser import ParamParser
 
 TRAIN_REPORTS_PATH = os.path.join(utils.REPORTS_PATH, "train")
@@ -38,33 +35,16 @@ if __name__ == "__main__":
             filters_kernel_size=params.train.model.filters_kernel_size
         )
 
-    with mlflow.start_run():
-        mlflow.log_params(params.__dict__)
-        mlflow.tensorflow.autolog(
-            log_input_examples=True,
-            log_models=True
-        )
+    model_trainer = MLFlowModelTrainer(
+        epochs=params.train.fit.epochs,
+        model_name=params.train.model.model_name,
+        train_data=train_set,
+        validation_data=validation_set
+    )
 
-        callbacks = [
-            EarlyStoppingByLossVal(monitor='loss', value=1, verbose=1),
-            SaveModelMLFlowCallback(
-                model_name=params.train.model.model_name
-            )
-        ]
-
-        logging.info(f"Training the model for {params.train.fit.epochs} epochs")
-
-        model.fit(
-            x=train_set,
-            validation_data=validation_set,
-            batch_size=16,
-            verbose=1,
-            validation_split=validation_set,
-            callbacks=callbacks,
-            epochs=params.train.fit.epochs
-        )
-
-
-        output_path = os.path.join(TRAIN_REPORTS_PATH, "history.json")
-        with open(output_path, "w") as f:
-            f.write(json.dumps(model.history.history, indent=4))
+    results_path = os.path.join(TRAIN_REPORTS_PATH, "history.json")
+    model_trainer.train(
+        model,
+        params_to_log=params.__dict__,
+        results_path=results_path
+    )

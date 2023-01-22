@@ -1,7 +1,9 @@
 import logging
 
 import mlflow
+import optuna
 from keras.callbacks import Callback
+
 
 class SaveModelMLFlowCallback(Callback):
 
@@ -40,3 +42,14 @@ class EarlyStoppingByLossVal(Callback):
             if self.verbose > 0:
                 print("\nEpoch %05d: early stopping THR" % epoch)
             self.model.stop_training = True
+
+class OptunaPruneCallback(Callback):
+    def __init__(self, trial):
+        super(Callback, self).__init__()
+        self.trial = trial
+
+    def on_epoch_end(self, epoch, logs={}):
+        if self.trial:
+            self.trial.report(logs["val_loss"], epoch)
+            if self.trial.should_prune():
+                raise optuna.TrialPruned()
