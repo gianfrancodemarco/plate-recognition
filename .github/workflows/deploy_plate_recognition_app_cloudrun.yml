@@ -26,16 +26,6 @@ jobs:
           username: _json_key
           password: ${{ secrets.GAR_JSON_KEY }}
       -
-        name: Setup DVC
-        uses: iterative/setup-dvc@v1
-      - 
-        name: Pull data from DVC
-        run: |
-          dvc remote modify origin --local auth basic
-          dvc remote modify origin --local user ${{ secrets.DAGSHUB_USERNAME }}
-          dvc remote modify origin --local password ${{ secrets.DAGSHUB_TOKEN }}
-          dvc pull models/*
-      -
         name: Build and push (GCP)
         uses: docker/build-push-action@v3
         with:
