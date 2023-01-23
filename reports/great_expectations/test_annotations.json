@@ -1,0 +1,34 @@
+{
+    "expectation_config": {
+        "expectation_type": "expect_table_columns_to_match_ordered_list",
+        "meta": {},
+        "kwargs": {
+            "column_list": [
+                "name",
+                "minx",
+                "miny",
+                "maxx",
+                "maxy",
+                "plate"
+            ],
+            "result_format": "BASIC"
+        }
+    },
+    "meta": {},
+    "exception_info": {
+        "raised_exception": false,
+        "exception_traceback": null,
+        "exception_message": null
+    },
+    "success": true,
+    "result": {
+        "observed_value": [
+            "name",
+            "minx",
+            "miny",
+            "maxx",
+            "maxy",
+            "plate"
+        ]
+    }
+}

@@ -1,9 +1,9 @@
 schema: '2.0'
 stages:
   download_data:
-    cmd: python src/data/download_data.py
+    cmd: python src/pipeline/download_data.py
     deps:
-    - path: src/data/download_data.py
+    - path: src/pipeline/download_data.py
       md5: a253f2456a52024015034e909fcddbb0
       size: 809
     outs:
@@ -18,7 +18,7 @@ stages:
       md5: 230a14f00bece9df11719b3e04ac8210
       size: 7380
   make_dataset:
-    cmd: python src/data/make_dataset.py
+    cmd: python src/pipeline/make_dataset.py
     deps:
     - path: data/raw/annotations.csv
       md5: e16179b0438f32222098fa82261cc1e7
@@ -30,46 +30,95 @@ stages:
     - path: data/raw/plates.csv
       md5: 230a14f00bece9df11719b3e04ac8210
       size: 7380
-    - path: src/data/make_dataset.py
-      md5: 9e9c92498c7326e1a9e253ad06b54dc6
-      size: 2861
-    outs:
-    - path: data/processed/test
-      md5: 2964496a9bfab4762cd354958b343e75.dir
-      size: 2537391
-      nfiles: 88
-    - path: data/processed/train
-      md5: 57dd8b01572d3eb8499f576b8d891bd3.dir
-      size: 9010846
-      nfiles: 305
-    - path: data/processed/validation
-      md5: 540028db69e0122a7be14d9b5af3233e.dir
-      size: 1274415
-      nfiles: 43
-  train_model:
-    cmd: python src/models/train_model.py
-    deps:
-    - path: data/processed
-      md5: c0f4a539f51d45fab131f51c2a41b851.dir
-      size: 12822673
-      nfiles: 437
-    - path: src/models/get_model.py
-      md5: 669ccdbc8ce5c688aafa980410bc6b2a
-      size: 1837
-    - path: src/models/model_trainer.py
-      md5: d87d325280d667e4794b54f644a80269
-      size: 2288
-    - path: src/models/train_model.py
-      md5: a2756d37cf784ce1aef4b63f837762f3
-      size: 1021
+    - path: src/pipeline/make_dataset.py
+      md5: f26c2b68b849d56810e61b5f3b748015
+      size: 3023
     params:
       params.yaml:
+        random_state: 42
+    outs:
+    - path: data/processed/test
+      md5: 22a16789f61f67221776c4805359f398.dir
+      size: 2584110
+      nfiles: 88
+    - path: data/processed/train
+      md5: 052c35f5225bdc40392f1e782789e01b.dir
+      size: 9000032
+      nfiles: 305
+    - path: data/processed/validation
+      md5: 95a74dab37061a91ea7f893d4bfae23b.dir
+      size: 1238510
+      nfiles: 43
+  train_model:
+    cmd: python src/pipeline/train_model.py
+    deps:
+    - path: data/processed
+      md5: 8c045e5acc5c24df4069d918b1f6489f.dir
+      size: 12822673
+      nfiles: 437
+    - path: reports/great_expectations/test_annotations.json
+      md5: fb68c09946cbc73175ee3cc1230f50e7
+      size: 741
+    - path: reports/great_expectations/train_annotations.json
+      md5: fb68c09946cbc73175ee3cc1230f50e7
+      size: 741
+    - path: reports/great_expectations/validation_annotations.json
+      md5: fb68c09946cbc73175ee3cc1230f50e7
+      size: 741
+    - path: src/models/build_model.py
+      md5: 1fee6f15783a6a58eb70a18491d1c207
+      size: 993
+    - path: src/models/fetch_model.py
+      md5: 1f16045389b110573af4200525429df6
+      size: 699
+    - path: src/pipeline/train_model.py
+      md5: f44f3982dde2a5c2e1ad7f950b6632de
+      size: 1713
+    params:
+      params.yaml:
+        random_state: 42
         train:
-          epochs: 100
-          save_every_n_epochs: 10
-          model_name: iou_v2
-          model_version: 1
-          dropout: 0.4
-          cnn_blocks: 5
-          filters_num: 64
-          filters_kernel_size: (2,2)
+          fit:
+            epochs: 1
+          model:
+            model_name: test
+            model_version: 1
+            dropout: 0.4
+            cnn_blocks: 6
+            filters_num: 32
+            filters_kernel_size: 3
+    outs:
+    - path: reports/train/history.json
+      md5: d588dac919bc5d549e0a38100905af50
+      size: 231
+  predict_model:
+    cmd: python src/pipeline/test_model.py
+    deps:
+    - path: src/pipeline/test_model.py
+      md5: a8b788e2cc9f394d8a65fca3f6e941cb
+      size: 3328
+    params:
+      params.yaml:
+        test:
+          model:
+            model_name: test
+            model_version: 1
+            tr_ocr_processor: microsoft/trocr-small-printed
+            tr_ocr_model: microsoft/trocr-small-printed
+  data_expectations:
+    cmd: python src/pipeline/data_expectations.py
+    deps:
+    - path: data/processed
+      md5: 8c045e5acc5c24df4069d918b1f6489f.dir
+      size: 12822673
+      nfiles: 437
+    outs:
+    - path: reports/great_expectations/test_annotations.json
+      md5: fb68c09946cbc73175ee3cc1230f50e7
+      size: 741
+    - path: reports/great_expectations/train_annotations.json
+      md5: fb68c09946cbc73175ee3cc1230f50e7
+      size: 741
+    - path: reports/great_expectations/validation_annotations.json
+      md5: fb68c09946cbc73175ee3cc1230f50e7
+      size: 741

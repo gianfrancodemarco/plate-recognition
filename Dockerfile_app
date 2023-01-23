@@ -14,7 +14,6 @@ COPY ./requirements_app.txt ./requirements.txt
 RUN --mount=type=cache,target=/root/.cache pip install -r ./requirements.txt 
 
 COPY ./src ./src
-COPY ./models ./models
 
 # Install project as module
 COPY ./setup.py ./setup.py

@@ -1,13 +1,14 @@
 import logging
 import os
 
+from telegram import ForceReply, Update
+from telegram.ext import (Application, CommandHandler, ContextTypes,
+                          MessageHandler, filters)
+
 from src.bot import telegram_helper
 from src.bot.api import plate_recognition_api
 from src.bot.monitoring import (increase_messages_counter,
                                 increase_photos_counter, start_monitoring)
-from telegram import ForceReply, Update
-from telegram.ext import (Application, CommandHandler, ContextTypes,
-                          MessageHandler, filters)
 
 DEFAULT_MESSAGE = "Send me the picture of a car plate and i'll try to transcribe it for you."
 TOKEN = os.getenv("TELEGRAM_API_TOKEN", "5608820637:AAG7cHLFOafgcVqTGS5QDVdebhCEGm-CJjk")
@@ -26,17 +27,17 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     )
 
 
-async def help_command(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
+async def help_command(update: Update, _: ContextTypes.DEFAULT_TYPE) -> None:
     """Send a message when the command /help is issued."""
     await update.message.reply_text("Help!")
 
 
-async def text_handler(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
+async def text_handler(update: Update, _: ContextTypes.DEFAULT_TYPE) -> None:
     increase_messages_counter()
     await update.message.reply_text(DEFAULT_MESSAGE)
 
 
-async def photo_handler(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
+async def photo_handler(update: Update, _: ContextTypes.DEFAULT_TYPE) -> None:
     logging.info("Received a photo message")
     increase_photos_counter()
     try:
@@ -53,7 +54,8 @@ async def photo_handler(update: Update, context: ContextTypes.DEFAULT_TYPE) -> N
             reply_to_message_id=update.message.id
         )
         logging.info("Done.")
-    except Exception as e:
+    except Exception as exc:
+        logging.exception(exc)
         await update.message.reply_text(
             "There was an error with your request. Please try again later.",
             reply_to_message_id=update.message.id

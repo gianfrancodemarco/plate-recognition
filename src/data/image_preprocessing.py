@@ -49,3 +49,17 @@ def random_image_augmentation(image: np.ndarray):
     functions = [get_raw_image, random_get_blurry_image, random_change_image_brightness]
     random_function = random.choice(functions)
     return random_function(image)
+
+
+def preprocess_image(image: np.ndarray) -> np.ndarray:
+    if len(image.shape) == 3 and image.shape[2] == 4:
+        image = cv2.cvtColor(image, cv2.COLOR_BGRA2BGR)
+    image = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
+    image = cv2.resize(image, (256, 256))
+    return image
+
+
+def crop_image(image, bbox):
+    _cropped_image = image.copy()
+    _cropped_image = _cropped_image[int(bbox[1]):int(bbox[3]), int(bbox[0]):int(bbox[2])]
+    return _cropped_image

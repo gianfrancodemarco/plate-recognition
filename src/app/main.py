@@ -1,8 +1,8 @@
 import uvicorn
 from fastapi import FastAPI
+from starlette.middleware.cors import CORSMiddleware
 from src.app.api import api
 from src.app.monitoring import instrumentator
-from starlette.middleware.cors import CORSMiddleware
 
 app = FastAPI()
 app.add_middleware(

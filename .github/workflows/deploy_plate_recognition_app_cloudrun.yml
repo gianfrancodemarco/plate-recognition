@@ -98,10 +98,13 @@ jobs:
       with:
         service: ${{ vars.APP_SERVICE_NAME }}
         image: ${{ vars.APP_DOCKER_IMAGE }}
-        env_vars_file: .env
         env_vars: |
           DAGSHUB_USERNAME=${{ secrets.DAGSHUB_USERNAME }}
           DAGSHUB_TOKEN=${{ secrets.DAGSHUB_TOKEN }}
+          MODEL_NAME=${{ vars.MODEL_NAME }}
+          MODEL_VERSION=${{ vars.MODEL_VERSION }}
+          TR_OCR_PROCESSOR=${{ vars.TR_OCR_PROCESSOR }}
+          TR_OCR_MODEL=${{ vars.TR_OCR_MODEL }}
 
     - name: 'Use output'
       run: 'curl "${{ steps.deploy.outputs.url }}"'

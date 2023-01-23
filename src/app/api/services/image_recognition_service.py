@@ -9,12 +9,14 @@ from keras.models import Model
 from PIL import Image
 from shapely.affinity import scale
 from shapely.geometry import box
-from src.models.metrics import iou
-from transformers import TrOCRProcessor, VisionEncoderDecoderModel
+from src.data.image_preprocessing import crop_image, preprocess_image
 from src.models.fetch_model import fetch_model
+from transformers import TrOCRProcessor, VisionEncoderDecoderModel
 
 model_name = os.getenv("MODEL_NAME")
 model_version = os.getenv("MODEL_VERSION")
+tr_ocr_processor = os.getenv("TR_OCR_PROCESSOR", "microsoft/trocr-small-printed")
+tr_ocr_model = os.getenv("TR_OCR_MODEL", "microsoft/trocr-small-printed")
 
 class ImageRecognitionService:
 
@@ -36,15 +38,13 @@ class ImageRecognitionService:
 
         def __load_transformer_processor():
             try:
-                return TrOCRProcessor.from_pretrained(
-                    "microsoft/trocr-small-printed")
+                return TrOCRProcessor.from_pretrained(tr_ocr_processor)
             except:
                 return __load_transformer_processor()
 
         def __load_transformer_model():
             try:
-                return VisionEncoderDecoderModel.from_pretrained(
-                    "microsoft/trocr-small-printed")
+                return VisionEncoderDecoderModel.from_pretrained(tr_ocr_model)
             except:
                 return __load_transformer_model()
 
@@ -81,7 +81,7 @@ class ImageRecognitionService:
 
     def __predict_image_bbox__(self, image: np.ndarray):
         _image = image.copy()
-        _image = self.preprocess_image(_image)
+        _image = preprocess_image(_image)
         _image_batch = np.array([_image])
         return self.__get_detection_model().predict(_image_batch)[0]
 
@@ -111,7 +111,7 @@ class ImageRecognitionService:
 
         bbox = self.__predict_image_bbox__(image)
 
-        cropped_image = self.crop_image(image, bbox)
+        cropped_image = crop_image(image, bbox)
         cropped_image = Image.fromarray(cropped_image)
 
         transformer_processor = self.__get_transformer_processor()
@@ -122,18 +122,3 @@ class ImageRecognitionService:
             generated_ids, skip_special_tokens=True)[0]
 
         return generated_text
-
-
-    def preprocess_image(self, image: np.ndarray) -> np.ndarray:
-        if len(image.shape) == 3 and image.shape[2] == 4:
-            image = cv2.cvtColor(image, cv2.COLOR_BGRA2BGR)
-        image = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
-
-        image = cv2.resize(image, (256, 256))
-        return image
-
-
-    def crop_image(self, image, bbox: box):
-        _cropped_image = image.copy()
-        _cropped_image = _cropped_image[int(bbox[3]):int(bbox[1]), int(bbox[2]):int(bbox[0])]
-        return _cropped_image

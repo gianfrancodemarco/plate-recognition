@@ -1,12 +1,19 @@
+random_state: 42
+
 train:
   fit:
-    epochs: 10000
-    save_every_n_epochs: 1000
-  
+    epochs: 1
   model:
-    model_name: giou_v10
+    model_name: test
     model_version: 1
     dropout: 0.4
     cnn_blocks: 6
     filters_num: 32
     filters_kernel_size: 3
+
+test:
+  model:  
+    model_name: test
+    model_version: 1
+    tr_ocr_processor: microsoft/trocr-small-printed
+    tr_ocr_model: microsoft/trocr-small-printed

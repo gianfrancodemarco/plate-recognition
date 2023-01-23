@@ -1,7 +1,9 @@
 fastapi
+great_expectations
 mlflow
 numpy
 opencv-python
+optuna
 pandas
 Pillow
 pydantic

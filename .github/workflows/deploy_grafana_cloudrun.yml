@@ -7,6 +7,7 @@ on:
     paths:
       - "grafana/**"
       - ".github/workflows/grafana*"
+  workflow_dispatch:
 
 jobs:
   build-and-push-artifact-registry:
