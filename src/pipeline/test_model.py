@@ -71,9 +71,13 @@ def evaluate_ocr():
 
 if __name__ == "__main__":
 
+    dataset_generator_type = ImageDatasetType.BBOX_IMAGES_DATASET_GENERATOR
+    if params.augmentation:
+        dataset_generator_type = ImageDatasetType.BBOX_AUGMENTED_IMAGES_DATASET_GENERATOR
+
     test_set_bbox = get_dataset(
         annotations_path=os.path.join(DATASETS_BASE, "test", "annotations.csv"),
-        dataset_generator_type=ImageDatasetType.BBOX_IMAGES_DATASET_GENERATOR, batch_size=1, shuffle=False
+        dataset_generator_type=ImageDatasetType.dataset_generator_type, batch_size=1, shuffle=False
     )
     
     test_set_plates = get_dataset(

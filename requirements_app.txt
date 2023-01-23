@@ -1,3 +1,4 @@
+albumentations
 fastapi
 great_expectations
 mlflow

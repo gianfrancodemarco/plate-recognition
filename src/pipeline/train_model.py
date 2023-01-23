@@ -19,13 +19,18 @@ utils.set_random_states(params.random_state)
 
 if __name__ == "__main__":
 
+    dataset_generator_type = ImageDatasetType.BBOX_IMAGES_DATASET_GENERATOR
+    if params.augmentation:
+        dataset_generator_type = ImageDatasetType.BBOX_AUGMENTED_IMAGES_DATASET_GENERATOR
+
     train_set = get_dataset(
         annotations_path=os.path.join(DATASETS_BASE, "train", "annotations.csv"),
-        dataset_generator_type=ImageDatasetType.BBOX_AUGMENTED_IMAGES_DATASET_GENERATOR
+        dataset_generator_type=dataset_generator_type
     )
+    
     validation_set = get_dataset(
         annotations_path=os.path.join(DATASETS_BASE, "validation", "annotations.csv"),
-        dataset_generator_type=ImageDatasetType.BBOX_IMAGES_DATASET_GENERATOR
+        dataset_generator_type=dataset_generator_type
     )
 
     try:

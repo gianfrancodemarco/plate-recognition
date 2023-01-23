@@ -11,6 +11,7 @@ class ParamParser():
     """
     REQUIRED_PARAMS = [
         "random_state",
+        "augmentation",
         "train",
         "train.model",
         "train.model.model_name",

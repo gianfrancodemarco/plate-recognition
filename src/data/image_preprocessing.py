@@ -1,55 +1,28 @@
-import random
-
+import albumentations as A
 import cv2
 import numpy as np
 
 
-def get_raw_image(image):
-    return image
+def augment_image(image: np.ndarray, bbox: np.ndarray): 
+    transform = A.Compose([
+        A.RandomCrop(p=0.2, width=200, height=200),
+        A.HorizontalFlip(p=0.2),
+        A.Blur(p=0.1),
+        A.CLAHE(p=0.1),
+        A.Equalize(p=0.3),
+        A.ColorJitter(p=0.1),
+        A.RandomShadow(p=0.3),
+        A.RandomBrightness(p=0.1)
+    ], bbox_params=A.BboxParams(format='pascal_voc', min_visibility=1, label_fields=[]))
 
+    transformed = transform(image=image, bboxes=[bbox])
+    transformed_image = transformed['image']
+    transformed_bboxes = transformed['bboxes']
 
-def random_get_blurry_image(image):
-    ksize = random.choice([1, 3])
-    sigma = random.randint(1, 3)
-    return get_blurry_img(image, ksize, sigma)
+    if len(transformed_bboxes) == 0:
+        return image, bbox
 
-
-def get_blurry_img(image, ksize: int, sigma: int):
-    return cv2.GaussianBlur(image, (ksize, ksize), sigma)
-
-
-def random_change_image_brightness(image):
-    delta = random.randint(-75, 75)
-    return change_image_brightness(image, delta)
-
-
-def change_image_brightness(image, delta: int):
-    hsv = cv2.cvtColor(image, cv2.COLOR_RGB2HSV)  # convert it to hsv
-    h, s, v = cv2.split(hsv)
-
-    v = cv2.add(v, delta)
-    v[v > 255] = 255
-    v[v < 0] = 0
-
-    final_hsv = cv2.merge((h, s, v))
-    image = cv2.cvtColor(final_hsv, cv2.COLOR_HSV2RGB)
-
-    return image
-
-
-def random_image_augmentation(image: np.ndarray):
-    """
-    Perform a position invariant transformation to the image
-    The transformation is randomly chosen among:
-    - no transformation
-    - blurry the image
-    - change the image brightness
-    """
-
-    functions = [get_raw_image, random_get_blurry_image, random_change_image_brightness]
-    random_function = random.choice(functions)
-    return random_function(image)
-
+    return transformed_image, transformed_bboxes
 
 def preprocess_image(image: np.ndarray) -> np.ndarray:
     if len(image.shape) == 3 and image.shape[2] == 4:

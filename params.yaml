@@ -1,4 +1,5 @@
 random_state: 42
+augmentation: true
 
 train:
   fit:
