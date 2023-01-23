@@ -17,7 +17,7 @@ COPY ./src ./src
 
 # Install project as module
 COPY ./setup.py ./setup.py
-RUN --mount=type=cache,target=/root/.cache python3 -m pip install .
+RUN python3 -m pip install . --no-dependencies
 
 COPY ./default.env ./.env
 
