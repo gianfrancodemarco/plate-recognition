@@ -26,44 +26,41 @@ class ImageRecognitionService:
     __transformer_model: VisionEncoderDecoderModel = None
 
     def __init__(self) -> None:
+        self.__load_models()
 
-        def __load_detection_model():
-            return fetch_model(
-                model_name=model_name,
-                model_version=model_version
-            )
+    def __load_detection_model(self) -> None:
+        self.__detection_model = fetch_model(
+            model_name=model_name,
+            model_version=model_version
+        )
 
-        def __load_transformer_processor():
-            return TrOCRProcessor.from_pretrained(tr_ocr_processor)
+    def __load_transformer_processor(self) -> None:
+        self.__transformer_processor = TrOCRProcessor.from_pretrained(tr_ocr_processor)
 
-        def __load_transformer_model():
-            return VisionEncoderDecoderModel.from_pretrained(tr_ocr_model)
+    def __load_transformer_model(self) -> None:
+        self.__transformer_model = VisionEncoderDecoderModel.from_pretrained(tr_ocr_model)
 
-        def _load():
-            logging.info("Downloading models in background")
-            self.__detection_model = __load_detection_model()
-            self.__transformer_processor = __load_transformer_processor()
-            self.__transformer_model = __load_transformer_model()
-
+    def __load_models(self):
+        logging.info("Downloading models in background")
         loop = asyncio.get_event_loop()
-        loop.run_in_executor(None, _load)
+        loop.run_in_executor(None, self.__load_detection_model)
+        loop.run_in_executor(None, self.__load_transformer_processor)
+        loop.run_in_executor(None, self.__load_transformer_model)
+
 
     def __get_detection_model(self):
-        while not self.__detection_model:
-            logging.warning("__detection_model not ready. Sleeping 1 sec.")
-            sleep(1)
+        if not self.__detection_model:
+            self.__load_detection_model()
         return self.__detection_model
 
     def __get_transformer_processor(self):
-        while not self.__transformer_processor:
-            logging.warning("__transformer_processor not ready. Sleeping 1 sec.")
-            sleep(1)
+        if not self.__transformer_processor:
+           self.__load_transformer_processor()
         return self.__transformer_processor
 
     def __get_transformer_model(self):
-        while not self.__transformer_model:
-            logging.warning("__transformer_model not ready. Sleeping 1 sec.")
-            sleep(1)
+        if not self.__transformer_model:
+            self.__load_transformer_model()
         return self.__transformer_model
 
     def __predict_image_bbox__(self, image: np.ndarray):

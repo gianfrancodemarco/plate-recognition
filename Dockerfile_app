@@ -11,7 +11,7 @@ RUN python3 -m pip install --upgrade pip
 
 # Install dependencies using cache so that they don't have to be downloaded every time
 COPY ./requirements_app.txt ./requirements_app.txt
-# RUN --mount=type=cache,target=/root/.cache pip install -r ./requirements_app.txt 
+RUN --mount=type=cache,target=/root/.cache pip install -r ./requirements_app.txt 
 
 COPY ./src ./src
 
