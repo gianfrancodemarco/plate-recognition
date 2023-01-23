@@ -63,8 +63,8 @@ jobs:
 
       - name: Run Load Test
         run: |
-          echo Waiting 120 seconds for service to fully load...
-          sleep 120
+          echo Waiting 300 seconds for service to fully load...
+          sleep 300
           locust --host http://localhost:8080 --headless --run-time 60s -u 5 -r 1
           
   #https://github.com/google-github-actions/deploy-cloudrun
