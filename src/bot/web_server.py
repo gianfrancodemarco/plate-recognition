@@ -1,5 +1,5 @@
 """
-We need the container to be listening on a predefined port to be able to run it on CloudRun, 
+We need the container to be listening on a predefined port to be able to run it on CloudRun,
 so we spawn a webserver along with the bot
 """
 

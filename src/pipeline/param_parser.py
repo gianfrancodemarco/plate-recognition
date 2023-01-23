@@ -3,7 +3,7 @@ from src.utils import dict2obj, rgetattr
 class Params():
     def __init__(self, dict1):
         self.__dict__.update(dict1)
-   
+
 class ParamParser():
 
     """
@@ -31,21 +31,21 @@ class ParamParser():
 
     def parse(self, params_dict: dict) -> Params:
         """
-        Builds a Params object and validates its structure 
+        Builds a Params object and validates its structure
 
         :param dict params_dict: A dictionary representing the params
         """
 
         params: Params = dict2obj(params_dict, Params)
-        self.__validate_params(params)   
+        self.__validate_params(params)
         return params
 
     def __validate_params(self, params: Params) -> Params:
-        """ 
+        """
         Validates the structure of top level params.
         Throws an exception if required fields are missing
         """
-        
+
         for param in self.REQUIRED_PARAMS:
             self.__validate_param(params, param)
 
@@ -53,5 +53,5 @@ class ParamParser():
     def __validate_param(self, params: Params, param_path: str) -> None:
         try:
             rgetattr(params, param_path)
-        except AttributeError as ex:
+        except AttributeError:
             raise KeyError(f"{param_path} is required")

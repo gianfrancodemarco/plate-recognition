@@ -10,7 +10,7 @@ TESTS_PATH = os.path.join(ROOT_PATH, "tests")
 REPORTS_PATH = os.path.join(ROOT_PATH, "reports")
 
 def set_random_states(random_state):
-    
+
     import random
     import numpy as np
     import tensorflow as tf
@@ -26,7 +26,7 @@ def set_random_states(random_state):
 def dict2obj(__dict__: dict, object_hook: callable):
     """
     Converts a nested dict into an object accessible with dot notation
-    
+
     ``__dict__`` is the object to convert
     """
     return json.loads(json.dumps(__dict__), object_hook=object_hook)

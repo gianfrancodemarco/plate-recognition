@@ -1,7 +1,6 @@
 import logging
 
 import mlflow
-from src.models.metrics import iou
 
 def fetch_model(
     model_name: str = None,
@@ -17,8 +16,8 @@ def fetch_model(
 
     model_version_uri = f"models:/{model_name}/{model_version}"
     model = mlflow.tensorflow.load_model(
-        model_version_uri, 
-        keras_model_kwargs={"custom_objects":{"iou": iou}}
+        model_version_uri,
+        keras_model_kwargs={"custom_objects":{}}
     )
     logging.info(f"Loaded registered model version from URI: '{model_version_uri}'")
     return model

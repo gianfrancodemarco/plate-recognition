@@ -9,7 +9,7 @@ from optuna.trial import Trial
 from src import utils
 from src.features.dataset import get_dataset
 from src.features.dataset_generator import ImageDatasetType
-from src.models.build_model import ModelBuilder
+from src.models.model_builder import ModelBuilder
 from src.models.mlflow_model_trainer import MLFlowModelTrainer
 from src.pipeline.param_parser import ParamParser
 
@@ -20,9 +20,9 @@ params = ParamParser().parse(params_dict)
 utils.set_random_states(params.random_state)
 
 train_set = get_dataset(
-    "train", dataset_generator_type=ImageDatasetType.BboxAugmentedImagesDatasetGenerator)
+    "train", dataset_generator_type=ImageDatasetType.BBOX_AUGMENTED_IMAGES_DATASET_GENERATOR)
 validation_set = get_dataset(
-    "validation", dataset_generator_type=ImageDatasetType.BboxImagesDatasetGenerator)
+    "validation", dataset_generator_type=ImageDatasetType.BBOX_IMAGES_DATASET_GENERATOR)
 
 
 def objective(params, trial: Trial):
@@ -42,7 +42,6 @@ def objective(params, trial: Trial):
         filters_kernel_size=params.train.model.filters_kernel_size,
         optimizer_name=optimizer_name,
         learning_rate=learning_rate
-        
     ).build()
 
     model_trainer = MLFlowModelTrainer(
@@ -60,7 +59,7 @@ def objective(params, trial: Trial):
 
     trial.set_user_attr("loss", model.history.history["loss"])
     trial.set_user_attr("val_loss", model.history.history["val_loss"])
-    
+
     val_loss = model.history.history["val_loss"][-1]
     return val_loss
 

@@ -1,6 +1,6 @@
 import logging
 import os
-from abc import abstractclassmethod, ABC
+from abc import ABC, abstractmethod
 from enum import Enum
 from typing import Tuple
 
@@ -12,9 +12,9 @@ from src.data.image_preprocessing import random_image_augmentation
 
 
 class ImageDatasetType(Enum):
-    PlateImagesDatasetGenerator = 'PlateImagesDatasetGenerator'
-    BboxImagesDatasetGenerator = 'BboxImagesDatasetGenerator'
-    BboxAugmentedImagesDatasetGenerator = 'BboxAugmentedImagesDatasetGenerator'
+    PLATE_IMAGES_DATASET_GENERATOR = 'PLATE_IMAGES_DATASET_GENERATOR'
+    BBOX_IMAGES_DATASET_GENERATOR = 'BBOX_IMAGES_DATASET_GENERATOR'
+    BBOX_AUGMENTED_IMAGES_DATASET_GENERATOR = 'BBOX_AUGMENTED_IMAGES_DATASET_GENERATOR'
 
 class ImagesDatasetGenerator(ABC):
     """
@@ -40,59 +40,58 @@ class ImagesDatasetGenerator(ABC):
                 image = self.image_transformation(image)
                 annotation = self.get_annotation(sample)
                 yield image, annotation
-            except Exception as e:
+            except Exception as exc:
                 logging.error("Error retrieving dataset image.")
-                logging.exception(e)
+                logging.exception(exc)
                 logging.info(f"Image path: {image_path}, annotation: {annotation}")
 
-    @abstractclassmethod
-    def image_transformation(cls, image: np.ndarray):
+    @abstractmethod
+    def image_transformation(self, image: np.ndarray):
         pass
 
-    @abstractclassmethod
-    def get_annotation(cls, annotation):
+    @abstractmethod
+    def get_annotation(self, annotation):
         pass
 
 class BboxImagesDatasetGenerator(ImagesDatasetGenerator):
 
-    def get_annotation(cls, annotation) -> Tuple[np.ndarray, np.ndarray]:
+    def get_annotation(self, annotation) -> Tuple[np.ndarray, np.ndarray]:
         return annotation[1:-1]
-    
+
     def image_transformation(self, image):
         return cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
 
 class BboxAugmentedImagesDatasetGenerator(ImagesDatasetGenerator):
-    
-    def get_annotation(cls, annotation) -> Tuple[np.ndarray, np.ndarray]:
+
+    def get_annotation(self, annotation) -> Tuple[np.ndarray, np.ndarray]:
         return annotation[1:-1]
-    
+
     def image_transformation(self, image):
         return random_image_augmentation(cv2.cvtColor(image, cv2.COLOR_BGR2RGB))
 
 class PlateImagesDatasetGenerator(ImagesDatasetGenerator):
-    
-    def get_annotation(cls, annotation) -> Tuple[np.ndarray, np.ndarray]:
+
+    def get_annotation(self, annotation) -> Tuple[np.ndarray, np.ndarray]:
         return annotation[-1]
-    
+
     def image_transformation(self, image):
         image = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
         image = random_image_augmentation(image)
         return image
 
 
-def get_dataset_generator(dataset_generator_type: ImageDatasetType):
-    if dataset_generator_type == ImageDatasetType.BboxImagesDatasetGenerator:
+def get_dataset_generator(dataset_generator_type: ImageDatasetType) -> ImagesDatasetGenerator:
+    if dataset_generator_type == ImageDatasetType.BBOX_IMAGES_DATASET_GENERATOR:
         return BboxImagesDatasetGenerator
-    elif dataset_generator_type == ImageDatasetType.BboxAugmentedImagesDatasetGenerator:
+    if dataset_generator_type == ImageDatasetType.BBOX_AUGMENTED_IMAGES_DATASET_GENERATOR:
         return BboxAugmentedImagesDatasetGenerator
-    elif dataset_generator_type == ImageDatasetType.PlateImagesDatasetGenerator:
+    if dataset_generator_type == ImageDatasetType.PLATE_IMAGES_DATASET_GENERATOR:
         return PlateImagesDatasetGenerator
 
 def get_model_output_signature(dataset_generator_type: ImageDatasetType):
-    if dataset_generator_type == ImageDatasetType.BboxImagesDatasetGenerator:
+    if dataset_generator_type == ImageDatasetType.BBOX_IMAGES_DATASET_GENERATOR:
         return tf.TensorSpec(shape=(256, 256, 3)), tf.TensorSpec(shape=(4, ))
-    elif dataset_generator_type == ImageDatasetType.BboxAugmentedImagesDatasetGenerator:
+    if dataset_generator_type == ImageDatasetType.BBOX_AUGMENTED_IMAGES_DATASET_GENERATOR:
         return tf.TensorSpec(shape=(256, 256, 3)), tf.TensorSpec(shape=(4, ))
-    elif dataset_generator_type == ImageDatasetType.PlateImagesDatasetGenerator:
+    if dataset_generator_type == ImageDatasetType.PLATE_IMAGES_DATASET_GENERATOR:
         return tf.TensorSpec(shape=(256, 256, 3)), tf.TensorSpec(shape=(), dtype=tf.string)
-

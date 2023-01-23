@@ -50,10 +50,10 @@ def post_process_plates(plates):
 
     return plates
 
-def post_process_plate(plate):    
+def post_process_plate(plate):
     """
     Perform postprocessing on a plate calling the more general version of this method: post_process_plate
     """
-    
+
     predictions = post_process_plates([plate])
     return predictions[0] if len(predictions) else None

@@ -25,6 +25,7 @@ class MLFlowModelTrainer:
         trial = None
     ) -> None:
 
+        self.model_name = model_name
         self.train_data = train_data
         self.validation_data = validation_data
         self.batch_size = batch_size
@@ -43,7 +44,7 @@ class MLFlowModelTrainer:
                 EarlyStoppingByLossVal(monitor='loss', value=1, verbose=1),
                 SaveModelMLFlowCallback(
                     model_name=self.model_name
-                )        
+                )
             ]
 
     def train(
@@ -56,7 +57,7 @@ class MLFlowModelTrainer:
         fit_func = lambda: self.__fit(
             model,
             results_path
-        ) 
+        )
 
         if self.trial:
             fit_func()
@@ -72,7 +73,7 @@ class MLFlowModelTrainer:
         model: Model,
         results_path: str = None
     ):
-        
+
         model.fit(
             epochs=self.epochs,
             x=self.train_data,
@@ -88,11 +89,11 @@ class MLFlowModelTrainer:
 
 
     def __mlflow_wrapped_fit(
-        self, 
+        self,
         fit_func: callable,
         params_to_log: dict = None
     ):
-    
+
         with mlflow.start_run():
 
             if params_to_log:

@@ -18,9 +18,9 @@ PROCESSED_PATH = os.path.join(utils.DATA_PATH, "processed")
 
 ANNOTATIONS_PATH = os.path.join(utils.DATA_PATH, "raw", "annotations.csv")
 PLATES_PATH = os.path.join(utils.DATA_PATH, "raw", "plates.csv")
-TRAIN_SET_FRACTION = os.getenv("TRAIN_SET_FRACTION", 0.7)
-TEST_SET_FRACTION = os.getenv("TEST_SET_FRACTION", 0.2)
-VALIDATION_SET_FRACTION = os.getenv("VALIDATION_SET_FRACTION", 0.1)
+TRAIN_SET_FRACTION = float(os.getenv(("TRAIN_SET_FRACTION"), "0.7"))
+TEST_SET_FRACTION = float(os.getenv("TEST_SET_FRACTION", "0.2"))
+VALIDATION_SET_FRACTION = float(os.getenv("VALIDATION_SET_FRACTION", "0.1"))
 
 
 def merge_annotations_and_plates_dataframes():

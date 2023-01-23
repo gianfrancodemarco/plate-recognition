@@ -1,12 +1,10 @@
-import logging
-
-from keras.layers import (Conv2D, Dense, Dropout, Flatten, Input, LeakyReLU,
-                          MaxPooling2D, ReLU, BatchNormalization)
+from keras.layers import (BatchNormalization, Conv2D, Dense, Dropout, Flatten,
+                          Input, LeakyReLU, MaxPooling2D)
 from keras.metrics import RootMeanSquaredError
 from keras.models import Sequential
-from src.models.metrics import iou
-from keras.optimizers.optimizer_experimental.sgd import SGD
 from keras.optimizers.optimizer_experimental.adam import Adam
+from keras.optimizers.optimizer_experimental.sgd import SGD
+
 
 class ModelBuilder:
 
@@ -17,13 +15,13 @@ class ModelBuilder:
         filters_num: int = 32,
         filters_kernel_size: int = (2, 2),
         optimizer_name: str = "adam",
-        learning_rate: float = 0.001        
+        learning_rate: float = 0.001
     ) -> None:
         self.dropout = dropout
         self.cnn_blocks = cnn_blocks
         self.filters_num = filters_num
         self.filters_kernel_size = filters_kernel_size
-        self.optimizer_name = optimizer_name 
+        self.optimizer_name = optimizer_name
         self.learning_rate = learning_rate
 
     def build(self):
@@ -58,5 +56,5 @@ class ModelBuilder:
     def get_optimizer(self):
         if self.optimizer_name == "adam":
             return Adam(learning_rate=self.learning_rate)
-        elif self.optimizer_name == "sgd":
+        if self.optimizer_name == "sgd":
             return SGD(learning_rate=self.learning_rate)
