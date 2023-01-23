@@ -18,7 +18,7 @@ COPY ./requirements_app.txt ./requirements_app.txt
 COPY ./setup.py ./setup.py
 RUN python3 -m pip install --no-dependencies .
 
-COPY ./.env ./.env
+COPY ./default.env ./.env
 
 EXPOSE 8080
 ENTRYPOINT ["python", "-m", "src.bot.main"]
