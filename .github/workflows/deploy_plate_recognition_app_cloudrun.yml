@@ -48,7 +48,11 @@ jobs:
           password: ${{ secrets.GAR_JSON_KEY }}
       - name: Run web API from GCP image
         run: |
-          docker run -d -p 8080:8080 ${{ vars.APP_DOCKER_IMAGE }} -e MLFLOW_TRACKING_URI=${{ secrets.MLFLOW_TRACKING_URI }} -e MLFLOW_TRACKING_USERNAME=${{ secrets.MLFLOW_TRACKING_USERNAME }} -e MLFLOW_TRACKING_PASSWORD=${{ secrets.MLFLOW_TRACKING_PASSWORD }}
+          docker run -d \
+          -e MLFLOW_TRACKING_URI=${{ secrets.MLFLOW_TRACKING_URI }} \
+          -e MLFLOW_TRACKING_USERNAME=${{ secrets.MLFLOW_TRACKING_USERNAME }} \
+          -e MLFLOW_TRACKING_PASSWORD=${{ secrets.MLFLOW_TRACKING_PASSWORD }} \
+          -p 8080:8080 ${{ vars.APP_DOCKER_IMAGE }}
 
       - name: Install Locust
         run: |
