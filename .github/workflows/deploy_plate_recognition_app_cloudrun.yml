@@ -55,7 +55,7 @@ jobs:
       - 
         name: Run web API from GCP image
         run: |
-          docker run -p 8080:8080 ${{ vars.APP_DOCKER_IMAGE }} --name api
+          docker run -p 8080:8080 ${{ vars.APP_DOCKER_IMAGE }}
       -
         name: Install Locust
         run: |
