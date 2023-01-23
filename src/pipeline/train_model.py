@@ -10,6 +10,7 @@ from src.models.mlflow_model_trainer import MLFlowModelTrainer
 from src.models.model_builder import ModelBuilder
 from src.pipeline.param_parser import ParamParser
 
+DATASETS_BASE = os.path.join(utils.DATA_PATH, "processed")
 TRAIN_REPORTS_PATH = os.path.join(utils.REPORTS_PATH, "train")
 
 params_dict = dvc.api.params_show()
@@ -19,9 +20,13 @@ utils.set_random_states(params.random_state)
 if __name__ == "__main__":
 
     train_set = get_dataset(
-        "train", dataset_generator_type=ImageDatasetType.BBOX_AUGMENTED_IMAGES_DATASET_GENERATOR)
+        annotations_path=os.path.join(DATASETS_BASE, "train", "annotations.csv"),
+        dataset_generator_type=ImageDatasetType.BBOX_AUGMENTED_IMAGES_DATASET_GENERATOR
+    )
     validation_set = get_dataset(
-        "validation", dataset_generator_type=ImageDatasetType.BBOX_IMAGES_DATASET_GENERATOR)
+        annotations_path=os.path.join(DATASETS_BASE, "validation", "annotations.csv"),
+        dataset_generator_type=ImageDatasetType.BBOX_IMAGES_DATASET_GENERATOR
+    )
 
     try:
         model = fetch_model(model_name=params.train.model.model_name,

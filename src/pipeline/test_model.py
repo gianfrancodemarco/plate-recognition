@@ -1,9 +1,10 @@
+import os
+
 import dvc.api
 import mlflow
 import numpy as np
 from PIL import Image
-from transformers import TrOCRProcessor, VisionEncoderDecoderModel
-
+from src import utils
 from src.data.image_preprocessing import crop_image
 from src.features.dataset import get_dataset
 from src.features.dataset_generator import ImageDatasetType
@@ -11,15 +12,20 @@ from src.features.postprocessing import post_process_plate
 from src.models.fetch_model import fetch_model
 from src.models.metrics import lev_dist
 from src.pipeline.param_parser import ParamParser
+from transformers import TrOCRProcessor, VisionEncoderDecoderModel
+
+DATASETS_BASE = os.path.join(utils.DATA_PATH, "processed")
 
 params = dvc.api.params_show()
 params_dict = dvc.api.params_show()
 params = ParamParser().parse(params_dict)
 
 
-model = fetch_model(model_name=params.test.model.model_name, model_version=params.test.model.model_version)
+model = fetch_model(model_name=params.test.model.model_name,
+                    model_version=params.test.model.model_version)
 transformer_processor = TrOCRProcessor.from_pretrained(params.test.model.tr_ocr_processor)
 transformer_model = VisionEncoderDecoderModel.from_pretrained(params.test.model.tr_ocr_model)
+
 
 def evaluate_bbox_detection():
     [loss, root_mean_squared_error] = model.evaluate(test_set_bbox)
@@ -64,10 +70,16 @@ def evaluate_ocr():
 
 
 if __name__ == "__main__":
+
     test_set_bbox = get_dataset(
-        "test", dataset_generator_type=ImageDatasetType.BBOX_IMAGES_DATASET_GENERATOR, batch_size=1, shuffle=False)
+        annotations_path=os.path.join(DATASETS_BASE, "test", "annotations.csv"),
+        dataset_generator_type=ImageDatasetType.BBOX_IMAGES_DATASET_GENERATOR, batch_size=1, shuffle=False
+    )
+    
     test_set_plates = get_dataset(
-        "test", dataset_generator_type=ImageDatasetType.PLATE_IMAGES_DATASET_GENERATOR, batch_size=1, shuffle=False)
+        annotations_path=os.path.join(DATASETS_BASE, "test", "annotations.csv"),
+        dataset_generator_type=ImageDatasetType.PLATE_IMAGES_DATASET_GENERATOR, batch_size=1, shuffle=False
+    )
 
     run_name = f"test_{params.test.model.model_name}_v{params.test.model.model_version}"
     with mlflow.start_run(run_name=run_name):
