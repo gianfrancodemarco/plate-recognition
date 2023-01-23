@@ -48,10 +48,11 @@ jobs:
           password: ${{ secrets.GAR_JSON_KEY }}
       - name: Run web API from GCP image
         run: |
-          docker run -p 8080:8080 ${{ vars.APP_DOCKER_IMAGE }} \
+          docker run -d \
           -e MLFLOW_TRACKING_URI=${{ secrets.MLFLOW_TRACKING_URI }} \
           -e MLFLOW_TRACKING_USERNAME=${{ secrets.MLFLOW_TRACKING_USERNAME }} \
-          -e MLFLOW_TRACKING_PASSWORD=${{ secrets.MLFLOW_TRACKING_PASSWORD }}
+          -e MLFLOW_TRACKING_PASSWORD=${{ secrets.MLFLOW_TRACKING_PASSWORD }} \
+          -p 8080:8080 ${{ vars.APP_DOCKER_IMAGE }}
 
       - name: Install Locust
         run: |
@@ -59,8 +60,8 @@ jobs:
 
       - name: Run Load Test
         run: |
-          echo Waiting 300 seconds for service to fully load...
-          sleep 300
+          echo Waiting 90 seconds for service to fully load...
+          sleep 90
           locust --host http://localhost:8080 --headless --run-time 60s -u 10 -r 1
 
   #https://github.com/google-github-actions/deploy-cloudrun
