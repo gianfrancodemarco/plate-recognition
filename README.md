@@ -1,4 +1,6 @@
-[![Code check](https://github.com/gianfrancodemarco/plate-recognition/actions/workflows/code_checks.yml/badge.svg)](https://github.com/gianfrancodemarco/plate-recognition/actions/workflows/code_checks.yml)
+[![Code checks (pylint, pynblint, pytest & coverage](https://github.com/gianfrancodemarco/plate-recognition/actions/workflows/code_checks_plate_recognition_app.yml/badge.svg)](https://github.com/gianfrancodemarco/plate-recognition/actions/workflows/code_checks_plate_recognition_app.yml)
+[![API endpoint](https://img.shields.io/badge/endpoint-API-blue?logo=googlechrome&logoColor=white)](https://plate-recognition-qbly4ubf5q-uc.a.run.app/docs#/)
+[![Telegram BOT](https://img.shields.io/badge/endpoint-UI-blue?logo=googlechrome&logoColor=white)](https://t.me/PlateRecognitionBOT)
 
 ## Commands
 
