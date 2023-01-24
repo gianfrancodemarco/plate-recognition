@@ -8,7 +8,7 @@ from src.features.dataset_generator import (ImageDatasetType,
 
 
 def configure_for_performance(dataset: tf.data.Dataset, batch_size: int = 16, shuffle: bool = True):
-    dataset = dataset.cache()
+    #dataset = dataset.cache()
     if shuffle:
         dataset = dataset.shuffle(buffer_size=1000)
     dataset = dataset.batch(batch_size)

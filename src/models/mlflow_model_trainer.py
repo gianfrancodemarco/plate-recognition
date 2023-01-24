@@ -14,6 +14,8 @@ class ModelTrainer:
 
 class MLFlowModelTrainer:
 
+    experiment = "Training"
+
     def __init__(
         self,
         model_name: str,
@@ -93,7 +95,7 @@ class MLFlowModelTrainer:
         fit_func: callable,
         params_to_log: dict = None
     ):
-
+        mlflow.set_experiment(self.experiment)
         with mlflow.start_run():
 
             if params_to_log:

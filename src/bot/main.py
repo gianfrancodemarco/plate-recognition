@@ -11,6 +11,7 @@ from src.bot.monitoring import (increase_messages_counter,
                                 increase_photos_counter, start_monitoring)
 
 DEFAULT_MESSAGE = "Send me the picture of a car plate and i'll try to transcribe it for you."
+NO_PLATE_MESSAGE = "No plate found. Please try again with a new image."
 TOKEN = os.getenv("TELEGRAM_API_TOKEN", "5608820637:AAG7cHLFOafgcVqTGS5QDVdebhCEGm-CJjk")
 
 # Define a few command handlers. These usually take the two arguments update and
@@ -19,10 +20,7 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     """Send a message when the command /start is issued."""
     user = update.effective_user
     await update.message.reply_html(
-        rf"""
-        Hi {user.mention_html()}!
-        {DEFAULT_MESSAGE}
-        """,
+        f"""Hi {user.mention_html()}! {DEFAULT_MESSAGE}""",
         reply_markup=ForceReply(selective=True),
     )
 
@@ -49,8 +47,9 @@ async def photo_handler(update: Update, _: ContextTypes.DEFAULT_TYPE) -> None:
         photo = await telegram_helper.get_photo(photo_file)
         logging.info("Requesting the plate to the plate recognition api...")
         response = plate_recognition_api.get_plate_text(photo)
+        message_text = response.json()["data"]["plate"] or NO_PLATE_MESSAGE 
         await update.message.reply_text(
-            response.json()["data"]["plate"],
+            message_text,
             reply_to_message_id=update.message.id
         )
         logging.info("Done.")

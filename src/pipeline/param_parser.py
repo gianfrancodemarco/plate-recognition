@@ -11,6 +11,7 @@ class ParamParser():
     """
     REQUIRED_PARAMS = [
         "random_state",
+        "augmentation",
         "train",
         "train.model",
         "train.model.model_name",
@@ -19,6 +20,8 @@ class ParamParser():
         "train.model.cnn_blocks",
         "train.model.filters_num",
         "train.model.filters_kernel_size",
+        "train.model.optimizer_name",
+        "train.model.learning_rate",
         "train.fit",
         "train.fit.epochs",
         "test",

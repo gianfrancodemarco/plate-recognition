@@ -8,7 +8,7 @@ import cv2
 import numpy as np
 import pandas as pd
 import tensorflow as tf
-from src.data.image_preprocessing import random_image_augmentation
+from src.data.image_preprocessing import augment_image
 
 
 class ImageDatasetType(Enum):
@@ -37,8 +37,9 @@ class ImagesDatasetGenerator(ABC):
                 image_name = sample[0]
                 image_path = os.path.join(self.images_path, image_name)
                 image = cv2.imread(image_path)
-                image = self.image_transformation(image)
                 annotation = self.get_annotation(sample)
+                image, annotation = self.image_transformation(image, annotation)
+                image = cv2.resize(image, (256,256))
                 yield image, annotation
             except Exception as exc:
                 logging.error("Error retrieving dataset image.")
@@ -46,7 +47,7 @@ class ImagesDatasetGenerator(ABC):
                 logging.info(f"Image path: {image_path}, annotation: {annotation}")
 
     @abstractmethod
-    def image_transformation(self, image: np.ndarray):
+    def image_transformation(self, image: np.ndarray, annotation: np.ndarray):
         pass
 
     @abstractmethod
@@ -58,27 +59,25 @@ class BboxImagesDatasetGenerator(ImagesDatasetGenerator):
     def get_annotation(self, annotation) -> Tuple[np.ndarray, np.ndarray]:
         return annotation[1:-1]
 
-    def image_transformation(self, image):
-        return cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
+    def image_transformation(self, image: np.ndarray, annotation: np.ndarray)-> Tuple[np.ndarray, np.ndarray]:
+        return cv2.cvtColor(image, cv2.COLOR_BGR2RGB), annotation
 
 class BboxAugmentedImagesDatasetGenerator(ImagesDatasetGenerator):
 
     def get_annotation(self, annotation) -> Tuple[np.ndarray, np.ndarray]:
         return annotation[1:-1]
 
-    def image_transformation(self, image):
-        return random_image_augmentation(cv2.cvtColor(image, cv2.COLOR_BGR2RGB))
+    def image_transformation(self, image: np.ndarray, annotation: np.ndarray)-> Tuple[np.ndarray, np.ndarray]:
+        return augment_image(cv2.cvtColor(image, cv2.COLOR_BGR2RGB), annotation)
 
 class PlateImagesDatasetGenerator(ImagesDatasetGenerator):
 
     def get_annotation(self, annotation) -> Tuple[np.ndarray, np.ndarray]:
         return annotation[-1]
 
-    def image_transformation(self, image):
+    def image_transformation(self,  image: np.ndarray, annotation: np.ndarray) -> Tuple[np.ndarray, np.ndarray]:
         image = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
-        image = random_image_augmentation(image)
-        return image
-
+        return image, annotation
 
 def get_dataset_generator(dataset_generator_type: ImageDatasetType) -> ImagesDatasetGenerator:
     if dataset_generator_type == ImageDatasetType.BBOX_IMAGES_DATASET_GENERATOR:

@@ -31,8 +31,8 @@ stages:
       md5: 230a14f00bece9df11719b3e04ac8210
       size: 7380
     - path: src/pipeline/make_dataset.py
-      md5: f26c2b68b849d56810e61b5f3b748015
-      size: 3023
+      md5: e1101cf189d047149df3e0bd1970088f
+      size: 3052
     params:
       params.yaml:
         random_state: 42
@@ -65,23 +65,23 @@ stages:
     - path: reports/great_expectations/validation_annotations.json
       md5: fb68c09946cbc73175ee3cc1230f50e7
       size: 741
-    - path: src/models/build_model.py
-      md5: 1fee6f15783a6a58eb70a18491d1c207
-      size: 993
     - path: src/models/fetch_model.py
-      md5: 1f16045389b110573af4200525429df6
-      size: 699
+      md5: cf76fc8318ef933baf2d089fec9425f7
+      size: 653
+    - path: src/models/model_builder.py
+      md5: 2295f4b2b811389f852a3619ac319ed5
+      size: 1834
     - path: src/pipeline/train_model.py
-      md5: f44f3982dde2a5c2e1ad7f950b6632de
-      size: 1713
+      md5: 2a1be97db3858c4e846d594288e70276
+      size: 2091
     params:
       params.yaml:
         random_state: 42
         train:
           fit:
-            epochs: 1
+            epochs: 10
           model:
-            model_name: test
+            model_name: teste
             model_version: 1
             dropout: 0.4
             cnn_blocks: 6
@@ -89,8 +89,8 @@ stages:
             filters_kernel_size: 3
     outs:
     - path: reports/train/history.json
-      md5: d588dac919bc5d549e0a38100905af50
-      size: 231
+      md5: 91dacccb1434d85088de009945f4155a
+      size: 1170
   predict_model:
     cmd: python src/pipeline/test_model.py
     deps:
@@ -122,3 +122,20 @@ stages:
     - path: reports/great_expectations/validation_annotations.json
       md5: fb68c09946cbc73175ee3cc1230f50e7
       size: 741
+  test_model:
+    cmd: python src/pipeline/test_model.py
+    deps:
+    - path: reports/train/history.json
+      md5: 91dacccb1434d85088de009945f4155a
+      size: 1170
+    - path: src/pipeline/test_model.py
+      md5: 9618d369cb959b49888148f39da0be3b
+      size: 3477
+    params:
+      params.yaml:
+        test:
+          model:
+            model_name: test
+            model_version: 1
+            tr_ocr_processor: microsoft/trocr-small-printed
+            tr_ocr_model: microsoft/trocr-small-printed

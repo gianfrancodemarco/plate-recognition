@@ -1,10 +1,11 @@
 random_state: 42
+augmentation: true
 
 train:
   fit:
-    epochs: 1
+    epochs: 10
   model:
-    model_name: test
+    model_name: teste
     model_version: 1
     dropout: 0.4
     cnn_blocks: 6

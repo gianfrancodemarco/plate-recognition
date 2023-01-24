@@ -10,16 +10,16 @@ RUN apt install ffmpeg libsm6 libxext6  -y
 RUN python3 -m pip install --upgrade pip
 
 # Install dependencies using cache so that they don't have to be downloaded every time
-COPY ./requirements_app.txt ./requirements.txt
-RUN --mount=type=cache,target=/root/.cache pip install -r ./requirements.txt 
+COPY ./requirements_app.txt ./requirements_app.txt
+RUN --mount=type=cache,target=/root/.cache pip install -r ./requirements_app.txt 
 
 COPY ./src ./src
 
 # Install project as module
 COPY ./setup.py ./setup.py
-RUN python3 -m pip install .
+RUN python3 -m pip install . --no-dependencies
 
-COPY ./.env ./.env
+COPY ./default.env ./.env
 
 EXPOSE 8080
 ENTRYPOINT ["uvicorn", "src.app.main:app", "--host", "0.0.0.0", "--port", "8080"]

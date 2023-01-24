@@ -18,66 +18,50 @@ model_version = os.getenv("MODEL_VERSION")
 tr_ocr_processor = os.getenv("TR_OCR_PROCESSOR", "microsoft/trocr-small-printed")
 tr_ocr_model = os.getenv("TR_OCR_MODEL", "microsoft/trocr-small-printed")
 
+
 class ImageRecognitionService:
 
     __detection_model: Model = None
     __transformer_processor: TrOCRProcessor = None
     __transformer_model: VisionEncoderDecoderModel = None
 
-
     def __init__(self) -> None:
+        self.__load_models()
 
-        def __load_detection_model():
-            try:
-                return fetch_model(
-                        model_name=model_name,
-                        model_version=model_version
-                    )
-            except:
-                return __load_detection_model()
+    def __load_detection_model(self) -> None:
+        self.__detection_model = fetch_model(
+            model_name=model_name,
+            model_version=model_version
+        )
 
-        def __load_transformer_processor():
-            try:
-                return TrOCRProcessor.from_pretrained(tr_ocr_processor)
-            except:
-                return __load_transformer_processor()
+    def __load_transformer_processor(self) -> None:
+        self.__transformer_processor = TrOCRProcessor.from_pretrained(tr_ocr_processor)
 
-        def __load_transformer_model():
-            try:
-                return VisionEncoderDecoderModel.from_pretrained(tr_ocr_model)
-            except:
-                return __load_transformer_model()
+    def __load_transformer_model(self) -> None:
+        self.__transformer_model = VisionEncoderDecoderModel.from_pretrained(tr_ocr_model)
 
-        def _load():
-            logging.info("Downloading models in background")
-            self.__detection_model = __load_detection_model()
-            self.__transformer_processor = __load_transformer_processor()
-            self.__transformer_model = __load_transformer_model()
-
+    def __load_models(self):
+        logging.info("Downloading models in background")
         loop = asyncio.get_event_loop()
-        loop.run_in_executor(None, _load)
+        loop.run_in_executor(None, self.__load_detection_model)
+        loop.run_in_executor(None, self.__load_transformer_processor)
+        loop.run_in_executor(None, self.__load_transformer_model)
 
 
     def __get_detection_model(self):
-        while not self.__detection_model:
-            logging.warning("__detection_model not ready. Sleeping 1 sec.")
-            sleep(1)
+        if not self.__detection_model:
+            self.__load_detection_model()
         return self.__detection_model
 
-
     def __get_transformer_processor(self):
-        while not self.__transformer_processor:
-            logging.warning("__transformer_processor not ready. Sleeping 1 sec.")
-            sleep(1)
+        if not self.__transformer_processor:
+           self.__load_transformer_processor()
         return self.__transformer_processor
 
-
     def __get_transformer_model(self):
-        while not self.__transformer_model:
-            logging.warning("__transformer_model not ready. Sleeping 1 sec.")
-            sleep(1)
+        if not self.__transformer_model:
+            self.__load_transformer_model()
         return self.__transformer_model
-
 
     def __predict_image_bbox__(self, image: np.ndarray):
         _image = image.copy()
@@ -85,17 +69,15 @@ class ImageRecognitionService:
         _image_batch = np.array([_image])
         return self.__get_detection_model().predict(_image_batch)[0]
 
-
     def predict_bbox(self, image: np.ndarray) -> np.ndarray:
         return self.__predict_image_bbox__(image)
-
 
     def predict_bbox_and_annotate_image(self, image: np.ndarray):
         bbox = self.__predict_image_bbox__(image)
         bbox = box(*bbox)
 
-        yfact = image.shape[0]/255
-        xfact = image.shape[1]/255
+        yfact = image.shape[0]/256
+        xfact = image.shape[1]/256
 
         bbox = scale(bbox, xfact=xfact, yfact=yfact, origin=(0, 0))
 
@@ -106,9 +88,9 @@ class ImageRecognitionService:
         cv2.rectangle(_image, pt1, pt2, color=(0, 0, 255), thickness=3)
         return _image
 
-
     def predict_plate(self, image: np.ndarray):
 
+        image = preprocess_image(image)
         bbox = self.__predict_image_bbox__(image)
 
         cropped_image = crop_image(image, bbox)

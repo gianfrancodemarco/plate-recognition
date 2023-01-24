@@ -19,13 +19,18 @@ utils.set_random_states(params.random_state)
 
 if __name__ == "__main__":
 
+    dataset_generator_type = ImageDatasetType.BBOX_IMAGES_DATASET_GENERATOR
+    if params.augmentation:
+        dataset_generator_type = ImageDatasetType.BBOX_AUGMENTED_IMAGES_DATASET_GENERATOR
+
     train_set = get_dataset(
         annotations_path=os.path.join(DATASETS_BASE, "train", "annotations.csv"),
-        dataset_generator_type=ImageDatasetType.BBOX_AUGMENTED_IMAGES_DATASET_GENERATOR
+        dataset_generator_type=dataset_generator_type
     )
+    
     validation_set = get_dataset(
         annotations_path=os.path.join(DATASETS_BASE, "validation", "annotations.csv"),
-        dataset_generator_type=ImageDatasetType.BBOX_IMAGES_DATASET_GENERATOR
+        dataset_generator_type=dataset_generator_type
     )
 
     try:
@@ -39,6 +44,8 @@ if __name__ == "__main__":
             cnn_blocks=params.train.model.cnn_blocks,
             filters_num=params.train.model.filters_num,
             filters_kernel_size=params.train.model.filters_kernel_size,
+            optimizer_name=params.train.model.optimizer_name,
+            learning_rate=params.train.model.learning_rate
         ).build()
 
     model_trainer = MLFlowModelTrainer(

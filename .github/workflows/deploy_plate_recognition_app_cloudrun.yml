@@ -12,21 +12,18 @@ jobs:
   build-and-push-artifact-registry:
     runs-on: ubuntu-latest
     steps:
-      -
-        name: Checkout
+      - name: Checkout
         uses: actions/checkout@v3
         with:
           ref: ${{ env.GITHUB_REF_NAME }}
 
-      -
-        name: Login to GAR
+      - name: Login to GAR
         uses: docker/login-action@v2
         with:
           registry: us-central1-docker.pkg.dev
           username: _json_key
           password: ${{ secrets.GAR_JSON_KEY }}
-      -
-        name: Build and push (GCP)
+      - name: Build and push (GCP)
         uses: docker/build-push-action@v3
         with:
           context: .
@@ -34,30 +31,30 @@ jobs:
           push: true
           tags: ${{ vars.APP_DOCKER_IMAGE }}
 
-
   locust-testing:
     needs: [build-and-push-artifact-registry]
     runs-on: ubuntu-latest
     steps:
-      -
-        name: Checkout
+      - name: Checkout
         uses: actions/checkout@v3
         with:
           ref: ${{ env.GITHUB_REF_NAME }}
 
-      -
-        name: Login to GAR
+      - name: Login to GAR
         uses: docker/login-action@v2
         with:
           registry: us-central1-docker.pkg.dev
           username: _json_key
           password: ${{ secrets.GAR_JSON_KEY }}
-      - 
-        name: Run web API from GCP image
+      - name: Run web API from GCP image
         run: |
-          docker run -d -p 8080:8080 ${{ vars.APP_DOCKER_IMAGE }}
-      -
-        name: Install Locust
+          docker run -d \
+          -e MLFLOW_TRACKING_URI=${{ secrets.MLFLOW_TRACKING_URI }} \
+          -e MLFLOW_TRACKING_USERNAME=${{ secrets.MLFLOW_TRACKING_USERNAME }} \
+          -e MLFLOW_TRACKING_PASSWORD=${{ secrets.MLFLOW_TRACKING_PASSWORD }} \
+          -p 8080:8080 ${{ vars.APP_DOCKER_IMAGE }}
+
+      - name: Install Locust
         run: |
           pip install locust
 
@@ -66,35 +63,38 @@ jobs:
           echo Waiting 90 seconds for service to fully load...
           sleep 90
           locust --host http://localhost:8080 --headless --run-time 60s -u 10 -r 1
-          
+
   #https://github.com/google-github-actions/deploy-cloudrun
   deploy-cloudrun:
     needs: [locust-testing]
     runs-on: ubuntu-latest
     permissions:
-      contents: 'read'
-      id-token: 'write'
+      contents: "read"
+      id-token: "write"
 
     steps:
-    - uses: 'actions/checkout@v3'
-      with:
+      - uses: "actions/checkout@v3"
+        with:
           ref: ${{ env.GITHUB_REF_NAME }}
-    - uses: 'google-github-actions/auth@v1'
-      with:
-        credentials_json: ${{ secrets.CLOUD_RUN_JSON_KEY }}
+      - uses: "google-github-actions/auth@v1"
+        with:
+          credentials_json: ${{ secrets.CLOUD_RUN_JSON_KEY }}
 
-    - id: 'deploy'
-      uses: 'google-github-actions/deploy-cloudrun@v1'
-      with:
-        service: ${{ vars.APP_SERVICE_NAME }}
-        image: ${{ vars.APP_DOCKER_IMAGE }}
-        env_vars: |
-          DAGSHUB_USERNAME=${{ secrets.DAGSHUB_USERNAME }}
-          DAGSHUB_TOKEN=${{ secrets.DAGSHUB_TOKEN }}
-          MODEL_NAME=${{ vars.MODEL_NAME }}
-          MODEL_VERSION=${{ vars.MODEL_VERSION }}
-          TR_OCR_PROCESSOR=${{ vars.TR_OCR_PROCESSOR }}
-          TR_OCR_MODEL=${{ vars.TR_OCR_MODEL }}
+      - id: "deploy"
+        uses: "google-github-actions/deploy-cloudrun@v1"
+        with:
+          service: ${{ vars.APP_SERVICE_NAME }}
+          image: ${{ vars.APP_DOCKER_IMAGE }}
+          env_vars: |
+            DAGSHUB_USERNAME=${{ secrets.DAGSHUB_USERNAME }}
+            DAGSHUB_TOKEN=${{ secrets.DAGSHUB_TOKEN }}
+            MODEL_NAME=${{ vars.MODEL_NAME }}
+            MODEL_VERSION=${{ vars.MODEL_VERSION }}
+            TR_OCR_PROCESSOR=${{ vars.TR_OCR_PROCESSOR }}
+            TR_OCR_MODEL=${{ vars.TR_OCR_MODEL }}
+            MLFLOW_TRACKING_URI=${{ secrets.MLFLOW_TRACKING_URI }}
+            MLFLOW_TRACKING_USERNAME=${{ secrets.MLFLOW_TRACKING_USERNAME }}
+            MLFLOW_TRACKING_PASSWORD=${{ secrets.MLFLOW_TRACKING_PASSWORD }}
 
-    - name: 'Use output'
-      run: 'curl "${{ steps.deploy.outputs.url }}"'
+      - name: "Use output"
+        run: 'curl "${{ steps.deploy.outputs.url }}"'
