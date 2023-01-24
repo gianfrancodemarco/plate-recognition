@@ -44,6 +44,8 @@ if __name__ == "__main__":
             cnn_blocks=params.train.model.cnn_blocks,
             filters_num=params.train.model.filters_num,
             filters_kernel_size=params.train.model.filters_kernel_size,
+            optimizer_name=params.train.model.optimizer_name,
+            learning_rate=params.train.model.learning_rate
         ).build()
 
     model_trainer = MLFlowModelTrainer(
