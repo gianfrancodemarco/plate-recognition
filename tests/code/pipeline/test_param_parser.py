@@ -7,6 +7,7 @@ class TestParamParser:
     def test_param_parser(self):
         dictionary = {
             "random_state": 12,
+            "augmentation": 0,
             "train": {
                 "fit": {
                     "epochs": 10
@@ -17,7 +18,9 @@ class TestParamParser:
                     "dropout": 0,
                     "cnn_blocks": 1,
                     "filters_num": 1,
-                    "filters_kernel_size": 2
+                    "filters_kernel_size": 2,
+                    "optimizer_name": "adam",
+                    "learning_rate": 1
                 }
             },
             "test": {
