@@ -25,10 +25,9 @@ class ModelBuilder:
         self.learning_rate = learning_rate
 
     def build(self):
+        input_shape = (256, 256, 3)
 
         model = Sequential()
-
-        input_shape = (256, 256, 3)
         model.add(Input(shape=input_shape))
 
         for i in range(self.cnn_blocks):

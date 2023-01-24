@@ -22,7 +22,7 @@ def augment_image(image: np.ndarray, bbox: np.ndarray):
     if len(transformed_bboxes) == 0:
         return image, bbox
 
-    return transformed_image, transformed_bboxes
+    return transformed_image, transformed_bboxes[0]
 
 def preprocess_image(image: np.ndarray) -> np.ndarray:
     if len(image.shape) == 3 and image.shape[2] == 4:

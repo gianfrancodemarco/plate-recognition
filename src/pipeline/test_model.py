@@ -45,12 +45,16 @@ def evaluate_ocr():
     for (bbox, sample) in zip(bboxes, test_set_plates):
         image = sample[0][0].numpy().astype(np.uint8)
         plate = sample[1][0].numpy().decode()
-        cropped_image = crop_image(image, bbox)
-        cropped_image = Image.fromarray(cropped_image)
-        pixel_values = transformer_processor(cropped_image, return_tensors="pt").pixel_values
-        generated_ids = transformer_model.generate(pixel_values)
-        generated_text = transformer_processor.batch_decode(
-            generated_ids, skip_special_tokens=True)[0]
+        
+        try:
+            cropped_image = crop_image(image, bbox)
+            cropped_image = Image.fromarray(cropped_image)
+            pixel_values = transformer_processor(cropped_image, return_tensors="pt").pixel_values
+            generated_ids = transformer_model.generate(pixel_values)
+            generated_text = transformer_processor.batch_decode(
+                generated_ids, skip_special_tokens=True)[0]
+        except:
+            generated_text = ""
 
         _accuracy += 1 if generated_text == plate else 0
         _lev_dist += lev_dist(generated_text, plate)
@@ -77,7 +81,7 @@ if __name__ == "__main__":
 
     test_set_bbox = get_dataset(
         annotations_path=os.path.join(DATASETS_BASE, "test", "annotations.csv"),
-        dataset_generator_type=ImageDatasetType.dataset_generator_type, batch_size=1, shuffle=False
+        dataset_generator_type=dataset_generator_type, batch_size=1, shuffle=False
     )
     
     test_set_plates = get_dataset(

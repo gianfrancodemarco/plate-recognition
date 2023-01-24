@@ -37,7 +37,7 @@ stages:
     - data/processed
     - src/pipeline/train_model.py
     - src/models/fetch_model.py
-    - src/models/build_model.py
+    - src/models/model_builder.py
     outs:
     - reports/train/history.json
     params:

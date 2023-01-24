@@ -82,7 +82,7 @@ if __name__ == "__main__":
 
     # Optimize
     pruner = optuna.pruners.MedianPruner(n_startup_trials=5, n_warmup_steps=5)
-    study = optuna.create_study(study_name="optimization", direction="minimize", pruner=pruner)
+    study = optuna.create_study(study_name="Optimization", direction="minimize", pruner=pruner)
     mlflow_callback = MLflowCallback(
         tracking_uri=mlflow.get_tracking_uri(),
         metric_name="val_loss"

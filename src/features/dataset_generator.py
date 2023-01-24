@@ -39,7 +39,7 @@ class ImagesDatasetGenerator(ABC):
                 image = cv2.imread(image_path)
                 annotation = self.get_annotation(sample)
                 image, annotation = self.image_transformation(image, annotation)
-                
+                image = cv2.resize(image, (256,256))
                 yield image, annotation
             except Exception as exc:
                 logging.error("Error retrieving dataset image.")
@@ -77,9 +77,7 @@ class PlateImagesDatasetGenerator(ImagesDatasetGenerator):
 
     def image_transformation(self,  image: np.ndarray, annotation: np.ndarray) -> Tuple[np.ndarray, np.ndarray]:
         image = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
-        image = augment_image(image, annotation)
         return image, annotation
-
 
 def get_dataset_generator(dataset_generator_type: ImageDatasetType) -> ImagesDatasetGenerator:
     if dataset_generator_type == ImageDatasetType.BBOX_IMAGES_DATASET_GENERATOR:
