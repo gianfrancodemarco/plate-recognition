@@ -8,7 +8,7 @@
 1. [The project](#the-project)
 2. [Inception](#inception)
     1. [Model card](#model-card)
-    2. [Dataset card)(#dataset-card)
+    2. [Dataset card](#dataset-card)
     3. [Data augmentation](#data-augmentation)
 3.  [Reproducibility](#reproducibility)
     1. [DVC](#dvc)
@@ -20,13 +20,13 @@
     3. [Pynblint](#pynblint)
 5. [API](#api)
 6. [CI/CD](#cicd)
-    1. [Codechecks]
-    2. [DockerHub]
-    3. [Artifact Registry & Cloud Run]
+    1. [Code Checks](#code-checks)
+    2. [DockerHub](#dockerhub)
+    3. [Artifact Registry & Cloud Run](#artifact-registry-cloud-run)
 7. [Monitoring](#monitoring)
 8. [Extra](#extra)
-    1. [Security]
-    2. [Costs]
+    1. [Security](#security)
+    2. [Costs](#costs)
 
 
 # The-project
