@@ -300,3 +300,5 @@ The user can send here an image, and the bot will respond with the predicted pla
 The telegram bot backend is a stand-alone service, and sends an HTTP request to the `/api/v1/image-recognition/predict/plate-text` to predict the license plate.
 
 It always uses the `postprocess` parameter as true.
+
+![A sample conversation with the bot](reports/figures/bot_conversation.png "Conversation")
