@@ -1,6 +1,8 @@
 [![Code checks (pylint, pynblint, pytest & coverage](https://github.com/gianfrancodemarco/plate-recognition/actions/workflows/code_checks_plate_recognition_app.yml/badge.svg)](https://github.com/gianfrancodemarco/plate-recognition/actions/workflows/code_checks_plate_recognition_app.yml)
-[![API endpoint](https://img.shields.io/badge/endpoint-API-blue?logo=googlechrome&logoColor=white)](https://plate-recognition-qbly4ubf5q-uc.a.run.app/docs#/)
-[![Telegram BOT](https://img.shields.io/badge/endpoint-UI-blue?logo=googlechrome&logoColor=white)](https://t.me/PlateRecognitionBOT)
+[![API endpoint](https://img.shields.io/badge/endpoint-API-blue?logo=googlechrome&logoColor=white&label=Endpoint)](https://plate-recognition-qbly4ubf5q-uc.a.run.app/docs#/)
+[![Telegram BOT](https://img.shields.io/badge/endpoint-UI-blue?logo=googlechrome&logoColor=white&label=Telegram%20BOT)](https://t.me/PlateRecognitionBOT)
+[![Prometheus](https://img.shields.io/badge/style-Monitoring-green?logo=prometheus&logoColor=orange&label=Prometheus)](https://prometheus-qbly4ubf5q-uc.a.run.app)
+[![Grafana](https://img.shields.io/badge/style-Monitoring-green?logo=grafana&logoColor=orange&label=Grafana&style=Monitoring)](https://grafana-qbly4ubf5q-uc.a.run.app)
 
 ## Commands
 
