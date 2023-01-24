@@ -20,15 +20,17 @@
     6. [Github variables and Secrets](#github-variables-and-secrets)
 4. [Quality assurance](#quality-assurance)
     1. [Pylint](#pylint)
-    2. [Coverage](#coverage)
-    3. [Pynblint](#pynblint)
+    2. [Pynblint](#pynblint)
+    3. [Pytest and coverage](#pytest-and-coverage)
+    4. [Great Expectations](#great-expectations)   
 5. [API](#api)
-6. [CI/CD](#cicd)
+6. [Telegram Bot](#telegram-bot)
+7. [CI/CD](#cicd)
     1. [Code Checks](#code-checks)
     2. [DockerHub](#dockerhub)
     3. [Artifact Registry & Cloud Run](#artifact-registry-cloud-run)
-7. [Monitoring](#monitoring)
-8. [Extra](#extra)
+8. [Monitoring](#monitoring)
+9. [Extra](#extra)
     1. [Hyperparameters optimization](#optimization)
     2. [Project structure](#project-structure)
     3. [Security](#security)
@@ -231,4 +233,70 @@ The following have been defined:
 - MLFLOW_TRACKING_USERNAME
 - TELEGRAM_API_TOKEN
 
-## Quality assurance
+# Quality assurance
+
+## Pylint
+
+This project integrates pylint, which is a static code analyser for Python, which checks the quality of the source code.
+
+## Pynblint
+
+This project integrates pynblint, which is a static code analyser for Python notebooks.
+
+## Pytest and coverage
+
+This project integrates pytest and coverage for unit testing of the code.
+Pytest is a framework that allows to write and execute unit tests.
+
+Coverage can be used as a wrapper for pytest, and is useful to produce statistics about the testing of the code (files/lines coverage).
+
+## Great Expectations
+
+Great expectations is a library that allows to check for the quality and charateristichs of the data. Specifically, it is useful to detect changes in the characteristics of the data in time.
+
+Great expectations is mainly indicated for tabular data. Since this project is based mainly on image data, Great expectations has been used exclusively to test the images annotations.
+
+# API
+
+The plate recognition service is exposed using an HTTP server.
+The framework used to build the APIs is FastAPI.
+
+The service loads the two required models at startup:
+- the plate recognition model (custom) from MLflow
+- the image-to-text model (pre trained) from HuggingFace
+
+The API exposed are:
+```
+URL: /api/v1/image-recognition/predict/plate-bbox
+Body: 
+- image_file (Binary)
+Parameters:
+- as_image (boolean)
+    
+Predicts the bbox of the plate for an image.
+If as_image is true, it returns the original image with the bbox drawn in overlay; otherwise, it returns the array representing the bbox.
+```
+
+```
+URL: /api/v1/image-recognition/predict/plate-text
+Body: 
+- image_file (Binary)
+Parameters:
+- postprocess (boolean)
+    
+Predicts the plate for an image.
+If postprocess is true, it applies some postprocessing to the predicted plate.
+```
+
+# Telegram bot
+
+The frontend chosen for these project is a Telegram Bot.
+Telegram bots are user friendly and easy-to-setup solutions to provide interfaces for a service.
+
+The telegram bot for this project can be found [here](https://t.me/PlateRecognitionBOT).
+
+The user can send here an image, and the bot will respond with the predicted place.
+
+The telegram bot backend is a stand-alone service, and sends an HTTP request to the `/api/v1/image-recognition/predict/plate-text` to predict the license plate.
+
+It always uses the `postprocess` parameter as true.
