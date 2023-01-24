@@ -4,7 +4,41 @@
 [![Prometheus](https://img.shields.io/badge/style-Monitoring-green?logo=prometheus&logoColor=orange&label=Prometheus)](https://prometheus-qbly4ubf5q-uc.a.run.app)
 [![Grafana](https://img.shields.io/badge/style-Monitoring-green?logo=grafana&logoColor=orange&label=Grafana&style=Monitoring)](https://grafana-qbly4ubf5q-uc.a.run.app)
 
-# Project Organization
+## Table of Contents
+1. [The project](#the-project)
+2. [Inception](#inception)
+    1. [Model card](#model-card)
+    2. [Dataset card)(#dataset-card)
+    3. [Data augmentation](#data-augmentation)
+3.  [Reproducibility](#reproducibility)
+    1. [DVC](#dvc)
+    2. [MLFlow](#mlflow)
+    3. [Dagshub](#dagshub)
+4. [Quality assurance](#quality-assurance)
+    1. [Pylint](#pylint)
+    2. [Coverage](#coverage)
+    3. [Pynblint](#pynblint)
+5. [API](#api)
+6. [CI/CD](#cicd)
+    1. [Codechecks]
+    2. [DockerHub]
+    3. [Artifact Registry & Cloud Run]
+7. [Monitoring](#monitoring)
+8. [Extra](#extra)
+    1. [Security]
+    2. [Costs]
+
+
+# The-project
+This project aims to build a service that recognizes and transcribes the license plate of a vehicle from a picture.
+The service is composed of:
+- A [backend service](https://plate-recognition-qbly4ubf5q-uc.a.run.app/docs#/), which exposes the API that interact with the model
+- A [Telegram bot](https://t.me/PlateRecognitionBOT), that can be used from the users to interact with the service
+- A [Prometheus instance](https://prometheus-qbly4ubf5q-uc.a.run.app), for monitoring
+- A [Grafana instance](https://grafana-qbly4ubf5q-uc.a.run.app), for monitoring and data analysis
+
+# Inception
+## Project Organization
  ```
 📦plate-recognition
  ┣ 📂.github
@@ -56,6 +90,12 @@
  ┣ 📜setup.py               <- makes project pip installable (pip install -e .) so src can be imported
  ┗ 📜tox.ini
 ```
+
+## Model card
+## Dataset card
+
+
+
 
 ## Commands
 
