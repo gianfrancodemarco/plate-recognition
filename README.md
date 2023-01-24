@@ -4,6 +4,59 @@
 [![Prometheus](https://img.shields.io/badge/style-Monitoring-green?logo=prometheus&logoColor=orange&label=Prometheus)](https://prometheus-qbly4ubf5q-uc.a.run.app)
 [![Grafana](https://img.shields.io/badge/style-Monitoring-green?logo=grafana&logoColor=orange&label=Grafana&style=Monitoring)](https://grafana-qbly4ubf5q-uc.a.run.app)
 
+# Project Organization
+ ```
+📦plate-recognition
+ ┣ 📂.github
+ ┃ ┗ 📂workflows            <- Workflow to be run on Github actions
+ ┣ 📂data                    
+ ┃ ┣ 📂external             <- Data from third party sources.
+ ┃ ┣ 📂interim              <- Intermediate data that has been transformed.
+ ┃ ┣ 📂processed            <- The final, canonical data sets for modeling.
+ ┃ ┗ 📂raw                  <- The original, immutable data dump.
+ ┣ 📂grafana
+ ┣ 📂notebooks              <- Jupyter notebooks. Naming convention is a number (for ordering),
+ ┃                              the creator's initials, and a short `-` delimited description, e.g.
+ ┃                              `1.0-jqp-initial-data-exploration`.
+ ┣ 📂prometheus             <- Custom Docker image for prometheus
+ ┣ 📂references             <- Data dictionaries, manuals, and all other explanatory materials.
+ ┣ 📂reports                <- Generated analysis as HTML, PDF, LaTeX, etc.
+ ┃ ┣ 📂figures              <- Generated graphics and figures to be used in reporting
+ ┃ ┣ 📂great_expectations
+ ┃ ┣ 📂train
+ ┣ 📂src                    <- Source code for use in this project.
+ ┃ ┣ 📂app                     <- Source code for the APIs    
+ ┃ ┃ ┣ 📂api
+ ┃ ┣ 📂bot                     <- Source code for the Telegram Bot           
+ ┃ ┣ 📂data                    <- Scripts to download or generate data
+ ┃ ┣ 📂features                <- Scripts to turn raw data into features for modeling
+ ┃ ┣ 📂models                  <- Scripts to train models and then use trained models to make predictions
+ ┃ ┣ 📂pipeline                <- Script composing the experiment pipeline
+ ┃ ┣ 📂visualization           <- Scripts to create exploratory and results oriented visualizations
+ ┃ ┣ 📜logging.conf            <- Logging configuration
+ ┣ 📂tests                  <- Python tests
+ ┣ 📜.coverage
+ ┣ 📜.dockerignore
+ ┣ 📜.dvcignore
+ ┣ 📜.gitignore
+ ┣ 📜.pylintrc
+ ┣ 📜Dockerfile_app         <- Dockerfile for the APIs
+ ┣ 📜Dockerfile_bot         <- Dockerfile for the Telegram Bot
+ ┣ 📜LICENSE
+ ┣ 📜README.md
+ ┣ 📜dev-requirements.txt
+ ┣ 📜docker-compose.yaml    <- Docker compose file for local developement
+ ┣ 📜dvc.lock
+ ┣ 📜dvc.yaml
+ ┣ 📜example.env            <- Example environment file
+ ┣ 📜locustfile.py          <- Locust source code for load testing
+ ┣ 📜params.yaml
+ ┣ 📜requirements_app.txt
+ ┣ 📜requirements_bot.txt
+ ┣ 📜setup.py               <- makes project pip installable (pip install -e .) so src can be imported
+ ┗ 📜tox.ini
+```
+
 ## Commands
 
 To run the main entry point, run:
