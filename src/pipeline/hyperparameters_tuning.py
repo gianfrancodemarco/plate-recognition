@@ -69,8 +69,8 @@ def objective(params, trial: Trial):
         params_to_log=params.__dict__
     )
 
-    trial.set_user_attr("loss", model.history.history["loss"])
-    trial.set_user_attr("val_loss", model.history.history["val_loss"])
+    trial.set_user_attr("loss", model.history.history["loss"][-1])
+    trial.set_user_attr("val_loss", model.history.history["val_loss"][-1])
 
     val_loss = model.history.history["val_loss"][-1]
     return val_loss
@@ -78,10 +78,10 @@ def objective(params, trial: Trial):
 
 if __name__ == "__main__":
 
-    NUM_TRIALS = 1000
+    NUM_TRIALS = 500
 
     # Optimize
-    pruner = optuna.pruners.MedianPruner(n_startup_trials=5, n_warmup_steps=5)
+    pruner = optuna.pruners.MedianPruner(n_startup_trials=5, n_warmup_steps=10)
     study = optuna.create_study(study_name="Optimization", direction="minimize", pruner=pruner)
     mlflow_callback = MLflowCallback(
         tracking_uri=mlflow.get_tracking_uri(),

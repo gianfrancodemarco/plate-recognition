@@ -76,8 +76,8 @@ class ImageRecognitionService:
         bbox = self.__predict_image_bbox__(image)
         bbox = box(*bbox)
 
-        yfact = image.shape[0]/255
-        xfact = image.shape[1]/255
+        yfact = image.shape[0]/256
+        xfact = image.shape[1]/256
 
         bbox = scale(bbox, xfact=xfact, yfact=yfact, origin=(0, 0))
 
@@ -90,6 +90,7 @@ class ImageRecognitionService:
 
     def predict_plate(self, image: np.ndarray):
 
+        image = preprocess_image(image)
         bbox = self.__predict_image_bbox__(image)
 
         cropped_image = crop_image(image, bbox)

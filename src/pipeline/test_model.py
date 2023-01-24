@@ -88,7 +88,8 @@ if __name__ == "__main__":
         annotations_path=os.path.join(DATASETS_BASE, "test", "annotations.csv"),
         dataset_generator_type=ImageDatasetType.PLATE_IMAGES_DATASET_GENERATOR, batch_size=1, shuffle=False
     )
-
+    
+    mlflow.set_experiment("Test")
     run_name = f"test_{params.test.model.model_name}_v{params.test.model.model_version}"
     with mlflow.start_run(run_name=run_name):
         evaluate_bbox_detection()
