@@ -167,7 +167,11 @@
             "uid": "PBFA97CFB590B2093"
           },
           "editorMode": "builder",
-          "expr": "fastapi_model_http_requests_total",
+          "exemplar": false,
+          "expr": "sum(fastapi_model_http_requests_total)",
+          "format": "time_series",
+          "instant": false,
+          "interval": "",
           "legendFormat": "Total number of requests",
           "range": true,
           "refId": "A"
@@ -339,32 +343,7 @@
             ]
           }
         },
-        "overrides": [
-          {
-            "__systemRef": "hideSeriesFrom",
-            "matcher": {
-              "id": "byNames",
-              "options": {
-                "mode": "exclude",
-                "names": [
-                  " /api/v1/image-recognition/predict/plate-text"
-                ],
-                "prefix": "All except:",
-                "readOnly": true
-              }
-            },
-            "properties": [
-              {
-                "id": "custom.hideFrom",
-                "value": {
-                  "legend": false,
-                  "tooltip": false,
-                  "viz": true
-                }
-              }
-            ]
-          }
-        ]
+        "overrides": []
       },
       "gridPos": {
         "h": 6,
@@ -393,7 +372,7 @@
           },
           "editorMode": "builder",
           "exemplar": false,
-          "expr": "fastapi_model_http_requests_total",
+          "expr": "fastapi_model_http_requests_total{handler!=\"/openapi.json\"}",
           "instant": false,
           "legendFormat": " {{handler}}",
           "range": true,

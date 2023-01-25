@@ -40,6 +40,8 @@
     4. [Security](#security)
     5. [Costs](#costs)
     6. [Developer Guide](#developer-guide)
+        1. [docker-compose](#docker-compose) (PIP CACHE)
+
 
 
 # The project
@@ -67,7 +69,6 @@ The Git workflow has been organized in a simple flow.
 ## Project Organization
 
 The project initial organization has been created using the [cookiecutter data sicence template](https://drivendata.github.io/cookiecutter-data-science/) and then adapted to the needs of this projects.
-
 For example, the folder `src/pipeline` has been added to gather all of the scripts composing the dvc pipeline.
 Another example is the absence of the `model` folder, since this project is completely integrated with MLFlow and uses an the MLFlow server provided by Dagshub to store the models.
 
@@ -379,3 +380,5 @@ It allows to create dashboard and alerts based on metrics updated in near real-t
 For this project, a Grafana instance is used to build dashboards on top of the Prometheus data.
 
 Since Cloud Run does not support mounting external storages (the containers are ephemeral), a custom Grafana docker image has been built. This image uses the [Grafana provisioning funcionality](https://grafana.com/docs/grafana/latest/administration/provisioning/) so that the service comes up with the necessary data sources and dashboard already configured.
+
+The Grafana image comes with a default account (admin:admin) and a configured dashboard (Services -> Monitoring).
