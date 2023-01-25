@@ -7,9 +7,10 @@
 ## Table of Contents
 1. [The project](#the-project)
 2. [Inception](#inception)
-    1. [Model card](#model-card)
-    2. [Dataset card](#dataset-card)
-    3. [Data augmentation](#data-augmentation)
+    1. [Git Flow](#git-flow)
+    2. [Project Organization](#project-organization)
+    3. [Model card](#model-card)
+    4. [Dataset card](#dataset-card)
 3.  [Reproducibility](#reproducibility)
     1. [Dagshub](#dagshub)
     2. [DVC](#dvc)
@@ -28,21 +29,24 @@
 7. [CI/CD](#cicd)
     1. [Code Checks](#code-checks)
     2. [DockerHub](#dockerhub)
-    3. [Artifact Registry & Cloud Run](#artifact-registry-cloud-run)
+    3. [Deployments](#deployments)
 8. [Monitoring](#monitoring)
+    1. [Prometheus](#prometheus)
+    2. [Grafanagrafana)
 9. [Extra](#extra)
     1. [Hyperparameters optimization](#optimization)
-    2. [Project structure](#project-structure)
-    3. [Security](#security)
-    4. [Costs](#costs)
-    5. [Developer Guide](#developer-guide)
+    2. [Data augmentation](#data-augmentation)
+    3. [Project structure](#project-structure)
+    4. [Security](#security)
+    5. [Costs](#costs)
+    6. [Developer Guide](#developer-guide)
 
 
 # The project
 This project aims to build a service that recognizes and transcribes the license plate of a vehicle from a picture.
 The service is composed of:
 - A [backend service](https://plate-recognition-qbly4ubf5q-uc.a.run.app/docs#/), which exposes the API that interact with the model
-- A [Telegram bot](https://t.me/PlateRecognitionBOT), that can be used from the users to interact with the service
+- A backend service which is connected to a [Telegram bot](https://t.me/PlateRecognitionBOT), that can be used from the users to interact with the service
 - A [Prometheus instance](https://prometheus-qbly4ubf5q-uc.a.run.app), for monitoring
 - A [Grafana instance](https://grafana-qbly4ubf5q-uc.a.run.app), for monitoring and data analysis
 
@@ -51,6 +55,15 @@ The plate recognition is performed in two steps:
 - image-to-text: uses a pretrained model to transcribe the plate
 
 # Inception
+
+## Git Flow
+
+The Git workflow has been organized in a simple flow.
+3 branches are maintaned:
+- `dev`, which is used to track features in development
+- `main` (default), where the features are merged when complete
+- `production`, used to deploy the services with CI/CD integrations
+
 ## Project Organization
 
 The project initial organization has been created using the [cookiecutter data sicence template](https://drivendata.github.io/cookiecutter-data-science/) and then adapted to the needs of this projects.
@@ -302,3 +315,67 @@ The telegram bot backend is a stand-alone service, and sends an HTTP request to 
 It always uses the `postprocess` parameter as true.
 
 ![A sample conversation with the bot](reports/figures/bot_conversation.png "Conversation")
+
+# CI/CD
+
+Continuous Integration & Continuous Deployment are foundamental aspects of modern software engineering.
+
+This concepts are extensively integrated into this project through the mean of Github Actions.
+Github Actions allow to define workflows, which are pieces of codes that can be executed remotely as responses to some event happening on the repository (push, pull requests, other workflows completing...)
+
+Some general concepts that are valid along all of the workflows in this project:
+- workflows are configured so that they are executed only when necessary; e.g. the build & deployment of the Grafana service is run only when code regarding Grafana is changed;
+- all of the relevant values used in the workflows are retrieved by Github Environment Variables (when these are not classified values) or Github secrets.
+
+
+## Code checks
+
+The workflow `Code Checks - Plate Recognition App` is run each time changes are made to the source code.
+
+![Code checks workflow](reports/figures/workflow.png "Code checks workflow")
+
+It executes:
+- static code analysis with pynbilint and pylint;
+- only if the previous are successful, unit tests with coverage and pytest
+
+
+## Dockerhub
+
+Only if the `Code Checks - Plate Recognition App` workflow is executed successfully, another workflow is triggered, whick builds the docker image for the APIs and pushes it to Dockerhub.
+This image was meant to be used for the deployments, but was abandoned as described in the next sections.
+
+## Deployments
+
+For each of the 4 services composing this project (APIs, Telegram bot backend, Prometheus and Grafana) a specific deployment workflow is configured.
+These are triggered only when updates are made on the relevant code for each service, and only for the `production` branch.
+
+The cloud platform chosen for deploying the services is Google Cloud Platform (GCP), and the specific service is Cloud Run.
+Cloud Run needs the docker images for the services to run to be stored into another GCP service, Artifact Registry.
+For this reason, each deployment workflow first builds the corresponding docker image and pushes it to Artifact Registry, and the triggers the deploy on Cloud Run.
+
+For the API service, after the image has been built, load testing is conducted using the Locust library.
+
+# Monitoring
+
+The monitoring phase is essential in the philosofy of Continuous Deployment.
+
+## Prometheus
+
+Prometheus is a service that allows to retrieve metrics from running services. These metrics can then be analyzed or organized for visualization and monitoring.
+
+In this project, Prometheus is employed on the:
+- API service, retrieving default metrics
+- Telegram bot backend, with two custom metrics, keeping track of the number of text messages and the number of images sent to the bot.
+
+Prometheus does not support dynamic resolution of targets, which means that URLs must be hard-coded into the configuration.
+Since this goes against the guide lines of this projects (all of the variables must be retrieved from Github), a custom Prometheus docker image has been built.
+This image includes a script that is run at startup, which resolves the targets using environment variables; this environment variables can be injected by the deployment service (Github Actions & Cloud Run, docker-compose).
+
+## Grafana
+
+Grafana is an open source analytics & monitoring solution which can be connected to a lot of data sources. 
+It allows to create dashboard and alerts based on metrics updated in near real-time.
+
+For this project, a Grafana instance is used to build dashboards on top of the Prometheus data.
+
+Since Cloud Run does not support mounting external storages (the containers are ephemeral), a custom Grafana docker image has been built. This image uses the [Grafana provisioning funcionality](https://grafana.com/docs/grafana/latest/administration/provisioning/) so that the service comes up with the necessary data sources and dashboard already configured.
