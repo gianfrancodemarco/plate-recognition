@@ -20,7 +20,7 @@ class MLFlowModelTrainer:
         self,
         model_name: str,
         train_data,
-        validation_data,
+        validation_data = None,
         batch_size: int = 16,
         epochs: int = 1000,
         verbose = 1,
