@@ -5,10 +5,9 @@ services:
   plate-recognition-app:
     container_name: plate-recognition-app
     env_file: .env
-    image: us-central1-docker.pkg.dev/linen-shape-374022/university/plate-recognition:latest
-    # build:
-    #   context: ./
-    #   dockerfile: Dockerfile_app
+    build:
+      context: ./
+      dockerfile: Dockerfile_app
     volumes:
       - ./src/common:/app/src/common
       - ./src/app:/app/src/app

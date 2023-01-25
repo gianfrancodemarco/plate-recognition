@@ -32,14 +32,13 @@
     3. [Deployments](#deployments)
 8. [Monitoring](#monitoring)
     1. [Prometheus](#prometheus)
-    2. [Grafanagrafana)
+    2. [Grafana](#grafana)
 9. [Extra](#extra)
-    1. [Hyperparameters optimization](#optimization)
+    1. [Hyperparameters optimization](#hyperparameters-optimization)
     2. [Data augmentation](#data-augmentation)
     3. [Project structure](#project-structure)
     4. [Security](#security)
-    5. [Costs](#costs)
-    6. [Developer Guide](#developer-guide)
+    5. [Developer Guide](#developer-guide)
         1. [docker-compose](#docker-compose) (PIP CACHE)
 
 
@@ -382,3 +381,72 @@ For this project, a Grafana instance is used to build dashboards on top of the P
 Since Cloud Run does not support mounting external storages (the containers are ephemeral), a custom Grafana docker image has been built. This image uses the [Grafana provisioning funcionality](https://grafana.com/docs/grafana/latest/administration/provisioning/) so that the service comes up with the necessary data sources and dashboard already configured.
 
 The Grafana image comes with a default account (admin:admin) and a configured dashboard (Services -> Monitoring).
+
+![Grafana monitoring](reports/figures/monitoring.png "Grafana monitoring")
+
+
+From left to right, from top to bottom:
+
+1. Number of text messages and image messages sent to the telegram bot
+2. Number of requests made to the APIs
+3. Timeline of the requests made to the telegram bot
+4. Timeline of the requests made to the APIs
+5. Percentage of requests to the APIs which resulted in an error
+
+
+# Extra 
+
+## Hyperparameters optimization
+
+The model architecture chosen for the plate detection model is a CNN.
+Other details of the network, like the number of convolutional blocks, optimizer, learning rate etc. have been made dynamically configurable.
+
+To find candidates for the optimal hyperparamters set, the [Optuna framework](https://optuna.readthedocs.io/en/stable/index.html) has been employed.
+Optuna allows to define a distribution for each parameter that we want to optimize, then it tries different samples from these distrubution to fit the model, trying to optimize the chosen metric. 
+A pruner can also be configured to prune experiments when certain criterias are not matched.
+Optuna allowed to test thousands of configurations effortlessly.
+After the optimization step, the best configuration were reused to conduct the full training.
+
+## Data augmentation
+
+The dataset used to train the plate recognition model is very small and suffers of very small diversity.
+For this reason, the [Albumentations](https://albumentations.ai/) library has been utilized to augment the images.
+This library offers dozens of functions that apply transformations to the input image (scaling, cropping, inserting shadows...).
+A composition of transformations can be defined, each with an associated probability. Then, these trasformations are applied to the image with respect to their probability.
+Tests were conducted both without and with data augmentation (see [Hyperparameters optimization](#hyperparameters-optimization)), and they showed that the augmentation clearly improves the performance of the model.
+Augmentation is applied online, which means that during the traning phase, at the moment of retrieving an image to input the model, the augmentation function is applied.
+
+## Project structure
+
+This project has all been condensed in a single repository for sake of simplicity.
+However, to ensure better maintainability and software engineering, it should be divded in:
+- API service repository
+- Telegram bot backend repository
+- Library repository: this should contain all of the shared code and published as a pip package
+- Experiments repository
+
+## Security
+
+Security was deliberately overlooked during this project; however, in a real-world scenario, different adjustments should be made:
+- don't expose the APIs on the internet and make the accessible only from the Telegram Bot backend
+- setup correct authentication for the Prometheus and Grafana instance
+- setup an API limit mechanism to avoid abuses
+- ...
+
+## Developer Guide
+
+This project is organized in a way that it is fully reproducible.
+
+For a fresh new installation, you need to:
+
+- clone this repository
+- create a python virtual environment (strongly suggested)
+- install the project requirements
+- create a `.env` file, starting from the `example.env` file, and replace all of the values
+
+To run new experiments it is sufficient to run the `dvc repro` command.
+To perform hyperparameters optimization, the script to run is `src/models/hyperparameters_tuning.py`.
+
+Finally, to spin-up all of the services on your machine, it is sufficient to run the command `docker-compose up` (this needs Docker to be installed on the system).
+
+To setup the GCP environment, the steps described in the `terraform.txt` file are required.
