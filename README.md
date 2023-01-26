@@ -47,7 +47,7 @@
 This project aims to build a service that recognizes and transcribes the license plate of a vehicle from a picture.
 The service is composed of:
 - A [backend service](https://plate-recognition-qbly4ubf5q-uc.a.run.app/docs#/), which exposes the API that interact with the model
-- A backend service which is connected to a [Telegram bot](https://t.me/PlateRecognitionBOT), that can be used from the users to interact with the service
+- A [backend service](https://telegram-bot-qbly4ubf5q-uc.a.run.app/), which is connected to a [Telegram bot](https://t.me/PlateRecognitionBOT), that can be used from the users to interact with the service
 - A [Prometheus instance](https://prometheus-qbly4ubf5q-uc.a.run.app), for metrics collection
 - A [Grafana instance](https://grafana-qbly4ubf5q-uc.a.run.app), for monitoring and data analysis
 
