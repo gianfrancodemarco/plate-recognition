@@ -3,14 +3,16 @@ augmentation: true
 
 train:
   fit:
-    epochs: 10
+    epochs: 1000
   model:
     model_name: teste
     model_version: 1
-    dropout: 0.4
-    cnn_blocks: 6
-    filters_num: 32
+    dropout: 0.5
+    cnn_blocks: 4
+    filters_num: 56
     filters_kernel_size: 3
+    optimizer_name: adam
+    learning_rate: 0.0635
 
 test:
   model:  
