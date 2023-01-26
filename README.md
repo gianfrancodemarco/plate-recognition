@@ -55,6 +55,8 @@ The plate recognition is performed in two steps:
 - plate detection: uses a custom model to find the bounding box of the plate 
 - image-to-text: uses a pretrained model to transcribe the plate
 
+The final plate recognition pipeline (with post-processing) reaches an accuracy of 35.6% on test data.
+
 # Inception
 
 ## Git Flow
@@ -277,7 +279,7 @@ The plate recognition service is exposed using an HTTP server.
 The framework used to build the APIs is FastAPI.
 
 The service loads the two required models at startup:
-- the plate recognition model (custom) from MLflow
+- the Plate Detection Model (custom) from MLflow
 - the image-to-text model (pre trained) from HuggingFace
 
 The API exposed are:
@@ -411,7 +413,7 @@ After the optimization step, the best configuration were reused to conduct the f
 
 ## Data augmentation
 
-The dataset used to train the plate recognition model is very small and suffers of very small diversity.
+The dataset used to train the Plate Detection Model is very small and suffers of very small diversity.
 For this reason, the [Albumentations](https://albumentations.ai/) library has been utilized to augment the images.
 This library offers dozens of functions that apply transformations to the input image (scaling, cropping, inserting shadows...).
 A composition of transformations can be defined, each with an associated probability. Then, these trasformations are applied to the image with respect to their probability.
