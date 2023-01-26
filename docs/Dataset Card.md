@@ -17,6 +17,8 @@ The dataset is a subset of the original [License Plate Detection, Recognition an
 
 The images in the original dataset have been manually tagged with the bounding box of the vehicle plate and with the textual transcription of the plates.
 
+![A sample conversation with the bot](../reports/figures/dataset.jpg "Conversation")
+
 ### Supported Tasks and Leaderboards
 
 The tasks supported by this dataset are:
