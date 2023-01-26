@@ -5,15 +5,15 @@ import numpy as np
 
 def augment_image(image: np.ndarray, bbox: np.ndarray): 
     transform = A.Compose([
-        A.RandomCrop(p=0.2, width=200, height=200),
-        A.HorizontalFlip(p=0.2),
-        A.Blur(p=0.1),
-        A.CLAHE(p=0.1),
+        A.RandomCrop(p=0.3, width=200, height=200),
+        A.HorizontalFlip(p=0.3),
+        A.Blur(p=0.3),
+        A.CLAHE(p=0.3),
         A.Equalize(p=0.3),
-        A.ColorJitter(p=0.1),
+        A.ColorJitter(p=0.3),
         A.RandomShadow(p=0.3),
-        A.RandomBrightness(p=0.1),
-        A.ShiftScaleRotate(p=0.2, rotate_limit=15)
+        A.RandomBrightness(p=0.3),
+        A.ShiftScaleRotate(p=0.3, rotate_limit=15)
     ], bbox_params=A.BboxParams(format='pascal_voc', min_visibility=1, label_fields=[]))
 
     transformed = transform(image=image, bboxes=[bbox])

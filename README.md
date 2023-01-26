@@ -124,10 +124,12 @@ Another example is the absence of the `model` folder, since this project is comp
 ```
 
 ## Model card
-
-Describe the 2 models!
+This project uses two models.
+The first is a custom model for the plate detection, described [here](docs/Model%20Card.md).
+The second is a pretrained model for the OCR, [shared on HuggingFace](https://huggingface.co/microsoft/trocr-small-printed).
 
 ## Dataset card
+The dataset card can be found [here](docs/Dataset%20Card.md).
 # Reproducibility
 
 ## Dagshub
