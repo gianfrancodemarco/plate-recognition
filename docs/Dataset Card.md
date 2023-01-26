@@ -1,8 +1,3 @@
----
-# For reference on model card metadata, see the spec: https://github.com/huggingface/hub-docs/blob/main/datasetcard.md?plain=1
-# Doc / guide: https://huggingface.co/docs/hub/datasets-cards
----
-
 # Dataset Card for Plate Recognition dataset
 
 ## Dataset Description
